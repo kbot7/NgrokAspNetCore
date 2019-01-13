@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NgrokAspNetCore.Lib", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NgrokAspNetCore.Test", "test\NgrokAspNetCore.Test\NgrokAspNetCore.Test.csproj", "{ED503E74-1A27-4492-A274-F7C5C0C43539}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NgrokAspNetCore.Sample", "sample\NgrokAspNetCore.Sample\NgrokAspNetCore.Sample.csproj", "{AB44BB76-BD09-413F-932E-85D8196CD362}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{ED503E74-1A27-4492-A274-F7C5C0C43539}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED503E74-1A27-4492-A274-F7C5C0C43539}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED503E74-1A27-4492-A274-F7C5C0C43539}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB44BB76-BD09-413F-932E-85D8196CD362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB44BB76-BD09-413F-932E-85D8196CD362}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB44BB76-BD09-413F-932E-85D8196CD362}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB44BB76-BD09-413F-932E-85D8196CD362}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
