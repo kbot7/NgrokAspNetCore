@@ -3,11 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NgrokAspNetCore.Lib", "src\NgrokAspNetCore.Lib\NgrokAspNetCore.Lib.csproj", "{2AEDAB6B-CD52-4F18-9538-69CEA05D1FB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NgrokAspNetCore.Lib", "src\NgrokAspNetCore.Lib\NgrokAspNetCore.Lib.csproj", "{2AEDAB6B-CD52-4F18-9538-69CEA05D1FB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NgrokAspNetCore.Test", "test\NgrokAspNetCore.Test\NgrokAspNetCore.Test.csproj", "{ED503E74-1A27-4492-A274-F7C5C0C43539}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NgrokAspNetCore.Test", "test\NgrokAspNetCore.Test\NgrokAspNetCore.Test.csproj", "{ED503E74-1A27-4492-A274-F7C5C0C43539}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NgrokAspNetCore.Sample", "sample\NgrokAspNetCore.Sample\NgrokAspNetCore.Sample.csproj", "{AB44BB76-BD09-413F-932E-85D8196CD362}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NgrokAspNetCore.Sample", "sample\NgrokAspNetCore.Sample\NgrokAspNetCore.Sample.csproj", "{AB44BB76-BD09-413F-932E-85D8196CD362}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7F097C02-4494-4636-B154-EC620F511A31}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

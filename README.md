@@ -64,7 +64,7 @@ To submit pull requests, fork this repository to your own account, then submit a
 * Support for subdomains
 
 ## Change Log
-* v1.0.0 Initial release
+* v0.9.0 Initial release
 
 
 

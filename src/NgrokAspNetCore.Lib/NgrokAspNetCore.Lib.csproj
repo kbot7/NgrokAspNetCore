@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+		<Version>0.9.0</Version>
+		<NuspecFile>NgrokAspNetCore.nuspec</NuspecFile>
+		<NuspecProperties>version=$(Version)</NuspecProperties>
   </PropertyGroup>
 
   <ItemGroup>
