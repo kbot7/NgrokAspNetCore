@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NgrokAspNetCore.Lib;
 
 namespace NgrokAspNetCore.Sample
 {
@@ -31,6 +32,7 @@ namespace NgrokAspNetCore.Sample
 				options.MinimumSameSitePolicy = SameSiteMode.None;
 			});
 
+			services.AddNgrok();
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}
@@ -45,10 +47,10 @@ namespace NgrokAspNetCore.Sample
 			else
 			{
 				app.UseExceptionHandler("/Home/Error");
-				app.UseHsts();
+				//app.UseHsts();
 			}
 
-			app.UseHttpsRedirection();
+			//app.UseHttpsRedirection();
 			app.UseStaticFiles();
 			app.UseCookiePolicy();
 

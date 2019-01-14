@@ -5,16 +5,25 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using NgrokAspNetCore.Lib;
 
 namespace NgrokAspNetCore.Sample
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
-			CreateWebHostBuilder(args).Build().Run();
+			var builder = CreateWebHostBuilder(args);
+
+			var host = builder.Build();
+
+			// Use Ngrok
+			await host.StartNgrokAsync();
+	
+			host.Run();
 		}
 
 		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
