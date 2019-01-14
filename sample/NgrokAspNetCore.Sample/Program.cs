@@ -20,7 +20,7 @@ namespace NgrokAspNetCore.Sample
 
 			var host = builder.Build();
 
-			// Use Ngrok
+			// Start Ngrok here
 			await host.StartNgrokAsync();
 	
 			host.Run();
