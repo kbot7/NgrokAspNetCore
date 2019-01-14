@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NgrokAspNetCore.Lib", "src\NgrokAspNetCore.Lib\NgrokAspNetCore.Lib.csproj", "{2AEDAB6B-CD52-4F18-9538-69CEA05D1FB2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NgrokAspNetCore.Test", "test\NgrokAspNetCore.Test\NgrokAspNetCore.Test.csproj", "{ED503E74-1A27-4492-A274-F7C5C0C43539}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NgrokAspNetCore.Tests", "test\NgrokAspNetCore.Test\NgrokAspNetCore.Tests.csproj", "{ED503E74-1A27-4492-A274-F7C5C0C43539}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NgrokAspNetCore.Sample", "sample\NgrokAspNetCore.Sample\NgrokAspNetCore.Sample.csproj", "{AB44BB76-BD09-413F-932E-85D8196CD362}"
 EndProject
