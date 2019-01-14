@@ -1,9 +1,9 @@
 name: $(majorVersion).$(minorVersion)$(Rev:.r)
 variables:
 - name: majorVersion
-  value: 6
+  value: 9
 - name: minorVersion
-  value: 3
+  value: 0
 resources:
 - repo: self
 queue:
