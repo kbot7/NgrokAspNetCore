@@ -28,11 +28,11 @@ steps:
     projects: '**/*[Tt]ests/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet pack'
+  displayName: Pack
   inputs:
     command: custom
     custom: 'pack '
-    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory) --include-symbols --include-source'
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory) --include-symbols --include-source src/NgrokAspNetCore.Lib/NgrokAspNetCore.Lib.csproj'
     buildProperties: 'version=$(Build.BuildNumber)'
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
