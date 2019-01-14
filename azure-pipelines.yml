@@ -32,7 +32,7 @@ steps:
   inputs:
     command: custom
     custom: 'pack '
-    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory) --include-symbols --include-source src/NgrokAspNetCore.Lib/NgrokAspNetCore.Lib.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory) --include-symbols --include-source -p:Version=$(Build.BuildNumber) src/NgrokAspNetCore.Lib/NgrokAspNetCore.Lib.csproj'
     buildProperties: 'version=$(Build.BuildNumber)'
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
