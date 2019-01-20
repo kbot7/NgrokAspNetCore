@@ -1,7 +1,7 @@
 name: $(majorVersion).$(minorVersion)$(Rev:.r)
 variables:
 - name: majorVersion
-  value: 9
+  value: 1
 - name: minorVersion
   value: 0
 - name: BuildConfiguration
