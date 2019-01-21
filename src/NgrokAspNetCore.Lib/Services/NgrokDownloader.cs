@@ -63,7 +63,7 @@ namespace NgrokAspNetCore
 		{
 			var downloadUrl = GetDownloadPath();
 			var fileName = $"{RuntimeExtensions.GetOSArchitectureString()}.zip";
-			var filePath = $"{Path.Combine(Directory.GetCurrentDirectory(), fileName)}.zip";
+			var filePath = $"{Path.Combine(Directory.GetCurrentDirectory(), fileName)}";
 
 			var downloadResponse = await _httpClient.GetAsync(downloadUrl);
 			downloadResponse.EnsureSuccessStatusCode();
