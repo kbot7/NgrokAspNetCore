@@ -32,7 +32,7 @@ public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
     	.UseStartup<Startup>();
 ```
 
-When the application starts up, ngrok will launch automatically and create a tunnel to the applicaiton. 
+When the application starts up, ngrok will launch automatically and create a tunnel to the application. 
 
 Note: If ngrok is not installed, it will be downloaded automatically to the execution directory
 
@@ -43,7 +43,7 @@ Ngrok can be configured when registering it in the services collection by passin
 | Option | Description |
 | --- | --- |
 | NgrokPath | Path to ngrok.exe. If not provided, it will default to the current directory, and search the Windows PATH variable. If all attempts fail, it will attempt to download it from the Ngrok CDN to the executing directory |
-| ApplicationHttpUrl | The local Url to proxy to. If not provided, it will default to the first http url registered. It should work fine automatically when hosted from kestrel. Haven't tested in IIS. |
+| ApplicationHttpUrl | The local URL to proxy to. If not provided, it will default to the first HTTP URL registered. It should work fine automatically when hosted from kestrel. Haven't tested in IIS. |
 | NgrokConfigProfile | The name of the config profile specified in an ngrok.yml config file. See here for details on the ngrok.yml format: https://ngrok.com/docs#config. This will override all other settings |
 
 ## Contributing
@@ -54,14 +54,14 @@ Please submit any bugs, issues, questions, or feature requests, by [submitting a
 To submit pull requests, fork this repository to your own account, then submit a pull request back to this repository.
 
 ## Limitations
-* Currently only supports tunnels to http
+* Currently only supports tunnels to HTTP
 * Support for ngrok.yml configuration is limited. Pull requests are welcome to improve this area
 
 ## Future Enhacements
 * Support for a standard appsettings configuration format
 * Better support for ngrok.yml
-* Support for tcp, tls
-* Support for subdomains
+* Support for TCP, TLS
+* Support for sub-domains
 
 ## Change Log
 * v0.9.0 Initial release
