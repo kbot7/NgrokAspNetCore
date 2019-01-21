@@ -10,6 +10,7 @@
 		<PackageLicenseUrl>https://raw.githubusercontent.com/kg73/NgrokAspNetCore/master/LICENSE</PackageLicenseUrl>
 		<Company />
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<RootNamespace>NgrokAspNetCore</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.1" />

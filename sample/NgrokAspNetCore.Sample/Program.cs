@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using NgrokAspNetCore.Lib;
+using NgrokAspNetCore;
 
 namespace NgrokAspNetCore.Sample
 {

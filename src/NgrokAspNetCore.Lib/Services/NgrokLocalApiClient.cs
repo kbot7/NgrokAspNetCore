@@ -3,20 +3,18 @@
 // Copyright (c) 2019 David Prothero, Kevin Gysberg
 
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using NgrokExtensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using NgrokExtensions;
-using System.IO;
-using System.ComponentModel;
-using Newtonsoft.Json;
-using System.Linq;
 
-namespace NgrokAspNetCore.Lib
+namespace NgrokAspNetCore
 {
 	public class NgrokLocalApiClient
 	{
@@ -144,7 +142,8 @@ namespace NgrokAspNetCore.Lib
 			if (url.Port != 80 && url.Port != 443)
 			{
 				addr = $"{url.Host}:{url.Port}";
-			} else
+			}
+			else
 			{
 				if (addr.StartsWith("http://"))
 				{

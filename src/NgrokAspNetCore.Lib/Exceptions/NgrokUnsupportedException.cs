@@ -3,11 +3,9 @@
 // Copyright (c) 2019 Kevin Gysberg
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
-namespace NgrokAspNetCore.Lib
+namespace NgrokAspNetCore
 {
 	public class NgrokUnsupportedException : Exception
 	{

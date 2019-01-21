@@ -6,13 +6,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace NgrokAspNetCore.Lib
+namespace NgrokAspNetCore
 {
 	public static class NgrokAspNetCoreExtensions
 	{
@@ -31,7 +28,7 @@ namespace NgrokAspNetCore.Lib
 		/// Start ngrok.exe with configured options
 		/// </summary>
 		/// <exception cref="NgrokStartFailedException">Throws when ngrok failed to start</exception>
-		/// <exception cref="NgrokUnsupportedException">Throws when ngrok is not suported on the os and architecture</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws when ngrok is not supported on the OS and architecture</exception>
 		/// <exception cref="NgrokNotFoundException">Throws when ngrok is not found and is unable to be downloaded automatically</exception>
 		/// <param name="host"></param>
 		/// <param name="options"></param>

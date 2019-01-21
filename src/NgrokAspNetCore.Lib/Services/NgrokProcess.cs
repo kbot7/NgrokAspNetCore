@@ -4,12 +4,9 @@
 // Pulled from Github on 2019-01-13 at https://github.com/dprothero/NgrokExtensions
 
 using Microsoft.Extensions.Hosting;
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 
-namespace NgrokAspNetCore.Lib
+namespace NgrokAspNetCore
 {
 	public class NgrokProcess
 	{

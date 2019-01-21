@@ -3,9 +3,8 @@
 // Copyright (c) 2019 Kevin Gysberg
 
 using System;
-using System.Runtime.Serialization;
 
-namespace NgrokAspNetCore.Lib
+namespace NgrokAspNetCore
 {
 	[Serializable]
 	internal class NgrokStartFailedException : Exception
