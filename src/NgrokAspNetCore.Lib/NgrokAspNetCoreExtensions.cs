@@ -5,7 +5,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
+using NgrokExtensions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,7 +35,7 @@ namespace NgrokAspNetCore
 		/// <param name="host"></param>
 		/// <param name="options"></param>
 		/// <returns></returns>
-		public static async Task StartNgrokAsync(this IWebHost host)
+		public static async Task<IEnumerable<Tunnel>> StartNgrokAsync(this IWebHost host)
 		{
 			var services = host.Services;
 
@@ -43,7 +45,7 @@ namespace NgrokAspNetCore
 			// Start Ngrok
 			var ngrokClient = services.GetRequiredService<NgrokLocalApiClient>();
 
-			await ngrokClient.StartTunnelsAsync(options.NgrokPath);
+			return await ngrokClient.StartTunnelsAsync(options.NgrokPath);
 		}
 
 		private static async Task<NgrokOptions> ConfigureOptions(IWebHost host)
