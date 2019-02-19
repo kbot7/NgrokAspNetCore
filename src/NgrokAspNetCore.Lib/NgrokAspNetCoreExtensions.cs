@@ -5,6 +5,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NgrokExtensions;
 using System;
 using System.Collections.Generic;
@@ -17,12 +18,12 @@ namespace NgrokAspNetCore
 	{
 		public static void AddNgrok(this IServiceCollection services, NgrokOptions options = null)
 		{
-			services.AddSingleton<NgrokProcess>();
+			services.TryAddSingleton<NgrokProcess>();
 
 			services.AddHttpClient<NgrokDownloader>();
 			services.AddHttpClient<NgrokLocalApiClient>();
 
-			services.AddSingleton<NgrokOptions>(options ?? new NgrokOptions());
+			services.TryAddSingleton<NgrokOptions>(options ?? new NgrokOptions());
 
 			services.AddLogging();
 		}
@@ -45,7 +46,9 @@ namespace NgrokAspNetCore
 			// Start Ngrok
 			var ngrokClient = services.GetRequiredService<NgrokLocalApiClient>();
 
-			return await ngrokClient.StartTunnelsAsync(options.NgrokPath);
+			var tunnels = await ngrokClient.StartTunnelsAsync(options.NgrokPath);
+
+			return tunnels;
 		}
 
 		private static async Task<NgrokOptions> ConfigureOptions(IWebHost host)
