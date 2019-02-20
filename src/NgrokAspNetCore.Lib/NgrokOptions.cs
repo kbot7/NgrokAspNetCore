@@ -4,6 +4,7 @@
 
 using NgrokAspNetCore.Exceptions;
 using NgrokAspNetCore.Internal;
+using System;
 using System.IO;
 
 namespace NgrokAspNetCore
@@ -47,8 +48,15 @@ namespace NgrokAspNetCore
 			if (!NgrokYmlConfigProfile.HasValue()) return false;
 
 			// If a config file isn't found in the current directory and specified, throw exception
-			var configFileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "ngrok.yml"));
+			var configFileExists = File.Exists("ngrok.yml");
+			if (configFileExists)
+			{
+				NgrokYmlConfigPath = "ngrok.yml";
+			}
 			configFileExists |= NgrokYmlConfigPath.HasValue() && File.Exists(NgrokYmlConfigPath);
+			configFileExists |= Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+				".ngrok2", "ngrok.yml").FileExists();
+
 			if (raiseException && !configFileExists)
 			{
 				throw new NgrokConfigNotFoundException();

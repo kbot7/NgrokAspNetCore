@@ -118,9 +118,11 @@ namespace NgrokAspNetCore
 			}
 			return null;
 		}
+
 		private async Task<IEnumerable<Tunnel>> StartNgrokTunnelAsync(string projectName)
 		{
-			var addr = _options.ApplicationHttpUrl;
+			var uri = new Uri(_options.ApplicationHttpUrl);
+			var addr = $"{uri.Host}:{uri.Port}";
 
 			var existingTunnels = _tunnels.Where(t => t.config.addr == addr);
 
@@ -132,7 +134,7 @@ namespace NgrokAspNetCore
 			else
 			{
 				var tunnel = await CreateTunnelAsync(projectName, addr);
-				return IEnumerableExt.SingleItemAsEnumerable(tunnel);
+				return tunnel.SingleItemAsEnumerable();
 			}
 		}
 

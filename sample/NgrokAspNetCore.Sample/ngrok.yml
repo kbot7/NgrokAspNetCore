@@ -1,0 +1,5 @@
+﻿tunnels:
+  testtunnel:
+    proto: http
+    addr: 5000
+    hostname: testtunnel.ngrok.shearcode.com

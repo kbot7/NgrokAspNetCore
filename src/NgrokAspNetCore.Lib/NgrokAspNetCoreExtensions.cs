@@ -63,15 +63,7 @@ namespace NgrokAspNetCore
 			var ngrokFullPath = await ngrokDownloader.EnsureNgrokInstalled(options);
 			options.NgrokPath = ngrokFullPath;
 
-			// If config is driven off an NgrokConfig, short circuit
-			if (options.NgrokYmlConfigProfile.HasValue())
-			{
-				// Throws if invalid
-				options.ValidateNgrokYmlSettings();
-				return options;
-			}
-
-			// Check if an app url was provided and if it is valid. If so, short circuit
+			// Check if an app url was provided in options and if it is valid. If so, short circuit
 			var optionsUrlValid = options.ApplicationHttpUrl.HasValue() && Uri.TryCreate(options.ApplicationHttpUrl, UriKind.Absolute, out Uri uri);
 			if (optionsUrlValid)
 			{
@@ -85,11 +77,14 @@ namespace NgrokAspNetCore
 			// Get first http address from address list. Throw exception if none found
 			// Note: Make this configurable if we eventually integrate TLS termination with Core HTTPS/HSTS
 			var localAddress = addresses.FirstOrDefault(a => a.StartsWith("http://"));
-			if (!localAddress.HasValue())
+			if (!localAddress.HasValue() && !options.NgrokYmlConfigProfile.HasValue())
 			{
 				throw new NgrokHostNotFoundException();
 			}
 			options.ApplicationHttpUrl = localAddress;
+
+			// If config is driven off an NgrokConfig, short circuit
+			if (options.NgrokYmlConfigProfile.HasValue() && options.ValidateNgrokYmlSettings()) { }
 
 			return options;
 		}
