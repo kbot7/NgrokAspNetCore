@@ -4,16 +4,16 @@
 
 using System.Runtime.InteropServices;
 
-namespace NgrokAspNetCore
+namespace NgrokAspNetCore.Internal
 {
-	public static class RuntimeExtensions
+	internal static class RuntimeExtensions
 	{
 		/// <summary>
 		/// Get architecture string format used by ngrok cdn
 		/// </summary>
 		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
 		/// <returns></returns>
-		public static string GetArchitectureString()
+		private static string GetArchitectureString()
 		{
 			var architecture = RuntimeInformation.ProcessArchitecture;
 			switch (architecture)

@@ -52,12 +52,12 @@ namespace NgrokAspNetCore
 
 		private async Task<IEnumerable<Tunnel>> DoStartTunnelsAsync(string ngrokPath)
 		{
-			await StartNgrokAsync(ngrokPath);
+			await EnsureNgrokProcessStartedAsync(ngrokPath);
 			return await StartNgrokTunnelAsync(System.AppDomain.CurrentDomain.FriendlyName);
 		}
 
 		/// <returns></returns>
-		private async Task StartNgrokAsync(string ngrokPath, bool retry = false)
+		private async Task EnsureNgrokProcessStartedAsync(string ngrokPath, bool retry = false)
 		{
 			// This allows a pre-existing ngrok instance to be used, instead of the one we are starting here. 
 			if (await CanGetTunnelList()) return;
