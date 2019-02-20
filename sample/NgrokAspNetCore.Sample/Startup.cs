@@ -18,7 +18,12 @@ namespace NgrokAspNetCore.Sample
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddNgrok();
+			services.AddNgrok(new NgrokOptions()
+			{
+				DownloadNgrok = true,
+				NgrokYmlConfigProfile = "testtunnel",
+				NgrokYmlConfigPath = "ngrok.yml"
+			});
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}

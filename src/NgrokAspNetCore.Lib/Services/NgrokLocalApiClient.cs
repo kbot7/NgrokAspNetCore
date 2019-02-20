@@ -52,12 +52,12 @@ namespace NgrokAspNetCore
 
 		private async Task<IEnumerable<Tunnel>> DoStartTunnelsAsync(string ngrokPath)
 		{
-			await StartNgrokAsync(ngrokPath);
+			await EnsureNgrokProcessStartedAsync(ngrokPath);
 			return await StartNgrokTunnelAsync(System.AppDomain.CurrentDomain.FriendlyName);
 		}
 
 		/// <returns></returns>
-		private async Task StartNgrokAsync(string ngrokPath, bool retry = false)
+		private async Task EnsureNgrokProcessStartedAsync(string ngrokPath, bool retry = false)
 		{
 			// This allows a pre-existing ngrok instance to be used, instead of the one we are starting here. 
 			if (await CanGetTunnelList()) return;
@@ -118,9 +118,11 @@ namespace NgrokAspNetCore
 			}
 			return null;
 		}
+
 		private async Task<IEnumerable<Tunnel>> StartNgrokTunnelAsync(string projectName)
 		{
-			var addr = _options.ApplicationHttpUrl;
+			var uri = new Uri(_options.ApplicationHttpUrl);
+			var addr = $"{uri.Host}:{uri.Port}";
 
 			var existingTunnels = _tunnels.Where(t => t.config.addr == addr);
 
@@ -132,7 +134,7 @@ namespace NgrokAspNetCore
 			else
 			{
 				var tunnel = await CreateTunnelAsync(projectName, addr);
-				return IEnumerableExt.SingleItemAsEnumerable(tunnel);
+				return tunnel.SingleItemAsEnumerable();
 			}
 		}
 
