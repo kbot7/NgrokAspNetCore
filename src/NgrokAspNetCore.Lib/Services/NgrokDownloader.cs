@@ -2,6 +2,7 @@
 // See the LICENSE file in the project root for more information.
 // Copyright (c) 2019 Kevin Gysberg
 
+using NgrokAspNetCore.Internal;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
@@ -27,30 +28,32 @@ namespace NgrokAspNetCore
 		/// <returns></returns>
 		public async Task<string> EnsureNgrokInstalled(NgrokOptions options)
 		{
-			bool fileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "ngrok.exe"));
-			if (fileExists)
-			{
-				return Path.Combine(Directory.GetCurrentDirectory(), "ngrok.exe");
-			}
-
-			bool fileInPath = false; // TODO parse this from windows PATH variable if on windows
-			if (fileInPath)
-			{
-				return ""; // TODO get actual path from PATH variable if on windows
-			}
-
+			// Search options
 			bool fileInOptions = !string.IsNullOrWhiteSpace(options.NgrokPath) && File.Exists(options.NgrokPath);
 			if (fileInOptions)
 			{
 				return options.NgrokPath;
 			}
 
-			if (!(fileExists || fileInPath || fileInOptions))
+			// Search execution directory
+			bool fileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "ngrok.exe"));
+			if (fileExists)
 			{
-				await DownloadNgrokAsync();
-				return "ngrok.exe";
+				return Path.Combine(Directory.GetCurrentDirectory(), "ngrok.exe");
 			}
-			throw new NgrokNotFoundException();
+
+			// Search Windows PATH
+			var envFullPath = PathExtensions.GetFullPathFromEnvPath("ngrok.exe");
+			if (!string.IsNullOrWhiteSpace(envFullPath) && File.Exists(envFullPath))
+			{
+				return envFullPath;
+			}
+
+			// Throw exception if not found yet and downloading is disabled
+			if (!options.DownloadNgrok) throw new NgrokNotFoundException();
+
+			await DownloadNgrokAsync();
+			return "ngrok.exe";
 		}
 
 		/// <summary>

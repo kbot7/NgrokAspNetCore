@@ -21,5 +21,10 @@ namespace NgrokAspNetCore
 		/// Sets the local URL Ngrok will proxy to. Must be http (not https) at this time. If not filled in, it will be populated automatically at runtime via the IWebHost features
 		/// </summary>
 		public string ApplicationHttpUrl { get; set; }
+
+		/// <summary>
+		/// Download ngrok if not found in local directory or PATH. Defaults to true
+		/// </summary>
+		public bool DownloadNgrok { get; set; } = true;
 	}
 }
