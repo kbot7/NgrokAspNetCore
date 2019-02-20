@@ -11,7 +11,6 @@ using NgrokAspNetCore.Internal;
 using NgrokExtensions;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -65,15 +64,10 @@ namespace NgrokAspNetCore
 			options.NgrokPath = ngrokFullPath;
 
 			// If config is driven off an NgrokConfig, short circuit
-			if (options.NgrokConfigProfile.HasValue())
+			if (options.NgrokYmlConfigProfile.HasValue())
 			{
-				// If a config file isn't found in the current directory and specified, throw exception
-				var configFileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "ngrok.yml"));
-				configFileExists |= options.NgrokConfigPath.HasValue() && File.Exists(options.NgrokConfigPath);
-				if (!configFileExists)
-				{
-					throw new NgrokConfigNotFoundException();
-				}
+				// Throws if invalid
+				options.ValidateNgrokYmlSettings();
 				return options;
 			}
 

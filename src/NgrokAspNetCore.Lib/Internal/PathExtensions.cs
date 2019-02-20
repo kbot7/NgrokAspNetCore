@@ -22,5 +22,14 @@ namespace NgrokAspNetCore.Internal
 				.FirstOrDefault(File.Exists);
 			return exePath;
 		}
+
+		public static bool FileExists(this string path)
+		{
+			if (string.IsNullOrWhiteSpace(path)) return false;
+			var relativeExists = File.Exists(path);
+			if (relativeExists) return true;
+			var fullExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), path));
+			return fullExists;
+		}
 	}
 }
