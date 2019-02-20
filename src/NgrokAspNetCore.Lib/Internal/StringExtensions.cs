@@ -1,4 +1,4 @@
-﻿namespace NgrokAspNetCore.Exceptions
+﻿namespace NgrokAspNetCore.Internal
 {
 	internal static class StringExtensions
 	{

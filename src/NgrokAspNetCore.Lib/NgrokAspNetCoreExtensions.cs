@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NgrokAspNetCore.Exceptions;
+using NgrokAspNetCore.Internal;
 using NgrokExtensions;
 using System;
 using System.Collections.Generic;
