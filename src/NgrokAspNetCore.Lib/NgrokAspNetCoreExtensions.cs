@@ -10,6 +10,7 @@ using NgrokAspNetCore.Exceptions;
 using NgrokExtensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -35,7 +36,8 @@ namespace NgrokAspNetCore
 		/// <exception cref="NgrokStartFailedException">Throws when ngrok failed to start</exception>
 		/// <exception cref="NgrokUnsupportedException">Throws when ngrok is not supported on the OS and architecture</exception>
 		/// <exception cref="NgrokNotFoundException">Throws when ngrok is not found and is unable to be downloaded automatically</exception>
-		/// /// <exception cref="NgrokHostNotFoundException">Throws when a local address to tunnel to is not found and not configured</exception>
+		/// <exception cref="NgrokHostNotFoundException">Throws when a local address to tunnel to is not found and not configured</exception>
+		/// <exception cref="NgrokConfigNotFoundException">Throws when an ngrok.yml config file was expected but not found</exception>
 		/// <param name="host"></param>
 		/// <returns></returns>
 		public static async Task<IEnumerable<Tunnel>> StartNgrokAsync(this IWebHost host)
@@ -64,6 +66,13 @@ namespace NgrokAspNetCore
 			// If config is driven off an NgrokConfig, short circuit
 			if (options.NgrokConfigProfile.HasValue())
 			{
+				// If a config file isn't found in the current directory and specified, throw exception
+				var configFileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "ngrok.yml"));
+				configFileExists |= options.NgrokConfigPath.HasValue() && File.Exists(options.NgrokConfigPath);
+				if (!configFileExists)
+				{
+					throw new NgrokConfigNotFoundException();
+				}
 				return options;
 			}
 
