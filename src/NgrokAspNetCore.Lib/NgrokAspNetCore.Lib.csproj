@@ -16,6 +16,6 @@
 		<PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.1.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="2.1.1" />
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
 	</ItemGroup>
 </Project>
