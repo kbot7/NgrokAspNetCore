@@ -9,11 +9,11 @@ namespace NgrokAspNetCore
 	[Serializable]
 	internal class NgrokStartFailedException : Exception
 	{
-		public NgrokStartFailedException() : base("ngrok.exe failed to start")
+		public NgrokStartFailedException() : base("ngrok failed to start")
 		{
 		}
 
-		public NgrokStartFailedException(Exception innerException) : base("ngrok.exe failed to start", innerException)
+		public NgrokStartFailedException(Exception innerException) : base("ngrok failed to start", innerException)
 		{
 		}
 	}
