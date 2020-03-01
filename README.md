@@ -27,7 +27,7 @@ When the application starts up, NGrok will launch automatically and create a tun
 Note: If NGrok is not installed, it will be downloaded automatically to the execution directory.
 
 ## Getting the exposed URL
-Simply inject a `INGrokHostedService` and call its `GetTunnelsAsync` method.
+Simply inject an `INGrokHostedService` and call its `GetTunnelsAsync` method.
 
 `INGrokHostedService` also has a `Ready` event that you can listen to, if you'd rather like that.
 
