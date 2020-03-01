@@ -1,5 +1,5 @@
 # Credits
-- Original author by kg73: https://github.com/kg73/NgrokAspNetCore
+- Original project by kg73: https://github.com/kg73/NgrokAspNetCore
 - Fork that enables .NET Core 3 and Linux support by doug62: https://github.com/doug62/NgrokAspNetCore/tree/linux-core3
 
 # FluffySpoon.AspNet.NGrok
