@@ -138,20 +138,31 @@ namespace NgrokAspNetCore
 
 		private async Task<Tunnel> CreateTunnelAsync(string projectName, string addr, bool retry = false)
 		{
-			var url = new Uri(addr);
-			if (url.Port != 80 && url.Port != 443)
+			if ( string.IsNullOrEmpty(addr))
 			{
-				addr = $"{url.Host}:{url.Port}";
+				addr = "80";
 			}
 			else
 			{
-				if (addr.StartsWith("http://"))
+				int x;
+				if ( !int.TryParse(addr, out x))
 				{
-					addr = addr.Remove(addr.IndexOf("http://"), "http://".Length);
-				}
-				if (addr.StartsWith("https://"))
-				{
-					addr = addr.Remove(addr.IndexOf("https://"), "https://".Length);
+					var url = new Uri(addr);
+					if (url.Port != 80 && url.Port != 443)
+					{
+						addr = $"{url.Host}:{url.Port}";
+					}
+					else
+					{
+						if (addr.StartsWith("http://"))
+						{
+							addr = addr.Remove(addr.IndexOf("http://"), "http://".Length);
+						}
+						if (addr.StartsWith("https://"))
+						{
+							addr = addr.Remove(addr.IndexOf("https://"), "https://".Length);
+						}
+					}
 				}
 			}
 

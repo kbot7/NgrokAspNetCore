@@ -1,25 +1,27 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace NgrokAspNetCore.Sample
 {
-	public class Program
-	{
-		public static async Task Main(string[] args)
-		{
-			var builder = CreateWebHostBuilder(args);
+    public class Program
+    {
+        public static async Task Main(string[] args)
+        {
+            var host = CreateHostBuilder(args).Build();
 
-			var host = builder.Build();
+            // NgrokAspNetCore - Only change needed to this file
+            var tunnels = await host.StartNgrokAsync();
 
-			// Start Ngrok here
-			var tunnels = await host.StartNgrokAsync();
+            host.Run();
 
-			host.Run();
-		}
+        }
 
-		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-			WebHost.CreateDefaultBuilder(args)
-				.UseStartup<Startup>();
-	}
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+    }
 }

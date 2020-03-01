@@ -3,9 +3,11 @@
 // Copyright (c) 2019 Kevin Gysberg
 
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using NgrokExtensions;
 using System;
 using System.Collections.Generic;
@@ -27,38 +29,38 @@ namespace NgrokAspNetCore
 
 			services.AddLogging();
 		}
-		/// <summary>
-		/// Start ngrok.exe with configured options
-		/// </summary>
-		/// <exception cref="NgrokStartFailedException">Throws when ngrok failed to start</exception>
-		/// <exception cref="NgrokUnsupportedException">Throws when ngrok is not supported on the OS and architecture</exception>
-		/// <exception cref="NgrokNotFoundException">Throws when ngrok is not found and is unable to be downloaded automatically</exception>
-		/// <param name="host"></param>
-		/// <param name="options"></param>
-		/// <returns></returns>
-		public static async Task<IEnumerable<Tunnel>> StartNgrokAsync(this IWebHost host)
+
+
+		public static async Task<IEnumerable<Tunnel>> StartNgrokAsyncWorker(IServiceProvider services, NgrokOptions options)
 		{
-			var services = host.Services;
-
-			// Configure NgrokOptions from services and IWebHost.Features
-			var options = await ConfigureOptions(host);
-
 			// Start Ngrok
 			var ngrokClient = services.GetRequiredService<NgrokLocalApiClient>();
-
-			var tunnels = await ngrokClient.StartTunnelsAsync(options.NgrokPath);
-
-			return tunnels;
+			return await ngrokClient.StartTunnelsAsync(options.NgrokPath);
 		}
 
-		private static async Task<NgrokOptions> ConfigureOptions(IWebHost host)
+		public static async Task<IEnumerable<Tunnel>> StartNgrokAsync(this IHost host)
 		{
-			var services = host.Services;
+			// Configure NgrokOptions from services and IWebHost.Features
+			var options = await ConfigureOptions(host);
+			return await StartNgrokAsyncWorker(host.Services, options);
+		}
+
+		public static async Task<IEnumerable<Tunnel>> StartNgrokAsync(this IWebHost host)
+		{
+			// Configure NgrokOptions from services and IWebHost.Features
+			var options = await ConfigureOptions(host);
+			return await StartNgrokAsyncWorker(host.Services, options);
+		}
+
+
+
+		private static async Task<NgrokOptions> ConfigureOptionsWorker(IServiceProvider services)
+		{
 			var options = services.GetRequiredService<NgrokOptions>();
 
 			// Set address automatically if not provided or invalid
-			var addresses = (host.ServerFeatures[typeof(IServerAddressesFeature)] as IServerAddressesFeature)?.Addresses;
-			if (!string.IsNullOrWhiteSpace(options.ApplicationHttpUrl) || !Uri.TryCreate(options.ApplicationHttpUrl, UriKind.Absolute, out Uri uri))
+			var addresses = services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>().Addresses.ToArray();
+			if (string.IsNullOrWhiteSpace(options.ApplicationHttpUrl) || !Uri.TryCreate(options.ApplicationHttpUrl, UriKind.Absolute, out Uri uri))
 			{
 				options.ApplicationHttpUrl = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
 			}
@@ -69,6 +71,16 @@ namespace NgrokAspNetCore
 			options.NgrokPath = ngrokFullPath;
 
 			return options;
+		}
+
+		private static async Task<NgrokOptions> ConfigureOptions(IHost host)
+		{
+			return await ConfigureOptionsWorker(host.Services);
+		}
+
+		private static async Task<NgrokOptions> ConfigureOptions(IWebHost host)
+		{
+			return await ConfigureOptionsWorker(host.Services);
 		}
 	}
 }

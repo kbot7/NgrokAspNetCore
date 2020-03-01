@@ -36,10 +36,10 @@ namespace NgrokAspNetCore
 			}
 
 			// Search execution directory
-			bool fileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "ngrok.exe"));
+			bool fileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNgrokExecutableString()));
 			if (fileExists)
 			{
-				return Path.Combine(Directory.GetCurrentDirectory(), "ngrok.exe");
+				return Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNgrokExecutableString());
 			}
 
 			// Search Windows PATH
@@ -53,7 +53,7 @@ namespace NgrokAspNetCore
 			if (!options.DownloadNgrok) throw new NgrokNotFoundException();
 
 			await DownloadNgrokAsync();
-			return "ngrok.exe";
+			return RuntimeExtensions.GetNgrokExecutableString();
 		}
 
 		/// <summary>
