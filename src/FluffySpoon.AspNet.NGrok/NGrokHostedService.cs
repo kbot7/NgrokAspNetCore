@@ -18,10 +18,14 @@ namespace FluffySpoon.AspNet.NGrok
         private readonly NGrokDownloader _nGrokDownloader;
 
         private IServerAddressesFeature _serverAddressesFeature;
-        private Tunnel[] _tunnels;
+        private TaskCompletionSource<IEnumerable<Tunnel>> _tunnelTaskCompletionSource;
 
-        public Tunnel[] Tunnels => _tunnels;
-        public event Action Ready;
+        public async Task<IEnumerable<Tunnel>> GetTunnelsAsync()
+        {
+            return await _tunnelTaskCompletionSource.Task;
+        }
+
+        public event Action<IEnumerable<Tunnel>> Ready;
 
         public NGrokHostedService(
             NGrokLocalApiClient localApiClient,
@@ -32,7 +36,7 @@ namespace FluffySpoon.AspNet.NGrok
             _options = options;
             _nGrokDownloader = nGrokDownloader;
 
-            _tunnels = Array.Empty<Tunnel>();
+            _tunnelTaskCompletionSource = new TaskCompletionSource<IEnumerable<Tunnel>>();
         }
 
         public void InjectServerAddressesFeature(IServerAddressesFeature feature)
@@ -57,9 +61,9 @@ namespace FluffySpoon.AspNet.NGrok
             _options.ApplicationHttpUrl = url;
 
             var tunnels = await _localApiClient.StartTunnelsAsync(_options.NGrokPath, url);
-            _tunnels = tunnels?.ToArray() ?? Array.Empty<Tunnel>();
-
-            Ready?.Invoke();
+            var tunnelsArray = tunnels.ToArray();
+            _tunnelTaskCompletionSource.SetResult(tunnelsArray);
+            Ready?.Invoke(tunnelsArray);
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -68,7 +72,7 @@ namespace FluffySpoon.AspNet.NGrok
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            await _localApiClient.StopNGrok();
+            _localApiClient.StopNGrok();
         }
     }
 }

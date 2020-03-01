@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FluffySpoon.AspNet.NGrok.NGrokModels;
@@ -8,8 +9,8 @@ namespace FluffySpoon.AspNet.NGrok
 {
     public interface INGrokHostedService : IHostedService
     {
-        Tunnel[] Tunnels { get; }
+        Task<IEnumerable<Tunnel>> GetTunnelsAsync();
 
-        event Action Ready;
+        event Action<IEnumerable<Tunnel>> Ready;
     }
 }

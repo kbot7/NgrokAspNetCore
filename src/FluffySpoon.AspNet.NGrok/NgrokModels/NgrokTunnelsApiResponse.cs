@@ -3,6 +3,8 @@
 // Copyright (c) 2016 David Prothero
 // Pulled from Github on 2019-01-13 at https://github.com/dprothero/NGrokExtensions
 
+using Newtonsoft.Json;
+
 namespace FluffySpoon.AspNet.NGrok.NGrokModels
 {
 
@@ -16,7 +18,10 @@ namespace FluffySpoon.AspNet.NGrok.NGrokModels
 	{
 		public string Name { get; set; }
 		public string Uri { get; set; }
+
+		[JsonProperty("public_url")]
 		public string PublicUrl { get; set; }
+
 		public string Proto { get; set; }
 		public Config Config { get; set; }
 		public Metrics Metrics { get; set; }

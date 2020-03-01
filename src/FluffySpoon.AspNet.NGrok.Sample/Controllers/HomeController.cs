@@ -10,17 +10,17 @@ namespace FluffySpoon.AspNet.NGrok.Sample.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly NGrokLocalApiClient _nGrokLocalApiClient;
+        private readonly INGrokHostedService _ngrokService;
 
-        public HomeController(ILogger<HomeController> logger, NGrokLocalApiClient nGrokLocalApiClient )
+        public HomeController(ILogger<HomeController> logger, INGrokHostedService ngrokService)
         {
             _logger = logger;
-            _nGrokLocalApiClient = nGrokLocalApiClient;
+            _ngrokService = ngrokService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var tunnels = await _nGrokLocalApiClient.GetTunnelListAsync();
+            var tunnels = await _ngrokService.GetTunnelsAsync();
             return View(tunnels);
         }
 

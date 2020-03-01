@@ -5,7 +5,7 @@
 # FluffySpoon.AspNet.NGrok
 Extensions to start Ngrok automatically from the AspNetCore pipeline. Useful to enable for local development when a public URL is needed.
 
-## How To
+## Setting it up
 
 Add `AddNgrok` to your service registration
 ```csharp
@@ -24,7 +24,12 @@ public void Configure(IApplicationBuilder app)
 
 When the application starts up, NGrok will launch automatically and create a tunnel to the application. 
 
-Note: If NGrok is not installed, it will be downloaded automatically to the execution directory
+Note: If NGrok is not installed, it will be downloaded automatically to the execution directory.
+
+## Getting the exposed URL
+Simple inject a `INGrokHostedService` and call its `GetTunnelsAsync` method.
+
+`INGrokHostedService` also has a `Ready` event that you can listen to, if you'd rather like that.
 
 ## Configuration
 NGrok can be configured when registering it in the services collection by passing in an `NGrokOptions` instance in the `AddNGrok` method

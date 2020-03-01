@@ -14,20 +14,17 @@ namespace FluffySpoon.AspNet.NGrok.Services
 
 		public NGrokProcess(IApplicationLifetime applicationLifetime)
 		{
-			applicationLifetime.ApplicationStopping.Register(() => Stop());
+			applicationLifetime.ApplicationStopping.Register(Stop);
 		}
 
 		public void StartNGrokProcess(string nGrokPath)
 		{
-			var pi = new ProcessStartInfo(nGrokPath, "start --none")
-			{
-				CreateNoWindow = false,
-				WindowStyle = ProcessWindowStyle.Normal
-			};
+            var processInformation = new ProcessStartInfo(nGrokPath, "start --none")
+            {
+                CreateNoWindow = false, WindowStyle = ProcessWindowStyle.Normal, UseShellExecute = true
+            };
 
-			pi.UseShellExecute = true;
-
-			Start(pi);
+            Start(processInformation);
 		}
 
 		protected virtual void Start(ProcessStartInfo pi)
@@ -38,14 +35,14 @@ namespace FluffySpoon.AspNet.NGrok.Services
 
 		public void Stop()
 		{
-			if (_process != null && !_process.HasExited)
-			{
-				_process.Kill();
-				foreach (var p in Process.GetProcessesByName("NGrok"))
-				{
-					p.Kill();
-				}
-			}
-		}
+            if (_process == null || _process.HasExited) 
+                return;
+
+            _process.Kill();
+            foreach (var p in Process.GetProcessesByName("NGrok"))
+            {
+                p.Kill();
+            }
+        }
 	}
 }
