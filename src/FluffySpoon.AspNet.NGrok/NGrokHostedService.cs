@@ -42,6 +42,12 @@ namespace FluffySpoon.AspNet.NGrok
 
         public void InjectServerAddressesFeature(IServerAddressesFeature feature)
         {
+            if (feature == null)
+            {
+                throw new ArgumentNullException(nameof(feature),
+                    "The URL of the server could not be found - make sure it is listening on a proper hostname.");
+            }
+
             _serverAddressesFeature = feature;
             RunAsync();
         }
