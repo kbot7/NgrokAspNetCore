@@ -62,7 +62,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
             {
                 await Task.Delay(100);
 
-                if (await HasTunnelByAddressAsync(tunnel.Config.Addr))
+                if (await HasTunnelByAddressAsync(tunnel?.Config?.Addr))
                     return await GetTunnelListAsync();
             }
 
