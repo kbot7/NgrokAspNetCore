@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NgrokAspNetCore.Sample", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngrok.ApiClient", "Ngrok.ApiClient\Ngrok.ApiClient.csproj", "{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngrok.ApiClient.IntegrationTests", "Ngrok.ApiClient.IntegrationTests\Ngrok.ApiClient.IntegrationTests.csproj", "{86F1FE1F-AEAF-42F7-9F5E-3C861319A761}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86F1FE1F-AEAF-42F7-9F5E-3C861319A761}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86F1FE1F-AEAF-42F7-9F5E-3C861319A761}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86F1FE1F-AEAF-42F7-9F5E-3C861319A761}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86F1FE1F-AEAF-42F7-9F5E-3C861319A761}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

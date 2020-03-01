@@ -32,8 +32,9 @@ namespace Ngrok.ApiClient
 			await ThrowIfError(response);
 
 			using var responseStream = await response.Content.ReadAsStreamAsync();
-			return await JsonSerializer.DeserializeAsync
-				<IEnumerable<Tunnel>>(responseStream);
+			var listTunnelResponse = await JsonSerializer.DeserializeAsync
+				<ListTunnelsResponse>(responseStream);
+			return listTunnelResponse.Tunnels;
 		}
 
 		public async Task<Tunnel> StartTunnelAsync(StartTunnelRequest request, CancellationToken cancellationToken = default)
