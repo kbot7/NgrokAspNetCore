@@ -67,7 +67,7 @@ namespace FluffySpoon.AspNet.NGrok
         private async Task<Tunnel[]> StartTunnelsAsync(string url)
         {
             var tunnels = await _localApiClient.StartTunnelsAsync(_options.NGrokPath, url);
-            var tunnelsArray = tunnels.ToArray();
+            var tunnelsArray = tunnels?.ToArray();
             return tunnelsArray;
         }
 
