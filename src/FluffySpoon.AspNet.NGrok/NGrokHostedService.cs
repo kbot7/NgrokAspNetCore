@@ -42,12 +42,6 @@ namespace FluffySpoon.AspNet.NGrok
 
         public void InjectServerAddressesFeature(IServerAddressesFeature feature)
         {
-            if (feature == null)
-            {
-                throw new ArgumentNullException(nameof(feature),
-                    "The URL of the server could not be found - make sure it is listening on a proper hostname.");
-            }
-
             _serverAddressesFeature = feature;
             RunAsync();
         }
@@ -80,14 +74,19 @@ namespace FluffySpoon.AspNet.NGrok
         private string AdjustApplicationHttpUrlIfNeeded()
         {
             var url = _options.ApplicationHttpUrl;
-            var addresses = _serverAddressesFeature.Addresses;
 
             if (string.IsNullOrWhiteSpace(url) || !Uri.TryCreate(url, UriKind.Absolute, out _))
             {
-                url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
+                var addresses = _serverAddressesFeature?.Addresses;
+                if(addresses != null)
+                    url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
             }
 
             _options.ApplicationHttpUrl = url;
+
+            if (url == null)
+                throw new InvalidOperationException("No application URL has been set, and it could not be inferred.");
+
             return url;
         }
 
