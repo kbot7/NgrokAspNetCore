@@ -31,6 +31,8 @@ namespace FluffySpoon.AspNet.NGrok
             _localApiClient = localApiClient;
             _options = options;
             _nGrokDownloader = nGrokDownloader;
+
+            _tunnels = Array.Empty<Tunnel>();
         }
 
         public void InjectServerAddressesFeature(IServerAddressesFeature feature)
@@ -55,7 +57,7 @@ namespace FluffySpoon.AspNet.NGrok
             _options.ApplicationHttpUrl = url;
 
             var tunnels = await _localApiClient.StartTunnelsAsync(_options.NGrokPath, url);
-            _tunnels = tunnels.ToArray();
+            _tunnels = tunnels?.ToArray() ?? Array.Empty<Tunnel>();
 
             Ready?.Invoke();
         }
