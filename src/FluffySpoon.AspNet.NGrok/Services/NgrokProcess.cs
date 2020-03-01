@@ -21,7 +21,8 @@ namespace FluffySpoon.AspNet.NGrok.Services
 		{
             var processInformation = new ProcessStartInfo(nGrokPath, "start --none")
             {
-                CreateNoWindow = false, WindowStyle = ProcessWindowStyle.Normal, UseShellExecute = true
+                CreateNoWindow = true, 
+                WindowStyle = ProcessWindowStyle.Hidden
             };
 
             Start(processInformation);
