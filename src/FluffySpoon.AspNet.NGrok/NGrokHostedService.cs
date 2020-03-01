@@ -17,8 +17,9 @@ namespace FluffySpoon.AspNet.NGrok
         private readonly NGrokOptions _options;
         private readonly NGrokDownloader _nGrokDownloader;
 
+        private readonly TaskCompletionSource<IEnumerable<Tunnel>> _tunnelTaskCompletionSource;
+
         private IServerAddressesFeature _serverAddressesFeature;
-        private TaskCompletionSource<IEnumerable<Tunnel>> _tunnelTaskCompletionSource;
 
         public async Task<IEnumerable<Tunnel>> GetTunnelsAsync()
         {
@@ -47,9 +48,31 @@ namespace FluffySpoon.AspNet.NGrok
 
         private async void RunAsync()
         {
-            var nGrokFullPath = await _nGrokDownloader.EnsureNGrokInstalled(_options);
-            _options.NGrokPath = nGrokFullPath;
+            await DownloadNGrokIfNeededAsync();
+            var url = AdjustApplicationHttpUrlIfNeeded();
 
+            var tunnels = await StartTunnelsAsync(url);
+            OnTunnelsFetched(tunnels);
+        }
+
+        private void OnTunnelsFetched(Tunnel[] tunnels)
+        {
+            if (tunnels == null)
+                throw new ArgumentNullException(nameof(tunnels), "Tunnels was not expected to be null here.");
+
+            _tunnelTaskCompletionSource.SetResult(tunnels);
+            Ready?.Invoke(tunnels);
+        }
+
+        private async Task<Tunnel[]> StartTunnelsAsync(string url)
+        {
+            var tunnels = await _localApiClient.StartTunnelsAsync(_options.NGrokPath, url);
+            var tunnelsArray = tunnels.ToArray();
+            return tunnelsArray;
+        }
+
+        private string AdjustApplicationHttpUrlIfNeeded()
+        {
             var url = _options.ApplicationHttpUrl;
             var addresses = _serverAddressesFeature.Addresses;
 
@@ -59,11 +82,13 @@ namespace FluffySpoon.AspNet.NGrok
             }
 
             _options.ApplicationHttpUrl = url;
+            return url;
+        }
 
-            var tunnels = await _localApiClient.StartTunnelsAsync(_options.NGrokPath, url);
-            var tunnelsArray = tunnels.ToArray();
-            _tunnelTaskCompletionSource.SetResult(tunnelsArray);
-            Ready?.Invoke(tunnelsArray);
+        private async Task DownloadNGrokIfNeededAsync()
+        {
+            var nGrokFullPath = await _nGrokDownloader.EnsureNGrokInstalled(_options);
+            _options.NGrokPath = nGrokFullPath;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
