@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FluffySpoon.AspNet.NGrok.NGrokModels;
 using FluffySpoon.AspNet.NGrok.Services;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Hosting;
@@ -17,7 +18,9 @@ namespace FluffySpoon.AspNet.NGrok
         private readonly NGrokDownloader _nGrokDownloader;
 
         private IServerAddressesFeature _serverAddressesFeature;
+        private Tunnel[] _tunnels;
 
+        public Tunnel[] Tunnels => _tunnels;
         public event Action Ready;
 
         public NGrokHostedService(
@@ -51,7 +54,9 @@ namespace FluffySpoon.AspNet.NGrok
 
             _options.ApplicationHttpUrl = url;
 
-            await _localApiClient.StartTunnelsAsync(_options.NGrokPath, url);
+            var tunnels = await _localApiClient.StartTunnelsAsync(_options.NGrokPath, url);
+            _tunnels = tunnels.ToArray();
+
             Ready?.Invoke();
         }
 
