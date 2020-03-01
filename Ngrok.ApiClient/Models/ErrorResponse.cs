@@ -5,10 +5,10 @@ namespace Ngrok.ApiClient
 	public class ErrorResponse
 	{
 		[JsonPropertyName("error_code")]
-		public int ErrorCode { get; set; }
+		public int NgrokErrorCode { get; set; }
 
 		[JsonPropertyName("status_code")]
-		public int StatusCode { get; set; }
+		public int HttpStatusCode { get; set; }
 
 		[JsonPropertyName("msg")]
 		public string Message { get; set; }
@@ -20,6 +20,6 @@ namespace Ngrok.ApiClient
 	public class Details
 	{
 		[JsonPropertyName("err")]
-		public string Error { get; set; }
+		public string DetailedErrorMessage { get; set; }
 	}
 }

@@ -9,7 +9,7 @@ namespace Ngrok.ApiClient
 	public interface INgrokApiClient
 	{
 		// GET /api/tunnels 
-		Task<ListTunnelsResponse> ListTunnelsAsync(CancellationToken cancellationToken);
+		Task<IEnumerable<Tunnel>> ListTunnelsAsync(CancellationToken cancellationToken);
 
 		// POST /api/tunnels 
 		Task<Tunnel> StartTunnelAsync(StartTunnelRequest request, CancellationToken cancellationToken);
