@@ -10,10 +10,7 @@ namespace FluffySpoon.AspNet.NGrok.Sample
         public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            await host.StartNgrokAsync();
-
-            host.Run();
-
+            await host.RunAsync();
         }
 
         private static IWebHostBuilder CreateHostBuilder(string[] args) =>

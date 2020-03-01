@@ -12,61 +12,61 @@ using FluffySpoon.AspNet.NGrok.Internal;
 
 namespace FluffySpoon.AspNet.NGrok.Services
 {
-	public class NgrokDownloader
+	public class NGrokDownloader
 	{
 		private readonly HttpClient _httpClient;
 
-		public NgrokDownloader(HttpClient httpClient)
+		public NGrokDownloader(HttpClient httpClient)
 		{
 			_httpClient = httpClient;
 		}
 
 		/// <summary>
-		/// Check if ngrok present in current directory or Windows PATH variable. If not, download from CDN, and throw exception if download fails
+		/// Check if NGrok present in current directory or Windows PATH variable. If not, download from CDN, and throw exception if download fails
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
-		/// <exception cref="NgrokNotFoundException">Throws if ngrok not found and failed to download from CDN</exception>
+		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
+		/// <exception cref="NGrokNotFoundException">Throws if NGrok not found and failed to download from CDN</exception>
 		/// <returns></returns>
-		public async Task<string> EnsureNgrokInstalled(NgrokOptions options)
+		public async Task<string> EnsureNGrokInstalled(NGrokOptions options)
 		{
 			// Search options
-			var fileInOptions = !string.IsNullOrWhiteSpace(options.NgrokPath) && File.Exists(options.NgrokPath);
+			var fileInOptions = !string.IsNullOrWhiteSpace(options.NGrokPath) && File.Exists(options.NGrokPath);
 			if (fileInOptions)
 			{
-				return options.NgrokPath;
+				return options.NGrokPath;
 			}
 
 			// Search execution directory
-			var fileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNgrokExecutableString()));
+			var fileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNGrokExecutableString()));
 			if (fileExists)
 			{
-				return Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNgrokExecutableString());
+				return Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNGrokExecutableString());
 			}
 
 			// Search Windows PATH
-			var envFullPath = PathExtensions.GetFullPathFromEnvPath("ngrok.exe");
+			var envFullPath = PathExtensions.GetFullPathFromEnvPath("NGrok.exe");
 			if (!string.IsNullOrWhiteSpace(envFullPath) && File.Exists(envFullPath))
 			{
 				return envFullPath;
 			}
 
 			// Throw exception if not found yet and downloading is disabled
-			if (!options.DownloadNgrok) throw new NgrokNotFoundException();
+			if (!options.DownloadNGrok) throw new NGrokNotFoundException();
 
-			await DownloadNgrokAsync();
-			return RuntimeExtensions.GetNgrokExecutableString();
+			await DownloadNGrokAsync();
+			return RuntimeExtensions.GetNGrokExecutableString();
 		}
 
 		/// <summary>
-		/// Download ngrok from equinox.io CDN
+		/// Download NGrok from equinox.io CDN
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
+		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <exception cref="HttpRequestException">Throws if failed to download from CDN</exception>
 		/// <returns></returns>
-		public async Task DownloadNgrokAsync()
+		public async Task DownloadNGrokAsync()
 		{
 			var downloadUrl = GetDownloadPath();
-			var fileName = $"{RuntimeExtensions.GetOSArchitectureString()}.zip";
+			var fileName = $"{RuntimeExtensions.GetOsArchitectureString()}.zip";
 			var filePath = $"{Path.Combine(Directory.GetCurrentDirectory(), fileName)}";
 
 			var downloadResponse = await _httpClient.GetAsync(downloadUrl);
@@ -84,17 +84,17 @@ namespace FluffySpoon.AspNet.NGrok.Services
 		}
 
 		/// <summary>
-		/// Get full url to download ngrok on this platform
+		/// Get full url to download NGrok on this platform
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
+		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <returns></returns>
 		public string GetDownloadPath()
 		{
 			var architecture = RuntimeInformation.ProcessArchitecture;
 			const string cdn = "https://bin.equinox.io";
-			const string cdnPath = "c/4VmDzA7iaHb/ngrok-stable";
+			const string cdnPath = "c/4VmDzA7iaHb/NGrok-stable";
 
-			return $"{cdn}/{cdnPath}-{RuntimeExtensions.GetOSArchitectureString()}.zip";
+			return $"{cdn}/{cdnPath}-{RuntimeExtensions.GetOsArchitectureString()}.zip";
 		}
 	}
 }

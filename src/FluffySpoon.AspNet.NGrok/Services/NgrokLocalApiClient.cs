@@ -11,119 +11,113 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using FluffySpoon.AspNet.NGrok.Exceptions;
-using FluffySpoon.AspNet.NGrok.NgrokModels;
+using FluffySpoon.AspNet.NGrok.NGrokModels;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace FluffySpoon.AspNet.NGrok.Services
 {
-	public class NgrokLocalApiClient
+	public class NGrokLocalApiClient
 	{
-		private readonly HttpClient _ngrokApi;
+		private readonly HttpClient _nGrokApi;
 		private readonly ILogger _logger;
-		private readonly NgrokProcess _ngrokProcess;
-		private readonly NgrokOptions _options;
+		private readonly NGrokProcess _nGrokProcess;
+		private readonly NGrokOptions _options;
 		private Tunnel[] _tunnels;
 
-		public NgrokLocalApiClient(HttpClient httpClient, NgrokProcess ngrokProcess, NgrokOptions options, ILogger<NgrokLocalApiClient> logger)
+		public NGrokLocalApiClient(HttpClient httpClient, NGrokProcess nGrokProcess, NGrokOptions options, ILogger<NGrokLocalApiClient> logger)
 		{
-			_ngrokApi = httpClient;
+			_nGrokApi = httpClient;
 			_options = options;
-			_ngrokProcess = ngrokProcess;
+			_nGrokProcess = nGrokProcess;
 			_logger = logger;
 
 			// TODO some of this can be moved to the DI registration
-			_ngrokApi.BaseAddress = new Uri("http://localhost:4040");
-			_ngrokApi.DefaultRequestHeaders.Accept.Clear();
-			_ngrokApi.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+			_nGrokApi.BaseAddress = new Uri("http://localhost:4040");
+			_nGrokApi.DefaultRequestHeaders.Accept.Clear();
+			_nGrokApi.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="ngrokPath"></param>
-		/// <exception cref="NgrokStartFailedException">Throws when ngrok failed to start</exception>
-		/// <exception cref="NgrokUnsupportedException">Throws when ngrok is not suported on the os and architecture</exception>
-		/// <exception cref="NgrokNotFoundException">Throws when ngrok is not found and is unable to be downloaded automatically</exception>
+		/// <param name="nGrokPath"></param>
+		/// <exception cref="NGrokStartFailedException">Throws when NGrok failed to start</exception>
+		/// <exception cref="NGrokUnsupportedException">Throws when NGrok is not suported on the os and architecture</exception>
+		/// <exception cref="NGrokNotFoundException">Throws when NGrok is not found and is unable to be downloaded automatically</exception>
 		/// <returns></returns>
-		public async Task<IEnumerable<Tunnel>> StartTunnelsAsync(string ngrokPath)
+		public async Task<IEnumerable<Tunnel>> StartTunnelsAsync(string nGrokPath, string url)
 		{
-			return await DoStartTunnelsAsync(ngrokPath);
-		}
-
-		private async Task<IEnumerable<Tunnel>> DoStartTunnelsAsync(string ngrokPath)
-		{
-			await StartNgrokAsync(ngrokPath);
-			return await StartNgrokTunnelAsync(System.AppDomain.CurrentDomain.FriendlyName);
+            await StartNGrokAsync(nGrokPath);
+            return await StartNGrokTunnelAsync(System.AppDomain.CurrentDomain.FriendlyName, url);
 		}
 
 		/// <returns></returns>
-		private async Task StartNgrokAsync(string ngrokPath, bool retry = false)
+		private async Task StartNGrokAsync(string nGrokPath)
 		{
-			// This allows a pre-existing ngrok instance to be used, instead of the one we are starting here. 
+			// This allows a pre-existing NGrok instance to be used, instead of the one we are starting here. 
 			if (await CanGetTunnelList()) return;
 
 			try
 			{
-				_ngrokProcess.StartNgrokProcess(ngrokPath);
+				_nGrokProcess.StartNGrokProcess(nGrokPath);
 
 				// This is accomplishing a retry and delay for checking if we can get tunnels
-				// It is also ensuring ngrok is up by waiting 250 ms and hoping ngrok has started in that time
-				// TODO replace by polling local API until it is up with http client using very short (<25ms) timeouts. Should be quicker than waiting 250 arbitrary ms. Limit retry attempts to 3
-				await Task.Delay(250);
-				if (await CanGetTunnelList(retry: true)) return;
+				// It is also ensuring NGrok is up by waiting 250 ms and hoping NGrok has started in that time
+				// TODO replace by polling local API until it is up with http client using very short (<25ms) timeouts. Should be quicker than waiting 50 arbitrary ms. Limit retry attempts to 3
+				await Task.Delay(50);
+				if (await CanGetTunnelList()) return;
 			}
 			catch (Exception ex)
 			{
-				throw new NgrokStartFailedException(ex);
+				throw new NGrokStartFailedException(ex);
 			}
 		}
 
-		public Task StopNgrok()
+		public Task StopNGrok()
 		{
-			_ngrokProcess.Stop();
+			_nGrokProcess.Stop();
 			return Task.CompletedTask;
 		}
 
-		private async Task<bool> CanGetTunnelList(bool retry = false)
+		private async Task<bool> CanGetTunnelList()
 		{
 			try
 			{
 				_tunnels = await GetTunnelListAsync();
 			}
-			catch (Exception)
+			catch
 			{
-				if (retry) throw;
+				//ignored.
 			}
 			return (_tunnels != null);
 		}
 
 		public async Task<Tunnel[]> GetTunnelListAsync()
 		{
-			var response = await _ngrokApi.GetAsync("/api/tunnels");
+			var response = await _nGrokApi.GetAsync("/api/tunnels");
 			if (response.IsSuccessStatusCode)
 			{
 				var responseText = await response.Content.ReadAsStringAsync();
-				NgrokTunnelsApiResponse apiResponse = null;
+				NGrokTunnelsApiResponse apiResponse = null;
 				try
 				{
-					apiResponse = JsonConvert.DeserializeObject<NgrokTunnelsApiResponse>(responseText);
+					apiResponse = JsonConvert.DeserializeObject<NGrokTunnelsApiResponse>(responseText);
 				}
 				catch (Exception ex)
 				{
-					_logger.LogError("Failed to deserialize ngrok tunnel response");
+					_logger.LogError("Failed to deserialize NGrok tunnel response");
 					throw ex;
 				}
 
-				return apiResponse.tunnels;
+				return apiResponse.Tunnels;
 			}
 			return null;
 		}
-		private async Task<IEnumerable<Tunnel>> StartNgrokTunnelAsync(string projectName)
+		private async Task<IEnumerable<Tunnel>> StartNGrokTunnelAsync(string projectName, string addr)
 		{
-			var addr = _options.ApplicationHttpUrl;
-
-			var existingTunnels = _tunnels.Where(t => t.config.addr == addr);
+            var existingTunnels = _tunnels.Where(t => t.Config.Addr == addr);
 
 			if (existingTunnels.Any())
 			{
@@ -133,7 +127,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
 			else
 			{
 				var tunnel = await CreateTunnelAsync(projectName, addr);
-				return IEnumerableExt.SingleItemAsEnumerable(tunnel);
+				return tunnel.SingleItemAsEnumerable();
 			}
 		}
 
@@ -167,33 +161,37 @@ namespace FluffySpoon.AspNet.NGrok.Services
 				}
 			}
 
-			var request = new NgrokTunnelApiRequest
+			var request = new NGrokTunnelApiRequest
 			{
-				name = projectName,
-				addr = addr,
-				proto = "http",
-				host_header = addr
+				Name = projectName,
+				Addr = addr,
+				Proto = "http",
+				HostHeader = addr
 			};
 
-			// TODO fix later once I bring back support for ngrok configs
+			// TODO fix later once I bring back support for NGrok configs
 			//if (!string.IsNullOrEmpty(_webAppConfig.SubDomain))
 			//{
 			//	request.subdomain = _webAppConfig.SubDomain;
 			//}
 
-			Debug.WriteLine($"request: '{JsonConvert.SerializeObject(request)}'");
-			var json = JsonConvert.SerializeObject(request);
+			var json = JsonConvert.SerializeObject(request, new JsonSerializerSettings()
+            {
+				ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
+            Debug.WriteLine($"request: '{json}'");
+
 			var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-			var response = await _ngrokApi.PostAsync("/api/tunnels", httpContent);
+			var response = await _nGrokApi.PostAsync("/api/tunnels", httpContent);
 			if (!response.IsSuccessStatusCode)
 			{
 				var errorText = await response.Content.ReadAsStringAsync();
 				Debug.WriteLine($"{response.StatusCode} errorText: '{errorText}'");
-				NgrokErrorApiResult error;
+				NGrokErrorApiResult error;
 
 				try
 				{
-					error = JsonConvert.DeserializeObject<NgrokErrorApiResult>(errorText);
+					error = JsonConvert.DeserializeObject<NGrokErrorApiResult>(errorText);
 				}
 				catch (JsonReaderException)
 				{
@@ -203,8 +201,8 @@ namespace FluffySpoon.AspNet.NGrok.Services
 				if (error != null)
 				{
 					_logger.Log(LogLevel.Error, $"Could not create tunnel for {projectName} ({addr}): " +
-										 $"\n[{error.error_code}] {error.msg}" +
-										 $"\nDetails: {error.details.err.Replace("\\n", "\n")}");
+										 $"\n[{error.ErrorCode}] {error.Msg}" +
+										 $"\nDetails: {error.Details.Err.Replace("\\n", "\n")}");
 				}
 				else
 				{
@@ -215,7 +213,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
 					}
 					else
 					{
-						await Task.Delay(1000);  // wait for ngrok to spin up completely?
+						await Task.Delay(1000);  // wait for NGrok to spin up completely?
 						await CreateTunnelAsync(projectName, addr, true);
 					}
 				}
@@ -227,7 +225,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
 			return JsonConvert.DeserializeObject<Tunnel>(responseText);
 		}
 	}
-	public static class IEnumerableExt
+	public static class EnumerableExt
 	{
 		// usage: someObject.SingleItemAsEnumerable();
 		public static IEnumerable<T> SingleItemAsEnumerable<T>(this T item)

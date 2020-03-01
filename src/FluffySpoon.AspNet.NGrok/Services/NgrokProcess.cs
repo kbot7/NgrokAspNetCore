@@ -1,25 +1,25 @@
 ﻿// This file is licensed to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 // Copyright (c) 2016 David Prothero
-// Pulled from Github on 2019-01-13 at https://github.com/dprothero/NgrokExtensions
+// Pulled from Github on 2019-01-13 at https://github.com/dprothero/NGrokExtensions
 
 using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
 
 namespace FluffySpoon.AspNet.NGrok.Services
 {
-	public class NgrokProcess
+	public class NGrokProcess
 	{
 		private Process _process;
 
-		public NgrokProcess(IApplicationLifetime applicationLifetime)
+		public NGrokProcess(IApplicationLifetime applicationLifetime)
 		{
 			applicationLifetime.ApplicationStopping.Register(() => Stop());
 		}
 
-		public void StartNgrokProcess(string ngrokPath)
+		public void StartNGrokProcess(string nGrokPath)
 		{
-			var pi = new ProcessStartInfo(ngrokPath, "start --none")
+			var pi = new ProcessStartInfo(nGrokPath, "start --none")
 			{
 				CreateNoWindow = false,
 				WindowStyle = ProcessWindowStyle.Normal
@@ -41,7 +41,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
 			if (_process != null && !_process.HasExited)
 			{
 				_process.Kill();
-				foreach (var p in Process.GetProcessesByName("ngrok"))
+				foreach (var p in Process.GetProcessesByName("NGrok"))
 				{
 					p.Kill();
 				}

@@ -10,9 +10,9 @@ namespace FluffySpoon.AspNet.NGrok
 	public static class RuntimeExtensions
 	{
 		/// <summary>
-		/// Get architecture string format used by ngrok cdn
+		/// Get architecture string format used by NGrok cdn
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
+		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <returns></returns>
 		public static string GetArchitectureString()
 		{
@@ -22,13 +22,13 @@ namespace FluffySpoon.AspNet.NGrok
 				case Architecture.Arm:
 					if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 					{
-						throw new NgrokUnsupportedException();
+						throw new NGrokUnsupportedException();
 					}
 					return "arm";
 				case Architecture.Arm64:
 					if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 					{
-						throw new NgrokUnsupportedException();
+						throw new NGrokUnsupportedException();
 					}
 					return "arm64";
 				case Architecture.X64:
@@ -36,16 +36,16 @@ namespace FluffySpoon.AspNet.NGrok
 				case Architecture.X86:
 					return "386";
 				default:
-					throw new NgrokUnsupportedException();
+					throw new NGrokUnsupportedException();
 			}
 		}
 
 		/// <summary>
-		/// Get OS string format used by ngrok cdn
+		/// Get OS string format used by NGrok cdn
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
+		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <returns></returns>
-		public static string GetOSString()
+		public static string GetOsString()
 		{
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
@@ -59,31 +59,31 @@ namespace FluffySpoon.AspNet.NGrok
 			{
 				return "darwin";
 			}
-			throw new NgrokUnsupportedException();
+			throw new NGrokUnsupportedException();
 		}
 
 		/// <summary>
-		/// Get OS-Architecture string format used by ngrok cdn
+		/// Get OS-Architecture string format used by NGrok cdn
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
+		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <returns></returns>
-		public static string GetOSArchitectureString()
+		public static string GetOsArchitectureString()
 		{
-			return $"{GetOSString()}-{GetArchitectureString()}";
+			return $"{GetOsString()}-{GetArchitectureString()}";
 		}
 
 		/// <summary>
-		/// Get NGROK executable name
+		/// Get NGrok executable name
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
+		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <returns></returns>
-		public static string GetNgrokExecutableString()
+		public static string GetNGrokExecutableString()
 		{
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
-				return "ngrok.exe";
+				return "NGrok.exe";
 			}
-			return "ngrok";
+			return "NGrok";
 		}
 	}
 }

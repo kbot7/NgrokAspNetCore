@@ -6,8 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluffySpoon.AspNet.NGrok.NgrokModels;
+using FluffySpoon.AspNet.NGrok.NGrokModels;
 using FluffySpoon.AspNet.NGrok.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -17,54 +18,28 @@ using Microsoft.Extensions.Hosting;
 
 namespace FluffySpoon.AspNet.NGrok
 {
-	public static class NgrokAspNetCoreExtensions
+	public static class NGrokAspNetCoreExtensions
 	{
-		public static void AddNgrok(this IServiceCollection services, NgrokOptions options = null)
+		public static void AddNGrok(this IServiceCollection services, NGrokOptions options = null)
 		{
-			services.TryAddSingleton<NgrokProcess>();
+			services.TryAddSingleton<NGrokProcess>();
 
-			services.AddHttpClient<NgrokDownloader>();
-			services.AddHttpClient<NgrokLocalApiClient>();
+			services.AddHttpClient<NGrokDownloader>();
+			services.AddHttpClient<NGrokLocalApiClient>();
 
-			services.TryAddSingleton(options ?? new NgrokOptions());
+			services.TryAddSingleton(options ?? new NGrokOptions());
 
 			services.AddLogging();
-		}
 
+            services.AddSingleton<NGrokHostedService>();
+            services.AddSingleton<INGrokHostedService>(p => p.GetRequiredService<NGrokHostedService>());
+            services.AddSingleton<IHostedService>(p => p.GetRequiredService<NGrokHostedService>());
+        }
 
-		public static async Task<IEnumerable<Tunnel>> StartNgrokAsyncWorker(IServiceProvider services, NgrokOptions options)
-		{
-			// Start Ngrok
-			var ngrokClient = services.GetRequiredService<NgrokLocalApiClient>();
-			return await ngrokClient.StartTunnelsAsync(options.NgrokPath);
-		}
-
-		public static async Task<IEnumerable<Tunnel>> StartNgrokAsync(this IWebHost host)
-		{
-			var options = await ConfigureOptions(host);
-			return await StartNgrokAsyncWorker(host.Services, options);
-		}
-
-		private static async Task<NgrokOptions> ConfigureOptions(IWebHost host)
+        public static void UseNGrok(this IApplicationBuilder builder)
         {
-            var services = host.Services;
-            var options = services.GetRequiredService<NgrokOptions>();
-
-            // Set address automatically if not provided or invalid
-            var addresses = host.ServerFeatures
-                .Get<IServerAddressesFeature>()
-                .Addresses;
-            if (string.IsNullOrWhiteSpace(options.ApplicationHttpUrl) || !Uri.TryCreate(options.ApplicationHttpUrl, UriKind.Absolute, out _))
-            {
-                options.ApplicationHttpUrl = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
-            }
-
-			// Ensure ngrok is installed and set path
-			var ngrokDownloader = services.GetRequiredService<NgrokDownloader>();
-            var ngrokFullPath = await ngrokDownloader.EnsureNgrokInstalled(options);
-            options.NgrokPath = ngrokFullPath;
-
-            return options;
-		}
+            var ngrokService = builder.ApplicationServices.GetRequiredService<NGrokHostedService>();
+			ngrokService.InjectServerAddressesFeature(builder.ServerFeatures.Get<IServerAddressesFeature>());
+        }
 	}
 }

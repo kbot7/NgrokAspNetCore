@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
-COPY ["NgrokAspNetCore.Sample.csproj", ""]
-RUN dotnet restore "./NgrokAspNetCore.Sample.csproj"
+COPY ["NGrokAspNetCore.Sample.csproj", ""]
+RUN dotnet restore "./NGrokAspNetCore.Sample.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "NgrokAspNetCore.Sample.csproj" -c Release -o /app/build
+RUN dotnet build "NGrokAspNetCore.Sample.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "NgrokAspNetCore.Sample.csproj" -c Release -o /app/publish
+RUN dotnet publish "NGrokAspNetCore.Sample.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "NgrokAspNetCore.Sample.dll"]
+ENTRYPOINT ["dotnet", "NGrokAspNetCore.Sample.dll"]

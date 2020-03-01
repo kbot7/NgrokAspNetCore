@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 
 namespace FluffySpoon.AspNet.NGrok.Exceptions
 {
-	public class NgrokUnsupportedException : Exception
+	public class NGrokUnsupportedException : Exception
 	{
-		public NgrokUnsupportedException() : base($"Platform not supported by ngrok {RuntimeInformation.OSDescription}-{RuntimeInformation.ProcessArchitecture}")
+		public NGrokUnsupportedException() : base($"Platform not supported by NGrok {RuntimeInformation.OSDescription}-{RuntimeInformation.ProcessArchitecture}")
 		{
 		}
 	}

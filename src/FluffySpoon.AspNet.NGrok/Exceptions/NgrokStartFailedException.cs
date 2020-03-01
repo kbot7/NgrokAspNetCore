@@ -7,13 +7,13 @@ using System;
 namespace FluffySpoon.AspNet.NGrok.Exceptions
 {
 	[Serializable]
-	internal class NgrokStartFailedException : Exception
+	internal class NGrokStartFailedException : Exception
 	{
-		public NgrokStartFailedException() : base("ngrok failed to start")
+		public NGrokStartFailedException() : base("NGrok failed to start")
 		{
 		}
 
-		public NgrokStartFailedException(Exception innerException) : base("ngrok failed to start", innerException)
+		public NGrokStartFailedException(Exception innerException) : base("NGrok failed to start", innerException)
 		{
 		}
 	}
