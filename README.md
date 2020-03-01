@@ -1,6 +1,6 @@
 # Credits
-- Original author by kg73: https://github.com/kg73/NgrokAspNetCore
-- Fork that enables .NET Core 3 and Linux support by doug62: https://github.com/doug62/NgrokAspNetCore/tree/linux-core3
+- Original project by kg73: https://github.com/kg73/NgrokAspNetCore
+- Fork that enables .NET Core 3 and Linux support by doug62 - which this project is based on: https://github.com/doug62/NgrokAspNetCore/tree/linux-core3
 
 # FluffySpoon.AspNet.NGrok
 Extensions to start Ngrok automatically from the AspNetCore pipeline. Useful to enable for local development when a public URL is needed.
@@ -27,7 +27,7 @@ When the application starts up, NGrok will launch automatically and create a tun
 Note: If NGrok is not installed, it will be downloaded automatically to the execution directory.
 
 ## Getting the exposed URL
-Simple inject a `INGrokHostedService` and call its `GetTunnelsAsync` method.
+Simply inject an `INGrokHostedService` and call its `GetTunnelsAsync` method.
 
 `INGrokHostedService` also has a `Ready` event that you can listen to, if you'd rather like that.
 
