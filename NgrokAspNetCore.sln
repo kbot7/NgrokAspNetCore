@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.271
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NgrokAspNetCore.Lib", "src\NgrokAspNetCore.Lib\NgrokAspNetCore.Lib.csproj", "{2AEDAB6B-CD52-4F18-9538-69CEA05D1FB2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NgrokAspNetCore.Sample", "sample\NgrokAspNetCore.Sample\NgrokAspNetCore.Sample.csproj", "{ED503E74-1A27-4492-A274-F7C5C0C43539}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngrok.ApiClient", "Ngrok.ApiClient\Ngrok.ApiClient.csproj", "{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +27,10 @@ Global
 		{AB44BB76-BD09-413F-932E-85D8196CD362}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB44BB76-BD09-413F-932E-85D8196CD362}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB44BB76-BD09-413F-932E-85D8196CD362}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
