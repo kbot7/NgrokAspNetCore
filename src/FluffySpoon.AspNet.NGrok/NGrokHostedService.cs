@@ -33,13 +33,11 @@ namespace FluffySpoon.AspNet.NGrok
         public void InjectServerAddressesFeature(IServerAddressesFeature feature)
         {
             _serverAddressesFeature = feature;
+            RunAsync();
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        private async void RunAsync()
         {
-            while (_serverAddressesFeature == null)
-                await Task.Delay(50);
-
             var nGrokFullPath = await _nGrokDownloader.EnsureNGrokInstalled(_options);
             _options.NGrokPath = nGrokFullPath;
 
@@ -55,6 +53,10 @@ namespace FluffySpoon.AspNet.NGrok
 
             await _localApiClient.StartTunnelsAsync(_options.NGrokPath, url);
             Ready?.Invoke();
+        }
+
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
