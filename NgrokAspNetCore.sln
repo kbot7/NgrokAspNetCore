@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NgrokAspNetCore.Lib", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NgrokAspNetCore.Sample", "sample\NgrokAspNetCore.Sample\NgrokAspNetCore.Sample.csproj", "{ED503E74-1A27-4492-A274-F7C5C0C43539}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngrok.ApiClient", "Ngrok.ApiClient\Ngrok.ApiClient.csproj", "{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngrok.ApiClient", "src\Ngrok.ApiClient\Ngrok.ApiClient.csproj", "{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngrok.ApiClient.IntegrationTests", "Ngrok.ApiClient.IntegrationTests\Ngrok.ApiClient.IntegrationTests.csproj", "{86F1FE1F-AEAF-42F7-9F5E-3C861319A761}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ngrok.ApiClient.IntegrationTests", "test\Ngrok.ApiClient.IntegrationTests\Ngrok.ApiClient.IntegrationTests.csproj", "{86F1FE1F-AEAF-42F7-9F5E-3C861319A761}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

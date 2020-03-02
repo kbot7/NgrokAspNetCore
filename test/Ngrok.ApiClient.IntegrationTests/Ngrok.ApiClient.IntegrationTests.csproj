@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ngrok.ApiClient\Ngrok.ApiClient.csproj" />
+    <ProjectReference Include="..\..\src\Ngrok.ApiClient\Ngrok.ApiClient.csproj" />
   </ItemGroup>
 
 </Project>
