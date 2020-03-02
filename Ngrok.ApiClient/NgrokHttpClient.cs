@@ -83,14 +83,14 @@ namespace Ngrok.ApiClient
 			using (var client = new HttpClient())
 			{
 				client.BaseAddress = new Uri("http://localhost:4040");
-				client.Timeout = TimeSpan.FromMilliseconds(100);
+				client.Timeout = TimeSpan.FromMilliseconds(4000);
 				try
 				{
 					var response = await client.GetAsync(ListTunnelsPath);
 					response.EnsureSuccessStatusCode();
 					return true;
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
 					return false;
 				}

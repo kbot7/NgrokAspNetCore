@@ -22,18 +22,19 @@ namespace NgrokAspNetCore.Lib
 	{
 		public static void AddNgrok(this IServiceCollection services, NgrokOptions options = null)
 		{
-			services.TryAddSingleton<NgrokProcess>();
+			services.TryAddSingleton<NgrokProcessMgr>();
 
 			services.AddHttpClient<NgrokDownloader>();
-			services.AddHttpClient<NgrokHttpClient>();
+			services.AddHttpClient<INgrokApiClient, NgrokHttpClient>();
+			
 
 			services.TryAddSingleton(options ?? new NgrokOptions());
 
 			services.AddLogging();
 
-            services.AddHostedService<NgrokHostedService>();
-			services.AddSingleton<NgrokProcessMgr>();
-            services.AddSingleton<INgrokHostedService>(p => p.GetRequiredService<NgrokHostedService>());
-        }
+			services.AddSingleton<NgrokHostedService>();
+			services.AddSingleton<INgrokHostedService>(p => p.GetRequiredService<NgrokHostedService>());
+			services.AddSingleton<IHostedService>(p => p.GetRequiredService<NgrokHostedService>());
+		}
 	}
 }
