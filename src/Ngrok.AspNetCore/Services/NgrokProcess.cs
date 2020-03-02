@@ -30,16 +30,16 @@ namespace Ngrok.AspNetCore.Services
 
 		public void StartNgrokProcess(string nGrokPath)
 		{
-            var processInformation = new ProcessStartInfo(nGrokPath, "start --none --log=stdout")
-            {
-				CreateNoWindow = true, 
+			var processInformation = new ProcessStartInfo(nGrokPath, "start --none --log=stdout")
+			{
+				CreateNoWindow = true,
 				WindowStyle = ProcessWindowStyle.Hidden,
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 				RedirectStandardError = true
-            };
+			};
 
-            Start(processInformation);
+			Start(processInformation);
 		}
 
 		protected virtual void Start(ProcessStartInfo pi)

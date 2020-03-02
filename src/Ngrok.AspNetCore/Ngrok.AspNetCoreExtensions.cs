@@ -26,7 +26,7 @@ namespace Ngrok.AspNetCore
 
 			services.AddHttpClient<NgrokDownloader>();
 			services.AddHttpClient<INgrokApiClient, NgrokHttpClient>();
-			
+
 
 			services.TryAddSingleton(options ?? new NgrokOptions());
 

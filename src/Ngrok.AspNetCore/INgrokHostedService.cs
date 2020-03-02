@@ -7,10 +7,10 @@ using Ngrok.ApiClient;
 
 namespace Ngrok.AspNetCore
 {
-    public interface INgrokHostedService : IHostedService
-    {
-        Task<IEnumerable<Tunnel>> GetTunnelsAsync();
+	public interface INgrokHostedService : IHostedService
+	{
+		Task<IEnumerable<Tunnel>> GetTunnelsAsync();
 
-        event Action<IEnumerable<Tunnel>> Ready;
-    }
+		event Action<IEnumerable<Tunnel>> Ready;
+	}
 }
