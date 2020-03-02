@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NgrokAspNetCore.Lib\NgrokAspNetCore.Lib.csproj" />
+    <ProjectReference Include="..\..\src\Ngrok.AspNetCore\Ngrok.AspNetCore.csproj" />
   </ItemGroup>
 
 </Project>

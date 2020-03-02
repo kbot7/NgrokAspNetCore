@@ -328,6 +328,5 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
-/src/NgrokNgrokAspNetCore.Sample/ngrok.exe
 *.zip
 **/ngrok.exe
