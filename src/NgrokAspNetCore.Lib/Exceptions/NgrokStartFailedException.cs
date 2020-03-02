@@ -4,16 +4,16 @@
 
 using System;
 
-namespace NgrokAspNetCore
+namespace NgrokAspNetCore.Lib.Exceptions
 {
 	[Serializable]
 	internal class NgrokStartFailedException : Exception
 	{
-		public NgrokStartFailedException() : base("ngrok failed to start")
+		public NgrokStartFailedException() : base("Ngrok failed to start")
 		{
 		}
 
-		public NgrokStartFailedException(Exception innerException) : base("ngrok failed to start", innerException)
+		public NgrokStartFailedException(Exception innerException) : base("Ngrok failed to start", innerException)
 		{
 		}
 	}

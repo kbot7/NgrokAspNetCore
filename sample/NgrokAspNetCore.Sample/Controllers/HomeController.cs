@@ -1,28 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
+using NgrokNgrokAspNetCore.Sample.Models;
+using NgrokAspNetCore.Lib.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using NgrokAspNetCore.Sample.Models;
+using NgrokAspNetCore.Lib;
 
-namespace NgrokAspNetCore.Sample.Controllers
+namespace NgrokNgrokAspNetCore.Sample.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly NgrokLocalApiClient _ngrokLocalApiClient;
+        private readonly INgrokHostedService _ngrokService;
 
-        public HomeController(ILogger<HomeController> logger, NgrokLocalApiClient ngrokLocalApiClient )
+        public HomeController(ILogger<HomeController> logger, INgrokHostedService ngrokService)
         {
             _logger = logger;
-            _ngrokLocalApiClient = ngrokLocalApiClient;
+            _ngrokService = ngrokService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var tunnels = await _ngrokLocalApiClient.GetTunnelListAsync();
+            var tunnels = await _ngrokService.GetTunnelsAsync();
             return View(tunnels);
         }
 

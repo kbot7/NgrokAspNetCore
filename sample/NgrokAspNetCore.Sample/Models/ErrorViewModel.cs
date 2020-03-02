@@ -1,6 +1,4 @@
-using System;
-
-namespace NgrokAspNetCore.Sample.Models
+namespace NgrokNgrokAspNetCore.Sample.Models
 {
     public class ErrorViewModel
     {

@@ -2,14 +2,15 @@
 // See the LICENSE file in the project root for more information.
 // Copyright (c) 2019 Kevin Gysberg
 
-using NgrokAspNetCore.Internal;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using NgrokAspNetCore.Lib.Exceptions;
+using NgrokAspNetCore.Lib.Internal;
 
-namespace NgrokAspNetCore
+namespace NgrokAspNetCore.Lib.Services
 {
 	public class NgrokDownloader
 	{
@@ -21,29 +22,29 @@ namespace NgrokAspNetCore
 		}
 
 		/// <summary>
-		/// Check if ngrok present in current directory or Windows PATH variable. If not, download from CDN, and throw exception if download fails
+		/// Check if Ngrok present in current directory or Windows PATH variable. If not, download from CDN, and throw exception if download fails
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
-		/// <exception cref="NgrokNotFoundException">Throws if ngrok not found and failed to download from CDN</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
+		/// <exception cref="NgrokNotFoundException">Throws if Ngrok not found and failed to download from CDN</exception>
 		/// <returns></returns>
 		public async Task<string> EnsureNgrokInstalled(NgrokOptions options)
 		{
 			// Search options
-			bool fileInOptions = !string.IsNullOrWhiteSpace(options.NgrokPath) && File.Exists(options.NgrokPath);
+			var fileInOptions = !string.IsNullOrWhiteSpace(options.NgrokPath) && File.Exists(options.NgrokPath);
 			if (fileInOptions)
 			{
 				return options.NgrokPath;
 			}
 
 			// Search execution directory
-			bool fileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNgrokExecutableString()));
+			var fileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNgrokExecutableString()));
 			if (fileExists)
 			{
 				return Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNgrokExecutableString());
 			}
 
 			// Search Windows PATH
-			var envFullPath = PathExtensions.GetFullPathFromEnvPath("ngrok.exe");
+			var envFullPath = PathExtensions.GetFullPathFromEnvPath("Ngrok.exe");
 			if (!string.IsNullOrWhiteSpace(envFullPath) && File.Exists(envFullPath))
 			{
 				return envFullPath;
@@ -57,15 +58,15 @@ namespace NgrokAspNetCore
 		}
 
 		/// <summary>
-		/// Download ngrok from equinox.io CDN
+		/// Download Ngrok from equinox.io CDN
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <exception cref="HttpRequestException">Throws if failed to download from CDN</exception>
 		/// <returns></returns>
 		public async Task DownloadNgrokAsync()
 		{
 			var downloadUrl = GetDownloadPath();
-			var fileName = $"{RuntimeExtensions.GetOSArchitectureString()}.zip";
+			var fileName = $"{RuntimeExtensions.GetOsArchitectureString()}.zip";
 			var filePath = $"{Path.Combine(Directory.GetCurrentDirectory(), fileName)}";
 
 			var downloadResponse = await _httpClient.GetAsync(downloadUrl);
@@ -83,17 +84,17 @@ namespace NgrokAspNetCore
 		}
 
 		/// <summary>
-		/// Get full url to download ngrok on this platform
+		/// Get full url to download Ngrok on this platform
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <returns></returns>
 		public string GetDownloadPath()
 		{
 			var architecture = RuntimeInformation.ProcessArchitecture;
 			const string cdn = "https://bin.equinox.io";
-			const string cdnPath = "c/4VmDzA7iaHb/ngrok-stable";
+			const string cdnPath = "c/4VmDzA7iaHb/Ngrok-stable";
 
-			return $"{cdn}/{cdnPath}-{RuntimeExtensions.GetOSArchitectureString()}.zip";
+			return $"{cdn}/{cdnPath}-{RuntimeExtensions.GetOsArchitectureString()}.zip";
 		}
 	}
 }

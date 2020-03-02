@@ -3,14 +3,14 @@
 // Copyright (c) 2016 David Prothero
 // Pulled from Github on 2019-01-13 at https://github.com/dprothero/NgrokExtensions
 
-namespace NgrokExtensions
+namespace NgrokAspNetCore.Lib.NgrokModels
 {
 	public class NgrokTunnelApiRequest
 	{
-		public string name { get; set; }
-		public string addr { get; set; }
-		public string proto { get; set; }
-		public string subdomain { get; set; }
-		public string host_header { get; set; }
+		public string Name { get; set; }
+		public string Addr { get; set; }
+		public string Proto { get; set; }
+		public string Subdomain { get; set; }
+		public string HostHeader { get; set; }
 	}
 }

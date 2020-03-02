@@ -3,15 +3,16 @@
 // Copyright (c) 2019 Kevin Gysberg
 
 using System.Runtime.InteropServices;
+using NgrokAspNetCore.Lib.Exceptions;
 
-namespace NgrokAspNetCore
+namespace NgrokAspNetCore.Lib
 {
 	public static class RuntimeExtensions
 	{
 		/// <summary>
-		/// Get architecture string format used by ngrok cdn
+		/// Get architecture string format used by Ngrok cdn
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <returns></returns>
 		public static string GetArchitectureString()
 		{
@@ -40,11 +41,11 @@ namespace NgrokAspNetCore
 		}
 
 		/// <summary>
-		/// Get OS string format used by ngrok cdn
+		/// Get OS string format used by Ngrok cdn
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <returns></returns>
-		public static string GetOSString()
+		public static string GetOsString()
 		{
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
@@ -62,27 +63,27 @@ namespace NgrokAspNetCore
 		}
 
 		/// <summary>
-		/// Get OS-Architecture string format used by ngrok cdn
+		/// Get OS-Architecture string format used by Ngrok cdn
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <returns></returns>
-		public static string GetOSArchitectureString()
+		public static string GetOsArchitectureString()
 		{
-			return $"{GetOSString()}-{GetArchitectureString()}";
+			return $"{GetOsString()}-{GetArchitectureString()}";
 		}
 
 		/// <summary>
-		/// Get NGROK executable name
+		/// Get Ngrok executable name
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by ngrok</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <returns></returns>
 		public static string GetNgrokExecutableString()
 		{
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
-				return "ngrok.exe";
+				return "Ngrok.exe";
 			}
-			return "ngrok";
+			return "Ngrok";
 		}
 	}
 }

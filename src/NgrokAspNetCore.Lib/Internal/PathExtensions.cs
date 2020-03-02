@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 
-namespace NgrokAspNetCore.Internal
+namespace NgrokAspNetCore.Lib.Internal
 {
 	internal static class PathExtensions
 	{

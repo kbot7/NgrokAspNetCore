@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NgrokAspNetCore.Lib;
 
-namespace NgrokAspNetCore.Sample
+namespace NgrokNgrokAspNetCore.Sample
 {
     public class Startup
     {
@@ -18,9 +19,7 @@ namespace NgrokAspNetCore.Sample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // NgrokAspNetCore - Only change needed to this file, uses CORE 3 IHost (not IWebHost)
-            services.AddNgrok( new NgrokOptions() { 
-            } );
+            services.AddNgrok();
             services.AddControllersWithViews();
         }
 
@@ -37,7 +36,6 @@ namespace NgrokAspNetCore.Sample
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

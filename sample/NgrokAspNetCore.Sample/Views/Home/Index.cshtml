@@ -1,4 +1,4 @@
-﻿@model NgrokExtensions.Tunnel[];
+﻿@model IEnumerable<NgrokAspNetCore.Lib.NgrokModels.Tunnel>;
 
 @{
     ViewData["Title"] = "Home Page";
@@ -9,7 +9,7 @@
         <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 
 
-        <h2>NGROK:</h2>
+        <h2>Ngrok:</h2>
         <table>
             <tr>
                 <td><b>Tunnel Name</b></td>
@@ -19,10 +19,10 @@
             {
                 <tr>
                     <td>
-                        @Html.Raw(tunnel.name)
+                        @Html.Raw(tunnel.Name)
                     </td>
                     <td>
-                        <a target="_blank" href="@Html.Raw(tunnel.public_url)">@Html.Raw(tunnel.public_url)</a>
+                        <a target="_blank" href="@Html.Raw(tunnel.PublicUrl)">@Html.Raw(tunnel.PublicUrl)</a>
                     </td>
                 </tr>
             }

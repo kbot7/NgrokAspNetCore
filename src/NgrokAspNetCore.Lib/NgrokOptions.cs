@@ -2,7 +2,7 @@
 // See the LICENSE file in the project root for more information.
 // Copyright (c) 2019 Kevin Gysberg
 
-namespace NgrokAspNetCore
+namespace NgrokAspNetCore.Lib
 {
 	public class NgrokOptions
 	{
@@ -12,8 +12,8 @@ namespace NgrokAspNetCore
 		public string NgrokPath { get; set; }
 
 		/// <summary>
-		/// Set to ngrok profile specified in ngrok config. Ngrok config file must be present to use this option
-		/// See <see href="https://ngrok.com/docs#config">https://ngrok.com/docs#config</see> for details
+		/// Set to Ngrok profile specified in Ngrok config. Ngrok config file must be present to use this option
+		/// See <see href="https://Ngrok.com/docs#config">https://Ngrok.com/docs#config</see> for details
 		/// </summary>
 		public string NgrokConfigProfile { get; set; }
 
@@ -23,7 +23,7 @@ namespace NgrokAspNetCore
 		public string ApplicationHttpUrl { get; set; }
 
 		/// <summary>
-		/// Download ngrok if not found in local directory or PATH. Defaults to true
+		/// Download Ngrok if not found in local directory or PATH. Defaults to true
 		/// </summary>
 		public bool DownloadNgrok { get; set; } = true;
 	}

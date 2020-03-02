@@ -4,18 +4,18 @@
 // Copyright (c) 2016 David Prothero
 // Pulled from Github on 2019-01-13 at https://github.com/dprothero/NgrokExtensions
 
-namespace NgrokExtensions
+namespace NgrokAspNetCore.Lib.NgrokModels
 {
 	public class NgrokErrorApiResult
 	{
-		public int error_code { get; set; }
-		public int status_code { get; set; }
-		public string msg { get; set; }
-		public Details details { get; set; }
+		public int ErrorCode { get; set; }
+		public int StatusCode { get; set; }
+		public string Msg { get; set; }
+		public Details Details { get; set; }
 	}
 
 	public class Details
 	{
-		public string err { get; set; }
+		public string Err { get; set; }
 	}
 }

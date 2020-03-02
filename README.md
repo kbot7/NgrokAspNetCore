@@ -1,40 +1,35 @@
-# Ngrok for AspNetCore
+# Credits
+- Original project by kg73: https://github.com/kg73/NgrokAspNetCore
+- Fork that enables .NET Core 3 and Linux support by doug62 - which this project is based on: https://github.com/doug62/NgrokAspNetCore/tree/linux-core3
+
+# NgrokAspNetCore.Lib
 Extensions to start Ngrok automatically from the AspNetCore pipeline. Useful to enable for local development when a public URL is needed.
 
-## How To
+## Setting it up
 
 Add `AddNgrok` to your service registration
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
     services.AddNgrok();
-    services.AddMvc()
 }
-```
 
-
-Start Ngrok in the WebHost pipeline
-```csharp
-public static async Task Main(string[] args)
+public void Configure(IApplicationBuilder app)
 {
-    var builder = CreateWebHostBuilder(args);
+    app.UseNgrok();
 
-    var host = builder.Build();
-
-    // Start Ngrok here
-    await host.StartNgrokAsync();
-
-    host.Run();
+    //the rest of the existing code goes here.
 }
-
-public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-    WebHost.CreateDefaultBuilder(args)
-    	.UseStartup<Startup>();
 ```
 
-When the application starts up, ngrok will launch automatically and create a tunnel to the application. 
+When the application starts up, Ngrok will launch automatically and create a tunnel to the application. 
 
-Note: If ngrok is not installed, it will be downloaded automatically to the execution directory
+Note: If Ngrok is not installed, it will be downloaded automatically to the execution directory.
+
+## Getting the exposed URL
+Simply inject an `INgrokHostedService` and call its `GetTunnelsAsync` method.
+
+`INgrokHostedService` also has a `Ready` event that you can listen to, if you'd rather like that.
 
 ## Configuration
 Ngrok can be configured when registering it in the services collection by passing in an `NgrokOptions` instance in the `AddNgrok` method

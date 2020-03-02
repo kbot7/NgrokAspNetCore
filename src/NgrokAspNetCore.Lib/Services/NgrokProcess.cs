@@ -3,10 +3,10 @@
 // Copyright (c) 2016 David Prothero
 // Pulled from Github on 2019-01-13 at https://github.com/dprothero/NgrokExtensions
 
-using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
+using Microsoft.Extensions.Hosting;
 
-namespace NgrokAspNetCore
+namespace NgrokAspNetCore.Lib.Services
 {
 	public class NgrokProcess
 	{
@@ -14,20 +14,18 @@ namespace NgrokAspNetCore
 
 		public NgrokProcess(IApplicationLifetime applicationLifetime)
 		{
-			applicationLifetime.ApplicationStopping.Register(() => Stop());
+			applicationLifetime.ApplicationStopping.Register(Stop);
 		}
 
-		public void StartNgrokProcess(string ngrokPath)
+		public void StartNgrokProcess(string nGrokPath)
 		{
-			var pi = new ProcessStartInfo(ngrokPath, "start --none")
-			{
-				CreateNoWindow = false,
-				WindowStyle = ProcessWindowStyle.Normal
-			};
+            var processInformation = new ProcessStartInfo(nGrokPath, "start --none")
+            {
+                CreateNoWindow = true, 
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
 
-			pi.UseShellExecute = true;
-
-			Start(pi);
+            Start(processInformation);
 		}
 
 		protected virtual void Start(ProcessStartInfo pi)
@@ -38,14 +36,14 @@ namespace NgrokAspNetCore
 
 		public void Stop()
 		{
-			if (_process != null && !_process.HasExited)
-			{
-				_process.Kill();
-				foreach (var p in Process.GetProcessesByName("ngrok"))
-				{
-					p.Kill();
-				}
-			}
-		}
+            if (_process == null || _process.HasExited) 
+                return;
+
+            _process.Kill();
+            foreach (var p in Process.GetProcessesByName("Ngrok"))
+            {
+                p.Kill();
+            }
+        }
 	}
 }
