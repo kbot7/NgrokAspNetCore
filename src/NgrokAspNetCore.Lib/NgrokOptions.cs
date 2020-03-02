@@ -26,5 +26,7 @@ namespace NgrokAspNetCore.Lib
 		/// Download Ngrok if not found in local directory or PATH. Defaults to true
 		/// </summary>
 		public bool DownloadNgrok { get; set; } = true;
+
+		public int NgrokProcessStartTimeoutMs = 10000;
 	}
 }

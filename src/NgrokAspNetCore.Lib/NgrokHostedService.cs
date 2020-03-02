@@ -4,19 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using NgrokAspNetCore.Lib.NgrokModels;
 using NgrokAspNetCore.Lib.Services;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
+using Ngrok.ApiClient;
+using Tunnel = Ngrok.ApiClient.Tunnel;
 
 namespace NgrokAspNetCore.Lib
 {
     class NgrokHostedService : INgrokHostedService
     {
-        private readonly NgrokLocalApiClient _localApiClient;
         private readonly NgrokOptions _options;
         private readonly NgrokDownloader _nGrokDownloader;
+        private readonly NgrokProcessMgr _processMgr;
+        private readonly INgrokApiClient _client;
         private readonly IServer _server;
         private readonly IApplicationLifetime _applicationLifetime;
 
@@ -32,17 +34,19 @@ namespace NgrokAspNetCore.Lib
         public event Action<IEnumerable<Tunnel>> Ready;
 
         public NgrokHostedService(
-            NgrokLocalApiClient localApiClient,
             NgrokOptions options,
             NgrokDownloader nGrokDownloader,
             IServer server,
-            IApplicationLifetime applicationLifetime)
+            IApplicationLifetime applicationLifetime,
+            NgrokProcessMgr processMgr,
+            INgrokApiClient client)
         {
-            _localApiClient = localApiClient;
             _options = options;
             _nGrokDownloader = nGrokDownloader;
             _server = server;
             _applicationLifetime = applicationLifetime;
+            _processMgr = processMgr;
+            _client = client;
 
             _tunnelTaskCompletionSource = new TaskCompletionSource<IEnumerable<Tunnel>>();
         }
@@ -51,13 +55,14 @@ namespace NgrokAspNetCore.Lib
         private async Task RunAsync()
         {
             await DownloadNgrokIfNeededAsync();
+            await _processMgr.EnsureNgrokStartedAsync(_options.NgrokPath);
             var url = AdjustApplicationHttpUrlIfNeeded();
 
             var tunnels = await StartTunnelsAsync(url);
             OnTunnelsFetched(tunnels);
         }
 
-        private void OnTunnelsFetched(Tunnel[] tunnels)
+        private void OnTunnelsFetched(IEnumerable<Tunnel> tunnels)
         {
             if (tunnels == null)
                 throw new ArgumentNullException(nameof(tunnels), "Tunnels was not expected to be null here.");
@@ -66,11 +71,50 @@ namespace NgrokAspNetCore.Lib
             Ready?.Invoke(tunnels);
         }
 
-        private async Task<Tunnel[]> StartTunnelsAsync(string url)
+        private async Task<IEnumerable<Tunnel>> StartTunnelsAsync(string address)
         {
-            var tunnels = await _localApiClient.StartTunnelsAsync(_options.NgrokPath, url);
-            var tunnelsArray = tunnels?.ToArray();
-            return tunnelsArray;
+            if (string.IsNullOrEmpty(address))
+            {
+                address = "80";
+            }
+            else
+            {
+                if (!int.TryParse(address, out _))
+                {
+                    var url = new Uri(address);
+                    if (url.Port != 80 && url.Port != 443)
+                    {
+                        address = $"{url.Host}:{url.Port}";
+                    }
+                    else
+                    {
+                        if (address.StartsWith("http://"))
+                        {
+                            address = address.Remove(address.IndexOf("http://"), "http://".Length);
+                        }
+                        if (address.StartsWith("https://"))
+                        {
+                            address = address.Remove(address.IndexOf("https://"), "https://".Length);
+                        }
+                    }
+                }
+            }
+
+            // Start Tunnel
+            var tunnel = await _client.StartTunnelAsync(new StartTunnelRequest()
+            {
+                Name = System.AppDomain.CurrentDomain.FriendlyName,
+                Address = address,
+                Protocol = "http",
+                HostHeader = address
+            });
+
+            // Get Tunnels
+            var tunnels = (await _client.ListTunnelsAsync())
+                .Where(t => t.Name == System.AppDomain.CurrentDomain.FriendlyName ||
+                t.Name == $"{System.AppDomain.CurrentDomain.FriendlyName} (http)");
+
+            return tunnels;
         }
 
         private string AdjustApplicationHttpUrlIfNeeded()
@@ -109,7 +153,7 @@ namespace NgrokAspNetCore.Lib
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            _localApiClient.StopNgrok();
+            await _processMgr.StopNgrokAsync();
         }
     }
 }

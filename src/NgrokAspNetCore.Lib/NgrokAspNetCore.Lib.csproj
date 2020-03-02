@@ -19,4 +19,7 @@
 		<PackageReference Include="Microsoft.Extensions.Http" Version="3.0.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Ngrok.ApiClient\Ngrok.ApiClient.csproj" />
+	</ItemGroup>
 </Project>
