@@ -330,3 +330,4 @@ ASALocalRun/
 .mfractor/
 /src/FluffySpoon.AspNet.NGrok.Sample/ngrok.exe
 *.zip
+**/ngrok.exe

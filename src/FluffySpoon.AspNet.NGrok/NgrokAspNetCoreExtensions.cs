@@ -35,11 +35,5 @@ namespace FluffySpoon.AspNet.NGrok
             services.AddSingleton<INGrokHostedService>(p => p.GetRequiredService<NGrokHostedService>());
             services.AddSingleton<IHostedService>(p => p.GetRequiredService<NGrokHostedService>());
         }
-
-        public static void UseNGrok(this IApplicationBuilder builder)
-        {
-            var ngrokService = builder.ApplicationServices.GetRequiredService<NGrokHostedService>();
-			ngrokService.InjectServerAddressesFeature(builder.ServerFeatures.Get<IServerAddressesFeature>());
-        }
 	}
 }

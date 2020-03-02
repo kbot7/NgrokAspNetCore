@@ -8,6 +8,7 @@ using FluffySpoon.AspNet.NGrok.NGrokModels;
 using FluffySpoon.AspNet.NGrok.Services;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
 
 namespace FluffySpoon.AspNet.NGrok
 {
@@ -16,10 +17,12 @@ namespace FluffySpoon.AspNet.NGrok
         private readonly NGrokLocalApiClient _localApiClient;
         private readonly NGrokOptions _options;
         private readonly NGrokDownloader _nGrokDownloader;
+        private readonly IServer _server;
+        private readonly IApplicationLifetime _applicationLifetime;
 
         private readonly TaskCompletionSource<IEnumerable<Tunnel>> _tunnelTaskCompletionSource;
 
-        private IServerAddressesFeature _serverAddressesFeature;
+        private ICollection<string> _addresses;
 
         public async Task<IEnumerable<Tunnel>> GetTunnelsAsync()
         {
@@ -31,22 +34,21 @@ namespace FluffySpoon.AspNet.NGrok
         public NGrokHostedService(
             NGrokLocalApiClient localApiClient,
             NGrokOptions options,
-            NGrokDownloader nGrokDownloader)
+            NGrokDownloader nGrokDownloader,
+            IServer server,
+            IApplicationLifetime applicationLifetime)
         {
             _localApiClient = localApiClient;
             _options = options;
             _nGrokDownloader = nGrokDownloader;
+            _server = server;
+            _applicationLifetime = applicationLifetime;
 
             _tunnelTaskCompletionSource = new TaskCompletionSource<IEnumerable<Tunnel>>();
         }
 
-        public void InjectServerAddressesFeature(IServerAddressesFeature feature)
-        {
-            _serverAddressesFeature = feature;
-            RunAsync();
-        }
 
-        private async void RunAsync()
+        private async Task RunAsync()
         {
             await DownloadNGrokIfNeededAsync();
             var url = AdjustApplicationHttpUrlIfNeeded();
@@ -77,9 +79,7 @@ namespace FluffySpoon.AspNet.NGrok
 
             if (string.IsNullOrWhiteSpace(url) || !Uri.TryCreate(url, UriKind.Absolute, out _))
             {
-                var addresses = _serverAddressesFeature?.Addresses;
-                if(addresses != null)
-                    url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
+                url = _addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? _addresses.FirstOrDefault();
             }
 
             _options.ApplicationHttpUrl = url;
@@ -98,6 +98,13 @@ namespace FluffySpoon.AspNet.NGrok
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            _applicationLifetime.ApplicationStarted.Register(() => OnApplicationStarted());
+        }
+
+        public Task OnApplicationStarted()
+        {
+            _addresses = _server.Features.Get<IServerAddressesFeature>().Addresses.ToArray();
+            return RunAsync();
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
