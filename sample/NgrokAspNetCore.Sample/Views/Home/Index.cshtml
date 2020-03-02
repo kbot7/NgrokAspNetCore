@@ -1,4 +1,4 @@
-﻿@model IEnumerable<NgrokAspNetCore.Lib.NgrokModels.Tunnel>;
+﻿@model IEnumerable<Ngrok.ApiClient.Tunnel>;
 
 @{
     ViewData["Title"] = "Home Page";
@@ -22,7 +22,7 @@
                         @Html.Raw(tunnel.Name)
                     </td>
                     <td>
-                        <a target="_blank" href="@Html.Raw(tunnel.PublicUrl)">@Html.Raw(tunnel.PublicUrl)</a>
+                        <a target="_blank" href="@Html.Raw(tunnel.PublicURL)">@Html.Raw(tunnel.PublicURL)</a>
                     </td>
                 </tr>
             }

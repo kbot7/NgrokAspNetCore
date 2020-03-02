@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using NgrokAspNetCore.Lib.NgrokModels;
 using Microsoft.Extensions.Hosting;
+using Ngrok.ApiClient;
 
 namespace NgrokAspNetCore.Lib
 {

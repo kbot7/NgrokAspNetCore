@@ -41,7 +41,7 @@ namespace NgrokAspNetCore.Lib.Services
 
         }
 
-        private async Task StartNgrokAsync(string nGrokPath)
+        public async Task EnsureNgrokStartedAsync(string nGrokPath)
         {
             // This allows an already-running Ngrok instance to be used, instead of the one we are starting here. 
             if (await _apiClient.CheckIfLocalAPIUpAsync()) 
@@ -77,7 +77,7 @@ namespace NgrokAspNetCore.Lib.Services
             }
         }
 
-        private Task StopNgrokAsync()
+        public Task StopNgrokAsync()
         {
             _process.Stop();
             return Task.CompletedTask;
