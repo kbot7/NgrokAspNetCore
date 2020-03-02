@@ -1,8 +1,5 @@
-# Credits
-- Original project by kg73: https://github.com/kg73/NgrokAspNetCore
-- Fork that enables .NET Core 3 and Linux support by doug62 - which this project is based on: https://github.com/doug62/NgrokAspNetCore/tree/linux-core3
 
-# NgrokAspNetCore.Lib
+# Ngrok for Asp.Net Core
 Extensions to start Ngrok automatically from the AspNetCore pipeline. Useful to enable for local development when a public URL is needed.
 
 ## Setting it up
@@ -12,13 +9,6 @@ Add `AddNgrok` to your service registration
 public void ConfigureServices(IServiceCollection services)
 {
     services.AddNgrok();
-}
-
-public void Configure(IApplicationBuilder app)
-{
-    app.UseNgrok();
-
-    //the rest of the existing code goes here.
 }
 ```
 
@@ -44,7 +34,7 @@ Ngrok can be configured when registering it in the services collection by passin
 ## Contributing
 Feedback and Contributions are greatly welcome. 
 
-Please submit any bugs, issues, questions, or feature requests, by [submitting an issue](https://github.com/dprothero/NgrokExtensions/issues)
+Please submit any bugs, issues, questions, or feature requests, by [submitting an issue](https://github.com/kg73/NgrokAspNetCore/issues)
 
 To submit pull requests, fork this repository to your own account, then submit a pull request back to this repository.
 
