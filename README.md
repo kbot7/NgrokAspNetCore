@@ -2,7 +2,7 @@
 - Original project by kg73: https://github.com/kg73/NgrokAspNetCore
 - Fork that enables .NET Core 3 and Linux support by doug62 - which this project is based on: https://github.com/doug62/NgrokAspNetCore/tree/linux-core3
 
-# FluffySpoon.AspNet.NGrok
+# NgrokAspNetCore.Lib
 Extensions to start Ngrok automatically from the AspNetCore pipeline. Useful to enable for local development when a public URL is needed.
 
 ## Setting it up
@@ -11,30 +11,30 @@ Add `AddNgrok` to your service registration
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddNGrok();
+    services.AddNgrok();
 }
 
 public void Configure(IApplicationBuilder app)
 {
-    app.UseNGrok();
+    app.UseNgrok();
 
     //the rest of the existing code goes here.
 }
 ```
 
-When the application starts up, NGrok will launch automatically and create a tunnel to the application. 
+When the application starts up, Ngrok will launch automatically and create a tunnel to the application. 
 
-Note: If NGrok is not installed, it will be downloaded automatically to the execution directory.
+Note: If Ngrok is not installed, it will be downloaded automatically to the execution directory.
 
 ## Getting the exposed URL
-Simply inject an `INGrokHostedService` and call its `GetTunnelsAsync` method.
+Simply inject an `INgrokHostedService` and call its `GetTunnelsAsync` method.
 
-`INGrokHostedService` also has a `Ready` event that you can listen to, if you'd rather like that.
+`INgrokHostedService` also has a `Ready` event that you can listen to, if you'd rather like that.
 
 ## Configuration
-NGrok can be configured when registering it in the services collection by passing in an `NGrokOptions` instance in the `AddNGrok` method
+Ngrok can be configured when registering it in the services collection by passing in an `NgrokOptions` instance in the `AddNgrok` method
 
-#### NGrokOptions
+#### NgrokOptions
 | Option | Description |
 | --- | --- |
 | NgrokPath | Path to ngrok.exe. If not provided, it will default to the current directory, and search the Windows PATH variable. If all attempts fail, it will attempt to download it from the Ngrok CDN to the executing directory |
