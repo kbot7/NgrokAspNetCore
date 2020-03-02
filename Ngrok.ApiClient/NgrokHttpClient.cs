@@ -77,5 +77,24 @@ namespace Ngrok.ApiClient
 				throw new NgrokApiException(errorResponse);
 			}
 		}
+
+		public async Task<bool> CheckIfLocalAPIUpAsync()
+		{
+			using (var client = new HttpClient())
+			{
+				client.BaseAddress = new Uri("http://localhost:4040");
+				client.Timeout = TimeSpan.FromMilliseconds(100);
+				try
+				{
+					var response = await client.GetAsync(ListTunnelsPath);
+					response.EnsureSuccessStatusCode();
+					return true;
+				}
+				catch (Exception)
+				{
+					return false;
+				}
+			}
+		}
 	}
 }

@@ -20,7 +20,7 @@ namespace NgrokAspNetCore.Lib.Services
 		private Process _process;
 		private ILogger _ngrokProcessLogger;
 
-		public Action NgrokClientEstablished { get; set; }
+		public Action ProcessStarted { get; set; }
 
 		public NgrokProcess(IApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory)
 		{
@@ -87,7 +87,7 @@ namespace NgrokAspNetCore.Lib.Services
 			const string clientSessionEstablishedKey = "obj=csess";
 			if (args?.Data?.Contains(clientSessionEstablishedKey) ?? false)
 			{
-				NgrokClientEstablished?.Invoke();
+				ProcessStarted?.Invoke();
 			}
 
 			// Build structured log data
