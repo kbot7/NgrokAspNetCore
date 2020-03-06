@@ -29,9 +29,9 @@ namespace FluffySpoon.AspNet.NGrok.Services
 		}
 
 		protected virtual void Start(ProcessStartInfo pi)
-		{
-			var startedProcess = Process.Start(pi);
-			_process = startedProcess;
+        {
+            KillExistingNGrokProcesses();
+            _process = Process.Start(pi);
 		}
 
 		public void Stop()
@@ -40,10 +40,15 @@ namespace FluffySpoon.AspNet.NGrok.Services
                 return;
 
             _process.Kill();
+            KillExistingNGrokProcesses();
+        }
+
+        private static void KillExistingNGrokProcesses()
+        {
             foreach (var p in Process.GetProcessesByName("NGrok"))
             {
                 p.Kill();
             }
         }
-	}
+    }
 }
