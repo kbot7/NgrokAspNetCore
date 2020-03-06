@@ -19,10 +19,12 @@ namespace FluffySpoon.AspNet.NGrok
 
         private readonly TaskCompletionSource<IEnumerable<Tunnel>> _tunnelTaskCompletionSource;
 
-        private IServerAddressesFeature _serverAddressesFeature;
+        private string[] _serverAddresses;
+        private Task _runTask;
 
         public async Task<IEnumerable<Tunnel>> GetTunnelsAsync()
         {
+            RunIfNotAlreadyRunning();
             return await _tunnelTaskCompletionSource.Task;
         }
 
@@ -42,11 +44,19 @@ namespace FluffySpoon.AspNet.NGrok
 
         public void InjectServerAddressesFeature(IServerAddressesFeature feature)
         {
-            _serverAddressesFeature = feature;
-            RunAsync();
+            _serverAddresses = feature.Addresses.ToArray();
+            RunIfNotAlreadyRunning();
         }
 
-        private async void RunAsync()
+        private void RunIfNotAlreadyRunning()
+        {
+            if (_runTask != null)
+                return;
+
+            _runTask = RunAsync();
+        }
+
+        private async Task RunAsync()
         {
             await DownloadNGrokIfNeededAsync();
             var url = AdjustApplicationHttpUrlIfNeeded();
@@ -77,7 +87,7 @@ namespace FluffySpoon.AspNet.NGrok
 
             if (string.IsNullOrWhiteSpace(url) || !Uri.TryCreate(url, UriKind.Absolute, out _))
             {
-                var addresses = _serverAddressesFeature?.Addresses;
+                var addresses = _serverAddresses;
                 if(addresses != null)
                     url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
             }
