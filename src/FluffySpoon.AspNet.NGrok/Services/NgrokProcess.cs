@@ -45,7 +45,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
 
         private static void KillExistingNGrokProcesses()
         {
-            foreach (var p in Process.GetProcessesByName("NGrok"))
+            foreach (var p in Process.GetProcessesByName("ngrok"))
             {
                 p.Kill();
             }
