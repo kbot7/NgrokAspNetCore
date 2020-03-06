@@ -78,14 +78,10 @@ namespace FluffySpoon.AspNet.NGrok.Services
         /// <returns></returns>
         private async Task StartNGrokAsync(string nGrokPath)
         {
-            // This allows a pre-existing NGrok instance to be used, instead of the one we are starting here. 
-            if (await CanGetTunnelList())
-                return;
+            _nGrokProcess.StartNGrokProcess(nGrokPath);
 
             try
             {
-                _nGrokProcess.StartNGrokProcess(nGrokPath);
-
                 var stopwatch = Stopwatch.StartNew();
                 var canGetTunnelList = false;
                 while (!canGetTunnelList && stopwatch.Elapsed < TimeSpan.FromSeconds(30))
