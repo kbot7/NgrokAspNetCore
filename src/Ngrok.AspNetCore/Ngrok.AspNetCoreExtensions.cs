@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ngrok.AspNetCore.Services;
+using NGrok.AspNetCore.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -14,27 +14,27 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Ngrok.ApiClient;
+using NGrok.ApiClient;
 
-namespace Ngrok.AspNetCore
+namespace NGrok.AspNetCore
 {
-	public static class NgrokAspNetCoreExtensions
+	public static class NGrokAspNetCoreExtensions
 	{
-		public static void AddNgrok(this IServiceCollection services, NgrokOptions options = null)
+		public static void AddNGrok(this IServiceCollection services, NGrokOptions options = null)
 		{
-			services.TryAddSingleton<NgrokProcessMgr>();
+			services.TryAddSingleton<NGrokProcessMgr>();
 
-			services.AddHttpClient<NgrokDownloader>();
-			services.AddHttpClient<INgrokApiClient, NgrokHttpClient>();
+			services.AddHttpClient<NGrokDownloader>();
+			services.AddHttpClient<INGrokApiClient, NGrokHttpClient>();
 
 
-			services.TryAddSingleton(options ?? new NgrokOptions());
+			services.TryAddSingleton(options ?? new NGrokOptions());
 
 			services.AddLogging();
 
-			services.AddSingleton<NgrokHostedService>();
-			services.AddSingleton<INgrokHostedService>(p => p.GetRequiredService<NgrokHostedService>());
-			services.AddSingleton<IHostedService>(p => p.GetRequiredService<NgrokHostedService>());
+			services.AddSingleton<NGrokHostedService>();
+			services.AddSingleton<INGrokHostedService>(p => p.GetRequiredService<NGrokHostedService>());
+			services.AddSingleton<IHostedService>(p => p.GetRequiredService<NGrokHostedService>());
 		}
 	}
 }

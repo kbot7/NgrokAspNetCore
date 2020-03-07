@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Ngrok.ApiClient
+namespace NGrok.ApiClient
 {
 	public class TunnelConfig
 	{

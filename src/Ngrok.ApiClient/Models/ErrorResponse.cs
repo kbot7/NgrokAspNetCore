@@ -1,11 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Ngrok.ApiClient
+namespace NGrok.ApiClient
 {
 	public class ErrorResponse
 	{
 		[JsonPropertyName("error_code")]
-		public int NgrokErrorCode { get; set; }
+		public int NGrokErrorCode { get; set; }
 
 		[JsonPropertyName("status_code")]
 		public int HttpStatusCode { get; set; }

@@ -1,11 +1,11 @@
-using Ngrok.AspNetCore.Extensions;
+using NGrok.AspNetCore.Extensions;
 using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Ngrok.AspNetCore.UnitTests
+namespace NGrok.AspNetCore.UnitTests
 {
-	public class NgrokLogExtensionsTests
+	public class NGrokLogExtensionsTests
 	{
 		[Fact]
 		public void ParseStartTunnel()
@@ -21,7 +21,7 @@ namespace Ngrok.AspNetCore.UnitTests
 				{ "addr", "http://localhost:425" },
 				{ "url", "https://12030abc.ngrok.io" }
 			};
-			var result = NgrokLogExtensions.ParseLogData(input);
+			var result = NGrokLogExtensions.ParseLogData(input);
 
 			Assert.Equal(expectedResult, result);
 		}
@@ -37,7 +37,7 @@ namespace Ngrok.AspNetCore.UnitTests
 				{ "msg", "no configuration paths supplied" }
 			};
 
-			var result = NgrokLogExtensions.ParseLogData(input);
+			var result = NGrokLogExtensions.ParseLogData(input);
 
 			Assert.Equal(expectedResult, result);
 		}

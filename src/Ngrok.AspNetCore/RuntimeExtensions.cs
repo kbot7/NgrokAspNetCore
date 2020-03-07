@@ -3,16 +3,16 @@
 // Copyright (c) 2019 Kevin Gysberg
 
 using System.Runtime.InteropServices;
-using Ngrok.AspNetCore.Exceptions;
+using NGrok.AspNetCore.Exceptions;
 
-namespace Ngrok.AspNetCore
+namespace NGrok.AspNetCore
 {
 	public static class RuntimeExtensions
 	{
 		/// <summary>
-		/// Get architecture string format used by Ngrok cdn
+		/// Get architecture string format used by NGrok cdn
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
+		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <returns></returns>
 		public static string GetArchitectureString()
 		{
@@ -22,13 +22,13 @@ namespace Ngrok.AspNetCore
 				case Architecture.Arm:
 					if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 					{
-						throw new NgrokUnsupportedException();
+						throw new NGrokUnsupportedException();
 					}
 					return "arm";
 				case Architecture.Arm64:
 					if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 					{
-						throw new NgrokUnsupportedException();
+						throw new NGrokUnsupportedException();
 					}
 					return "arm64";
 				case Architecture.X64:
@@ -36,14 +36,14 @@ namespace Ngrok.AspNetCore
 				case Architecture.X86:
 					return "386";
 				default:
-					throw new NgrokUnsupportedException();
+					throw new NGrokUnsupportedException();
 			}
 		}
 
 		/// <summary>
-		/// Get OS string format used by Ngrok cdn
+		/// Get OS string format used by NGrok cdn
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
+		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <returns></returns>
 		public static string GetOsString()
 		{
@@ -59,13 +59,13 @@ namespace Ngrok.AspNetCore
 			{
 				return "darwin";
 			}
-			throw new NgrokUnsupportedException();
+			throw new NGrokUnsupportedException();
 		}
 
 		/// <summary>
-		/// Get OS-Architecture string format used by Ngrok cdn
+		/// Get OS-Architecture string format used by NGrok cdn
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
+		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <returns></returns>
 		public static string GetOsArchitectureString()
 		{
@@ -73,17 +73,17 @@ namespace Ngrok.AspNetCore
 		}
 
 		/// <summary>
-		/// Get Ngrok executable name
+		/// Get NGrok executable name
 		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
+		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <returns></returns>
-		public static string GetNgrokExecutableString()
+		public static string GetNGrokExecutableString()
 		{
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
-				return "Ngrok.exe";
+				return "NGrok.exe";
 			}
-			return "Ngrok";
+			return "NGrok";
 		}
 	}
 }

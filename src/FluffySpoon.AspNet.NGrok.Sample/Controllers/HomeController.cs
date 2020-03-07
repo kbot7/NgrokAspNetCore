@@ -1,19 +1,19 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using FluffySpoon.AspNet.NGrok.Models;
-using Ngrok.AspNetCore.Services;
+using NGrok.AspNetCore.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Ngrok.AspNetCore;
+using NGrok.AspNetCore;
 
 namespace FluffySpoon.AspNet.NGrok.Controllers
 {
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
-		private readonly INgrokHostedService _ngrokService;
+		private readonly INGrokHostedService _ngrokService;
 
-		public HomeController(ILogger<HomeController> logger, INgrokHostedService ngrokService)
+		public HomeController(ILogger<HomeController> logger, INGrokHostedService ngrokService)
 		{
 			_logger = logger;
 			_ngrokService = ngrokService;

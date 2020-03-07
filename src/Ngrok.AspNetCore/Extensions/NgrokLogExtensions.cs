@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Ngrok.AspNetCore.Extensions
+namespace NGrok.AspNetCore.Extensions
 {
-	public static class NgrokLogExtensions
+	public static class NGrokLogExtensions
 	{
 		public static Dictionary<string, string> ParseLogData(string input)
 		{

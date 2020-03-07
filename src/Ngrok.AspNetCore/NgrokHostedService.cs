@@ -4,21 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Ngrok.AspNetCore.Services;
+using NGrok.AspNetCore.Services;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
-using Ngrok.ApiClient;
-using Tunnel = Ngrok.ApiClient.Tunnel;
+using NGrok.ApiClient;
+using Tunnel = NGrok.ApiClient.Tunnel;
 
-namespace Ngrok.AspNetCore
+namespace NGrok.AspNetCore
 {
-	class NgrokHostedService : INgrokHostedService
+	class NGrokHostedService : INGrokHostedService
 	{
-		private readonly NgrokOptions _options;
-		private readonly NgrokDownloader _nGrokDownloader;
-		private readonly NgrokProcessMgr _processMgr;
-		private readonly INgrokApiClient _client;
+		private readonly NGrokOptions _options;
+		private readonly NGrokDownloader _nGrokDownloader;
+		private readonly NGrokProcessMgr _processMgr;
+		private readonly INGrokApiClient _client;
 		private readonly IServer _server;
 		private readonly IApplicationLifetime _applicationLifetime;
 
@@ -33,13 +33,13 @@ namespace Ngrok.AspNetCore
 
 		public event Action<IEnumerable<Tunnel>> Ready;
 
-		public NgrokHostedService(
-			NgrokOptions options,
-			NgrokDownloader nGrokDownloader,
+		public NGrokHostedService(
+			NGrokOptions options,
+			NGrokDownloader nGrokDownloader,
 			IServer server,
 			IApplicationLifetime applicationLifetime,
-			NgrokProcessMgr processMgr,
-			INgrokApiClient client)
+			NGrokProcessMgr processMgr,
+			INGrokApiClient client)
 		{
 			_options = options;
 			_nGrokDownloader = nGrokDownloader;
@@ -54,8 +54,8 @@ namespace Ngrok.AspNetCore
 
 		private async Task RunAsync()
 		{
-			await DownloadNgrokIfNeededAsync();
-			await _processMgr.EnsureNgrokStartedAsync(_options.NgrokPath);
+			await DownloadNGrokIfNeededAsync();
+			await _processMgr.EnsureNGrokStartedAsync(_options.NGrokPath);
 			var url = AdjustApplicationHttpUrlIfNeeded();
 
 			var tunnels = await StartTunnelsAsync(url);
@@ -134,10 +134,10 @@ namespace Ngrok.AspNetCore
 			return url;
 		}
 
-		private async Task DownloadNgrokIfNeededAsync()
+		private async Task DownloadNGrokIfNeededAsync()
 		{
-			var nGrokFullPath = await _nGrokDownloader.EnsureNgrokInstalled(_options);
-			_options.NgrokPath = nGrokFullPath;
+			var nGrokFullPath = await _nGrokDownloader.EnsureNGrokInstalled(_options);
+			_options.NGrokPath = nGrokFullPath;
 		}
 
 		public async Task StartAsync(CancellationToken cancellationToken)
@@ -153,7 +153,7 @@ namespace Ngrok.AspNetCore
 
 		public async Task StopAsync(CancellationToken cancellationToken)
 		{
-			await _processMgr.StopNgrokAsync();
+			await _processMgr.StopNGrokAsync();
 		}
 	}
 }

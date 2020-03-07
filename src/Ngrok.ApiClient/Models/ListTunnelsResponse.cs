@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Ngrok.ApiClient
+namespace NGrok.ApiClient
 {
 
 	public class ListTunnelsResponse

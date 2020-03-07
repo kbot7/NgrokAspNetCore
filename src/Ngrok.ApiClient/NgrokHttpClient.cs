@@ -6,9 +6,9 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Ngrok.ApiClient
+namespace NGrok.ApiClient
 {
-	public class NgrokHttpClient : INgrokApiClient
+	public class NGrokHttpClient : INGrokApiClient
 	{
 		private const string ListTunnelsPath = "/api/tunnels";
 		private const string GetTunnelPathFormat = "/api/tunnels/{0}";
@@ -17,7 +17,7 @@ namespace Ngrok.ApiClient
 
 		public HttpClient Client { get; }
 
-		public NgrokHttpClient(HttpClient client)
+		public NGrokHttpClient(HttpClient client)
 		{
 			client.BaseAddress = new Uri("http://localhost:4040");
 
@@ -74,7 +74,7 @@ namespace Ngrok.ApiClient
 				using var responseStream = await response.Content.ReadAsStreamAsync();
 				var errorResponse = await JsonSerializer.DeserializeAsync
 					<ErrorResponse>(responseStream);
-				throw new NgrokApiException(errorResponse);
+				throw new NGrokApiException(errorResponse);
 			}
 		}
 

@@ -5,11 +5,11 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Ngrok.AspNetCore.Exceptions
+namespace NGrok.AspNetCore.Exceptions
 {
-	public class NgrokUnsupportedException : Exception
+	public class NGrokUnsupportedException : Exception
 	{
-		public NgrokUnsupportedException() : base($"Platform not supported by Ngrok {RuntimeInformation.OSDescription}-{RuntimeInformation.ProcessArchitecture}")
+		public NGrokUnsupportedException() : base($"Platform not supported by NGrok {RuntimeInformation.OSDescription}-{RuntimeInformation.ProcessArchitecture}")
 		{
 		}
 	}

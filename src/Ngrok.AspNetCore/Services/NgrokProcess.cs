@@ -1,7 +1,7 @@
 ﻿// This file is licensed to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 // Copyright (c) 2016 David Prothero, Kevin Gysberg
-// Originally pulled from Github on 2019-01-13 at https://github.com/dprothero/NgrokExtensions
+// Originally pulled from Github on 2019-01-13 at https://github.com/dprothero/NGrokExtensions
 
 using System;
 using System.Collections.Generic;
@@ -11,24 +11,24 @@ using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Ngrok.AspNetCore.Extensions;
+using NGrok.AspNetCore.Extensions;
 
-namespace Ngrok.AspNetCore.Services
+namespace NGrok.AspNetCore.Services
 {
-	public class NgrokProcess
+	public class NGrokProcess
 	{
 		private Process _process;
 		private ILogger _ngrokProcessLogger;
 
 		public Action ProcessStarted { get; set; }
 
-		public NgrokProcess(IApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory)
+		public NGrokProcess(IApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory)
 		{
 			applicationLifetime.ApplicationStopping.Register(Stop);
-			_ngrokProcessLogger = loggerFactory.CreateLogger("NgrokProcess");
+			_ngrokProcessLogger = loggerFactory.CreateLogger("NGrokProcess");
 		}
 
-		public void StartNgrokProcess(string nGrokPath)
+		public void StartNGrokProcess(string nGrokPath)
 		{
 			var processInformation = new ProcessStartInfo(nGrokPath, "start --none --log=stdout")
 			{
@@ -62,7 +62,7 @@ namespace Ngrok.AspNetCore.Services
 				return;
 
 			_process.Kill();
-			foreach (var p in Process.GetProcessesByName("Ngrok"))
+			foreach (var p in Process.GetProcessesByName("NGrok"))
 			{
 				p.Kill();
 			}
@@ -83,7 +83,7 @@ namespace Ngrok.AspNetCore.Services
 				return;
 			}
 
-			// Fire event when Ngrok Client Session is established
+			// Fire event when NGrok Client Session is established
 			const string clientSessionEstablishedKey = "obj=csess";
 			if (args?.Data?.Contains(clientSessionEstablishedKey) ?? false)
 			{
@@ -91,11 +91,11 @@ namespace Ngrok.AspNetCore.Services
 			}
 
 			// Build structured log data
-			var data = NgrokLogExtensions.ParseLogData(args.Data);
+			var data = NGrokLogExtensions.ParseLogData(args.Data);
 			var logFormatData = data.Where(d => d.Key != "lvl" && d.Key != "t")
 				.ToDictionary(e => e.Key, e => e.Value);
-			var logFormatString = NgrokLogExtensions.GetLogFormatString(logFormatData);
-			var logLevel = NgrokLogExtensions.ParseLogLevel(data["lvl"]);
+			var logFormatString = NGrokLogExtensions.GetLogFormatString(logFormatData);
+			var logLevel = NGrokLogExtensions.ParseLogLevel(data["lvl"]);
 
 			_ngrokProcessLogger.Log(logLevel, logFormatString, logFormatData.Values.ToArray());
 		}

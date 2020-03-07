@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Ngrok.ApiClient;
-using Ngrok.AspNetCore.Exceptions;
+using NGrok.ApiClient;
+using NGrok.AspNetCore.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -9,31 +9,31 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Ngrok.AspNetCore.Services
+namespace NGrok.AspNetCore.Services
 {
-	public class NgrokProcessMgr
+	public class NGrokProcessMgr
 	{
-		private NgrokProcess _process;
-		private readonly ILogger<NgrokProcessMgr> _logger;
+		private NGrokProcess _process;
+		private readonly ILogger<NGrokProcessMgr> _logger;
 		private readonly ILoggerFactory _loggerFactory;
 		private readonly IApplicationLifetime _lifetime;
 
-		private readonly NgrokOptions _options;
-		private readonly INgrokApiClient _apiClient;
+		private readonly NGrokOptions _options;
+		private readonly INGrokApiClient _apiClient;
 
 		private SemaphoreSlim _processStartSemaphore = new SemaphoreSlim(0, 1);
 
 		public bool UsingManagedProcess { get; private set; }
 		public bool IsStarted { get; private set; }
 
-		public NgrokProcessMgr(
-			ILogger<NgrokProcessMgr> logger,
+		public NGrokProcessMgr(
+			ILogger<NGrokProcessMgr> logger,
 			ILoggerFactory loggerFactory,
 			IApplicationLifetime lifetime,
-			NgrokOptions options,
-			INgrokApiClient apiClient)
+			NGrokOptions options,
+			INGrokApiClient apiClient)
 		{
-			_logger = loggerFactory.CreateLogger<NgrokProcessMgr>();
+			_logger = loggerFactory.CreateLogger<NGrokProcessMgr>();
 			_loggerFactory = loggerFactory;
 			_options = options;
 			_apiClient = apiClient;
@@ -41,9 +41,9 @@ namespace Ngrok.AspNetCore.Services
 
 		}
 
-		public async Task EnsureNgrokStartedAsync(string nGrokPath)
+		public async Task EnsureNGrokStartedAsync(string nGrokPath)
 		{
-			// This allows an already-running Ngrok instance to be used, instead of the one we are starting here. 
+			// This allows an already-running NGrok instance to be used, instead of the one we are starting here. 
 			if (await _apiClient.CheckIfLocalAPIUpAsync())
 			{
 				return;
@@ -52,32 +52,32 @@ namespace Ngrok.AspNetCore.Services
 			try
 			{
 				UsingManagedProcess = true;
-				_process = new NgrokProcess(_lifetime, _loggerFactory);
+				_process = new NGrokProcess(_lifetime, _loggerFactory);
 
 				// Register OnProcessStarted Handler
 				_process.ProcessStarted += OnProcessStarted;
 
 				// Start Process
-				_process.StartNgrokProcess(nGrokPath);
+				_process.StartNGrokProcess(nGrokPath);
 
 				// Wait for Process to be started
-				await _processStartSemaphore.WaitAsync(TimeSpan.FromSeconds(_options.NgrokProcessStartTimeoutMs));
+				await _processStartSemaphore.WaitAsync(TimeSpan.FromSeconds(_options.NGrokProcessStartTimeoutMs));
 
 				// Verify API is up
 				var IsAPIUp = await _apiClient.CheckIfLocalAPIUpAsync();
 
 				if (!IsAPIUp)
 				{
-					throw new NgrokStartFailedException();
+					throw new NGrokStartFailedException();
 				}
 			}
 			catch (Exception ex)
 			{
-				throw new NgrokStartFailedException(ex);
+				throw new NGrokStartFailedException(ex);
 			}
 		}
 
-		public Task StopNgrokAsync()
+		public Task StopNGrokAsync()
 		{
 			_process.Stop();
 			return Task.CompletedTask;
