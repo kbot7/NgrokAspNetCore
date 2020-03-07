@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Hosting;
 
 namespace FluffySpoon.AspNet.NGrok.Sample
@@ -15,6 +16,8 @@ namespace FluffySpoon.AspNet.NGrok.Sample
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(x => x.UseStartup<Startup>());
+                .ConfigureWebHostDefaults(x => x
+                    .UseStartup<Startup>()
+                    .UseNGrok());
     }
 }

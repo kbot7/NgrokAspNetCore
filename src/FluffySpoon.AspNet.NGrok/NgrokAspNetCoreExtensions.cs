@@ -2,44 +2,53 @@
 // See the LICENSE file in the project root for more information.
 // Copyright (c) 2019 Kevin Gysberg
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using FluffySpoon.AspNet.NGrok.NGrokModels;
 using FluffySpoon.AspNet.NGrok.Services;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 
 namespace FluffySpoon.AspNet.NGrok
 {
 	public static class NGrokAspNetCoreExtensions
 	{
-		public static void AddNGrok(this IServiceCollection services, NGrokOptions options = null)
-		{
-			services.TryAddSingleton<NGrokProcess>();
+        public static IApplicationBuilder UseNGrokAutomaticUrlDetection(this IApplicationBuilder app)
+        {
+            var service = app.ApplicationServices.GetRequiredService<NGrokHostedService>();
+            service.InjectServerAddressesFeature(app.ServerFeatures.Get<IServerAddressesFeature>());
 
-			services.AddHttpClient<NGrokDownloader>();
-			services.AddHttpClient<NGrokApiClient>();
+            return app;
+        }
 
-			services.TryAddSingleton(options ?? new NGrokOptions());
+        public static IServiceCollection AddNGrok(this IServiceCollection services, NGrokOptions? options = null)
+        {
+            services.TryAddSingleton<NGrokProcess>();
 
-			services.AddLogging();
+            services.AddHttpClient<NGrokDownloader>();
+            services.AddHttpClient<NGrokApiClient>();
+
+            services.AddLogging();
 
             services.AddSingleton<NGrokHostedService>();
             services.AddSingleton<INGrokHostedService>(p => p.GetRequiredService<NGrokHostedService>());
-            services.AddSingleton<IHostedService>(p => p.GetRequiredService<NGrokHostedService>());
+
+            services.AddSingleton(options ?? new NGrokOptions());
+
+            return services;
         }
 
-        public static void UseNGrok(this IApplicationBuilder builder)
+        public static IWebHostBuilder UseNGrok(this IWebHostBuilder builder)
         {
-            var ngrokService = builder.ApplicationServices.GetRequiredService<NGrokHostedService>();
-			ngrokService.InjectServerAddressesFeature(builder.ServerFeatures.Get<IServerAddressesFeature>());
+            return builder
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddSingleton<IHostedService>(p => p.GetRequiredService<NGrokHostedService>());
+                });
         }
 	}
 }

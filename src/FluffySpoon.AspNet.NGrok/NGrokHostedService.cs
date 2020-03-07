@@ -19,15 +19,12 @@ namespace FluffySpoon.AspNet.NGrok
         private readonly NGrokDownloader _nGrokDownloader;
         private readonly ILogger<NGrokHostedService> _logger;
 
-        private readonly TaskCompletionSource<IReadOnlyCollection<Tunnel>> _tunnelTaskCompletionSource;
-
-        private string[] _serverAddresses;
-        private Task _runTask;
+        private readonly TaskCompletionSource<IReadOnlyCollection<Tunnel>> _tunnelTaskSource;
+        private readonly TaskCompletionSource<IReadOnlyCollection<string>> _serverAddressesSource;
 
         public async Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync()
         {
-            RunIfNotAlreadyRunning();
-            return await _tunnelTaskCompletionSource.Task;
+            return await WaitForTaskWithTimeout(_tunnelTaskSource.Task, 300_000, "No tunnels were found within 5 minutes. Perhaps the server was taking too long to start?");
         }
 
         public event Action<IEnumerable<Tunnel>> Ready;
@@ -43,31 +40,23 @@ namespace FluffySpoon.AspNet.NGrok
             _nGrokDownloader = nGrokDownloader;
             _logger = logger;
 
-            _tunnelTaskCompletionSource = new TaskCompletionSource<IReadOnlyCollection<Tunnel>>();
+            _tunnelTaskSource = new TaskCompletionSource<IReadOnlyCollection<Tunnel>>();
+            _serverAddressesSource = new TaskCompletionSource<IReadOnlyCollection<string>>();
+
+            RunAsync();
         }
 
-        public void InjectServerAddressesFeature(IServerAddressesFeature feature)
+        internal void InjectServerAddressesFeature(IServerAddressesFeature? feature)
         {
-            _serverAddresses = feature.Addresses.ToArray();
-            _logger.LogDebug("Inferred hosting URLs as {ServerAddresses}.", new object[] {_serverAddresses});
-
-            RunIfNotAlreadyRunning();
+            _logger.LogDebug("Inferred hosting URLs as {ServerAddresses}.", feature?.Addresses);
+            _serverAddressesSource.SetResult(feature?.Addresses.ToArray());
         }
 
-        private void RunIfNotAlreadyRunning()
-        {
-            if (_runTask != null)
-                return;
-
-            _logger.LogTrace("Starting NGrok.");
-            _runTask = RunAsync();
-        }
-
-        private async Task RunAsync()
+        private async void RunAsync()
         {
             await _nGrokDownloader.DownloadExecutableAsync();
 
-            var url = AdjustApplicationHttpUrlIfNeeded();
+            var url = await AdjustApplicationHttpUrlIfNeededAsync();
             _logger.LogInformation("Picked hosting URL {Url}.", url);
 
             var tunnels = await StartTunnelsAsync(url);
@@ -81,7 +70,7 @@ namespace FluffySpoon.AspNet.NGrok
             if (tunnels == null)
                 throw new ArgumentNullException(nameof(tunnels), "Tunnels was not expected to be null here.");
 
-            _tunnelTaskCompletionSource.SetResult(tunnels);
+            _tunnelTaskSource.SetResult(tunnels);
             Ready?.Invoke(tunnels);
         }
 
@@ -92,17 +81,28 @@ namespace FluffySpoon.AspNet.NGrok
             return tunnelsArray;
         }
 
-        private string AdjustApplicationHttpUrlIfNeeded()
+        private async Task<T> WaitForTaskWithTimeout<T>(Task<T> task, int timeoutInMilliseconds, string timeoutMessage)
+        {
+            if (await Task.WhenAny(task, Task.Delay(timeoutInMilliseconds)) == task)
+                await task;
+
+            throw new InvalidOperationException(timeoutMessage);
+        }
+
+        private async Task<string> AdjustApplicationHttpUrlIfNeededAsync()
         {
             var url = _options.ApplicationHttpUrl;
 
             if (string.IsNullOrWhiteSpace(url) || !Uri.TryCreate(url, UriKind.Absolute, out _))
             {
-                var addresses = _serverAddresses;
+                var addresses = await WaitForTaskWithTimeout(
+                    _serverAddressesSource.Task,
+                    30000,
+                    $"No {nameof(NGrokOptions.ApplicationHttpUrl)} was set in the settings, and the URL of the server could not be inferred within 30 seconds. Perhaps you are missing a call to {nameof(NGrokAspNetCoreExtensions.UseNGrokAutomaticUrlDetection)} in your Configure method of your Startup class?");
                 if (addresses != null)
                 {
                     url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
-                    url = url?.Replace("*", "localhost");
+                    url = url?.Replace("*", "localhost", StringComparison.InvariantCulture);
                 }
             }
 
