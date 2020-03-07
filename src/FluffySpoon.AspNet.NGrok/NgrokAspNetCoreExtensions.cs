@@ -26,7 +26,7 @@ namespace FluffySpoon.AspNet.NGrok
             return app;
         }
 
-        public static IServiceCollection AddNGrok(this IServiceCollection services, NGrokOptions? options = null)
+        public static IServiceCollection AddNGrok(this IServiceCollection services)
         {
             services.TryAddSingleton<NGrokProcess>();
 
@@ -38,16 +38,15 @@ namespace FluffySpoon.AspNet.NGrok
             services.AddSingleton<NGrokHostedService>();
             services.AddSingleton<INGrokHostedService>(p => p.GetRequiredService<NGrokHostedService>());
 
-            services.AddSingleton(options ?? new NGrokOptions());
-
             return services;
         }
 
-        public static IWebHostBuilder UseNGrok(this IWebHostBuilder builder)
+        public static IWebHostBuilder UseNGrok(this IWebHostBuilder builder, NgrokOptions? options = null)
         {
             return builder
                 .ConfigureServices((context, services) =>
                 {
+                    services.AddSingleton(options ?? new NgrokOptions());
                     services.AddSingleton<IHostedService>(p => p.GetRequiredService<NGrokHostedService>());
                 });
         }

@@ -4,7 +4,7 @@
 
 namespace FluffySpoon.AspNet.NGrok
 {
-	public class NGrokOptions
+	public class NgrokOptions
 	{
 		public bool Disable { get; set; }
 
@@ -13,6 +13,6 @@ namespace FluffySpoon.AspNet.NGrok
 		/// <summary>
 		/// Sets the local URL NGrok will proxy to. Must be http (not https) at this time. If not filled in, it will be populated automatically.
 		/// </summary>
-		public string ApplicationHttpUrl { get; set; }
+		public string? ApplicationHttpUrl { get; set; }
 	}
 }

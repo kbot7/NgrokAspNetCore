@@ -24,9 +24,9 @@ namespace FluffySpoon.AspNet.NGrok.Services
         private readonly HttpClient _nGrokApi;
         private readonly ILogger _logger;
         private readonly NGrokProcess _nGrokProcess;
-        private readonly NGrokOptions _options;
+        private readonly NgrokOptions _options;
 
-        public NGrokApiClient(HttpClient httpClient, NGrokProcess nGrokProcess, NGrokOptions options, ILogger<NGrokApiClient> logger)
+        public NGrokApiClient(HttpClient httpClient, NGrokProcess nGrokProcess, NgrokOptions options, ILogger<NGrokApiClient> logger)
         {
             _nGrokApi = httpClient;
             _options = options;

@@ -13,7 +13,7 @@ Add `AddNGrok` to your service registration
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddNGrok(/* optional options here */);
+    services.AddNGrok();
 }
 ```
 
@@ -24,7 +24,7 @@ public static IHostBuilder CreateHostBuilder(string[] args) =>
     Host.CreateDefaultBuilder(args)
         .ConfigureWebHostDefaults(x => x
             .UseStartup<Startup>()
-            .UseNGrok());
+            .UseNGrok(/* optional options here */));
 ```
 
 When the application starts up, NGrok will launch automatically and create a tunnel to the application. 

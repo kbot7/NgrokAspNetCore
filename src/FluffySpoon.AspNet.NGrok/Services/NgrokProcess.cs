@@ -11,12 +11,12 @@ namespace FluffySpoon.AspNet.NGrok.Services
 {
 	public class NGrokProcess
 	{
-        private readonly NGrokOptions _ngrokOptions;
+        private readonly NgrokOptions _ngrokOptions;
         private Process _process;
 
 		public NGrokProcess(
             IApplicationLifetime applicationLifetime,
-            NGrokOptions ngrokOptions)
+            NgrokOptions ngrokOptions)
         {
             _ngrokOptions = ngrokOptions;
             applicationLifetime.ApplicationStopping.Register(Stop);

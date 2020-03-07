@@ -15,7 +15,7 @@ namespace FluffySpoon.AspNet.NGrok
     class NGrokHostedService : INGrokHostedService
     {
         private readonly NGrokApiClient _apiClient;
-        private readonly NGrokOptions _options;
+        private readonly NgrokOptions _options;
         private readonly NGrokDownloader _nGrokDownloader;
         private readonly ILogger<NGrokHostedService> _logger;
 
@@ -34,7 +34,7 @@ namespace FluffySpoon.AspNet.NGrok
 
         public NGrokHostedService(
             NGrokApiClient apiClient,
-            NGrokOptions options,
+            NgrokOptions options,
             NGrokDownloader nGrokDownloader,
             ILogger<NGrokHostedService> logger)
         {
@@ -99,12 +99,12 @@ namespace FluffySpoon.AspNet.NGrok
         {
             var url = _options.ApplicationHttpUrl;
 
-            if (string.IsNullOrWhiteSpace(url) || !Uri.TryCreate(url, UriKind.Absolute, out _))
+            if (string.IsNullOrWhiteSpace(url))
             {
                 var addresses = await WaitForTaskWithTimeout(
                     _serverAddressesSource.Task,
                     30000,
-                    $"No {nameof(NGrokOptions.ApplicationHttpUrl)} was set in the settings, and the URL of the server could not be inferred within 30 seconds. Perhaps you are missing a call to {nameof(NGrokAspNetCoreExtensions.UseNGrokAutomaticUrlDetection)} in your Configure method of your Startup class?");
+                    $"No {nameof(NgrokOptions.ApplicationHttpUrl)} was set in the settings, and the URL of the server could not be inferred within 30 seconds. Perhaps you are missing a call to {nameof(NGrokAspNetCoreExtensions.UseNGrokAutomaticUrlDetection)} in your Configure method of your Startup class?");
                 if (addresses != null)
                 {
                     url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
