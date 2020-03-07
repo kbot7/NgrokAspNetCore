@@ -42,7 +42,7 @@ namespace FluffySpoon.AspNet.NGrok.Tests
         private static async Task AssertIsUrlReachableAsync(HttpClient httpClient, string url)
         {
             var stopwatch = Stopwatch.StartNew();
-            while (stopwatch.Elapsed < TimeSpan.FromSeconds(10))
+            while (stopwatch.Elapsed < TimeSpan.FromSeconds(60))
             {
                 try
                 {
