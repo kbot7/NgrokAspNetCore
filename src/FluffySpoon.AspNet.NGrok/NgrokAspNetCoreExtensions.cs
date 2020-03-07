@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using FluffySpoon.AspNet.NGrok.Services;
 using Microsoft.AspNetCore.Builder;
@@ -47,6 +48,9 @@ namespace FluffySpoon.AspNet.NGrok
             return builder
                 .ConfigureServices((context, services) =>
                 {
+                    if (services.All(x => x.ImplementationType != typeof(NGrokHostedService)))
+                        return;
+
                     services.AddSingleton<IHostedService>(p => p.GetRequiredService<NGrokHostedService>());
                 });
         }

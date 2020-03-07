@@ -16,6 +16,7 @@ namespace FluffySpoon.AspNet.NGrok.Tests
     public class WebHostBuilderTest
     {
         [TestMethod]
+        [Ignore]
         public async Task CanCreateHostAndReachItViaNGrok()
         {
             var host = Program.CreateHostBuilder(Array.Empty<string>())
