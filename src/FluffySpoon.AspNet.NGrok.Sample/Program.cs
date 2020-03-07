@@ -13,8 +13,8 @@ namespace FluffySpoon.AspNet.NGrok.Sample
             await host.RunAsync();
         }
 
-        private static IWebHostBuilder CreateHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(x => x.UseStartup<Startup>());
     }
 }

@@ -9,7 +9,7 @@ namespace FluffySpoon.AspNet.NGrok
 {
     public interface INGrokHostedService : IHostedService
     {
-        Task<IEnumerable<Tunnel>> GetTunnelsAsync();
+        Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync();
 
         event Action<IEnumerable<Tunnel>> Ready;
     }

@@ -14,17 +14,17 @@ namespace FluffySpoon.AspNet.NGrok
 {
     class NGrokHostedService : INGrokHostedService
     {
-        private readonly NGrokLocalApiClient _localApiClient;
+        private readonly NGrokApiClient _apiClient;
         private readonly NGrokOptions _options;
         private readonly NGrokDownloader _nGrokDownloader;
         private readonly ILogger<NGrokHostedService> _logger;
 
-        private readonly TaskCompletionSource<IEnumerable<Tunnel>> _tunnelTaskCompletionSource;
+        private readonly TaskCompletionSource<IReadOnlyCollection<Tunnel>> _tunnelTaskCompletionSource;
 
         private string[] _serverAddresses;
         private Task _runTask;
 
-        public async Task<IEnumerable<Tunnel>> GetTunnelsAsync()
+        public async Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync()
         {
             RunIfNotAlreadyRunning();
             return await _tunnelTaskCompletionSource.Task;
@@ -33,17 +33,17 @@ namespace FluffySpoon.AspNet.NGrok
         public event Action<IEnumerable<Tunnel>> Ready;
 
         public NGrokHostedService(
-            NGrokLocalApiClient localApiClient,
+            NGrokApiClient apiClient,
             NGrokOptions options,
             NGrokDownloader nGrokDownloader,
             ILogger<NGrokHostedService> logger)
         {
-            _localApiClient = localApiClient;
+            _apiClient = apiClient;
             _options = options;
             _nGrokDownloader = nGrokDownloader;
             _logger = logger;
 
-            _tunnelTaskCompletionSource = new TaskCompletionSource<IEnumerable<Tunnel>>();
+            _tunnelTaskCompletionSource = new TaskCompletionSource<IReadOnlyCollection<Tunnel>>();
         }
 
         public void InjectServerAddressesFeature(IServerAddressesFeature feature)
@@ -87,7 +87,7 @@ namespace FluffySpoon.AspNet.NGrok
 
         private async Task<Tunnel[]> StartTunnelsAsync(string url)
         {
-            var tunnels = await _localApiClient.StartTunnelsAsync(_options.NGrokPath, url);
+            var tunnels = await _apiClient.StartTunnelsAsync(_options.NGrokPath, url);
             var tunnelsArray = tunnels?.ToArray();
             return tunnelsArray;
         }
@@ -99,8 +99,11 @@ namespace FluffySpoon.AspNet.NGrok
             if (string.IsNullOrWhiteSpace(url) || !Uri.TryCreate(url, UriKind.Absolute, out _))
             {
                 var addresses = _serverAddresses;
-                if(addresses != null)
+                if (addresses != null)
+                {
                     url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
+                    url = url?.Replace("*", "localhost");
+                }
             }
 
             _options.ApplicationHttpUrl = url;
@@ -123,7 +126,7 @@ namespace FluffySpoon.AspNet.NGrok
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            _localApiClient.StopNGrok();
+            _apiClient.StopNGrok();
         }
     }
 }

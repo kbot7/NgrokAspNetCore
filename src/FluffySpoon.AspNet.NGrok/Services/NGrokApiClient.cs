@@ -19,14 +19,14 @@ using Newtonsoft.Json.Serialization;
 
 namespace FluffySpoon.AspNet.NGrok.Services
 {
-    public class NGrokLocalApiClient
+    public class NGrokApiClient
     {
         private readonly HttpClient _nGrokApi;
         private readonly ILogger _logger;
         private readonly NGrokProcess _nGrokProcess;
         private readonly NGrokOptions _options;
 
-        public NGrokLocalApiClient(HttpClient httpClient, NGrokProcess nGrokProcess, NGrokOptions options, ILogger<NGrokLocalApiClient> logger)
+        public NGrokApiClient(HttpClient httpClient, NGrokProcess nGrokProcess, NGrokOptions options, ILogger<NGrokApiClient> logger)
         {
             _nGrokApi = httpClient;
             _options = options;
@@ -39,14 +39,6 @@ namespace FluffySpoon.AspNet.NGrok.Services
             _nGrokApi.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="nGrokPath"></param>
-        /// <exception cref="NGrokStartFailedException">Throws when NGrok failed to start</exception>
-        /// <exception cref="NGrokUnsupportedException">Throws when NGrok is not suported on the os and architecture</exception>
-        /// <exception cref="NGrokNotFoundException">Throws when NGrok is not found and is unable to be downloaded automatically</exception>
-        /// <returns></returns>
         internal async Task<IEnumerable<Tunnel>> StartTunnelsAsync(string nGrokPath, string url)
         {
             await StartNGrokAsync(nGrokPath);
@@ -112,7 +104,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
             return tunnels != null;
         }
 
-        internal async Task<Tunnel[]> GetTunnelListAsync()
+        private async Task<Tunnel[]> GetTunnelListAsync()
         {
             try
             {
@@ -132,37 +124,12 @@ namespace FluffySpoon.AspNet.NGrok.Services
 
         private async Task<Tunnel> CreateTunnelAsync(string projectName, string address)
         {
-            if (string.IsNullOrEmpty(address))
-            {
-                address = "80";
-            }
-            else
-            {
-                if (!int.TryParse(address, out _))
-                {
-                    var url = new Uri(address);
-                    if (url.Port != 80 && url.Port != 443)
-                    {
-                        address = $"{url.Host}:{url.Port}";
-                    }
-                    else
-                    {
-                        if (address.StartsWith("http://"))
-                        {
-                            address = address.Remove(address.IndexOf("http://"), "http://".Length);
-                        }
-                        if (address.StartsWith("https://"))
-                        {
-                            address = address.Remove(address.IndexOf("https://"), "https://".Length);
-                        }
-                    }
-                }
-            }
+            var url = new Uri(address);
 
             var request = new NGrokTunnelApiRequest
             {
                 Name = projectName,
-                Addr = address,
+                Addr = url.Host + ":" + url.Port,
                 Proto = "http",
                 HostHeader = address
             };
@@ -185,6 +152,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
                     $"Could not create tunnel for {projectName} ({address}): " +
                     $"\n[{error.ErrorCode}] {error.Msg}" +
                     $"\nDetails: {error.Details.Err.Replace("\\n", "\n")}");
+                throw new InvalidOperationException("Could not create tunnel in NGrok: " + error.Msg);
             }
 
             var responseText = await response.Content.ReadAsStringAsync();

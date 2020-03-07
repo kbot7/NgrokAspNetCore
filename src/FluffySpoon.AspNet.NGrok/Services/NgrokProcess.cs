@@ -4,6 +4,7 @@
 // Pulled from Github on 2019-01-13 at https://github.com/dprothero/NGrokExtensions
 
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.Hosting;
 
 namespace FluffySpoon.AspNet.NGrok.Services
@@ -25,8 +26,9 @@ namespace FluffySpoon.AspNet.NGrok.Services
 		{
             var processInformation = new ProcessStartInfo(nGrokPath, "start --none")
             {
-                CreateNoWindow = !_ngrokOptions.ShowNGrokWindow, 
-                WindowStyle = _ngrokOptions.ShowNGrokWindow ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden
+                CreateNoWindow = true,
+                WindowStyle = _ngrokOptions.ShowNGrokWindow ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden,
+                UseShellExecute = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             };
 
             Start(processInformation);

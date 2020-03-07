@@ -18,8 +18,12 @@ namespace FluffySpoon.AspNet.NGrok.Sample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddNGrok();
-            services.AddControllersWithViews();
+            services.AddNGrok(new NGrokOptions()
+            {
+                ShowNGrokWindow = true
+            });
+            services.AddControllersWithViews()
+                .AddApplicationPart(typeof(Startup).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -27,17 +31,7 @@ namespace FluffySpoon.AspNet.NGrok.Sample
         {
             app.UseNGrok();
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-            app.UseHttpsRedirection();
+            app.UseDeveloperExceptionPage();
             app.UseStaticFiles();
 
             app.UseRouting();

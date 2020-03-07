@@ -25,7 +25,7 @@ namespace FluffySpoon.AspNet.NGrok
 			services.TryAddSingleton<NGrokProcess>();
 
 			services.AddHttpClient<NGrokDownloader>();
-			services.AddHttpClient<NGrokLocalApiClient>();
+			services.AddHttpClient<NGrokApiClient>();
 
 			services.TryAddSingleton(options ?? new NGrokOptions());
 
