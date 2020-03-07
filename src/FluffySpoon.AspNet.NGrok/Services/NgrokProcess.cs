@@ -24,12 +24,27 @@ namespace FluffySpoon.AspNet.NGrok.Services
 
 		public void StartNGrokProcess()
 		{
-            var processInformation = new ProcessStartInfo(RuntimeExtensions.GetNGrokExecutableString(), "start --none")
+            var processWindowStyle = _ngrokOptions.ShowNGrokWindow ? 
+                ProcessWindowStyle.Normal : 
+                ProcessWindowStyle.Hidden;
+
+            var linuxProcessStartInfo = new ProcessStartInfo("/bin/bash", "-c \"./ngrok start --none\"")
             {
                 CreateNoWindow = true,
-                WindowStyle = _ngrokOptions.ShowNGrokWindow ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden,
-                UseShellExecute = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                WindowStyle = processWindowStyle,
+                UseShellExecute = false
             };
+
+            var windowsProcessStartInfo = new ProcessStartInfo("NGrok.exe", "start --none")
+            {
+                CreateNoWindow = true,
+                WindowStyle = processWindowStyle,
+                UseShellExecute = true
+            };
+
+            var processInformation = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+                windowsProcessStartInfo :
+                linuxProcessStartInfo;
 
             Start(processInformation);
 		}

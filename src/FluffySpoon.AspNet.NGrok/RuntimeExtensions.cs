@@ -71,15 +71,5 @@ namespace FluffySpoon.AspNet.NGrok
 		{
 			return $"{GetOsString()}-{GetArchitectureString()}";
 		}
-
-		/// <summary>
-		/// Get NGrok executable name
-		/// </summary>
-		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
-		/// <returns></returns>
-		public static string GetNGrokExecutableString()
-        {
-            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "NGrok.exe" : "NGrok";
-        }
 	}
 }
