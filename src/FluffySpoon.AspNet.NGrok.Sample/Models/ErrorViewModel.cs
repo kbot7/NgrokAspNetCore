@@ -1,4 +1,4 @@
-namespace Ngrok.AspNetCore.Sample.Models
+namespace FluffySpoon.AspNet.NGrok.Models
 {
 	public class ErrorViewModel
 	{

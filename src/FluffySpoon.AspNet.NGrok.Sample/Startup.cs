@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Ngrok.AspNetCore;
 
-namespace Ngrok.AspNetCore.Sample
+namespace FluffySpoon.AspNet.NGrok.Sample
 {
 	public class Startup
 	{

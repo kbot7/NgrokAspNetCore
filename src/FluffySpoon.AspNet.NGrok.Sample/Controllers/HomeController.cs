@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
-using Ngrok.AspNetCore.Sample.Models;
+using FluffySpoon.AspNet.NGrok.Models;
 using Ngrok.AspNetCore.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Ngrok.AspNetCore;
 
-namespace Ngrok.AspNetCore.Sample.Controllers
+namespace FluffySpoon.AspNet.NGrok.Controllers
 {
 	public class HomeController : Controller
 	{

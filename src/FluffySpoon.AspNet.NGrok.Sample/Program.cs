@@ -3,7 +3,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Ngrok.AspNetCore.Sample
+namespace FluffySpoon.AspNet.NGrok.Sample
 {
 	public class Program
 	{
