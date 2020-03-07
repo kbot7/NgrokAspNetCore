@@ -6,6 +6,7 @@ namespace FluffySpoon.AspNet.NGrok
 {
 	public class NGrokOptions
 	{
+		public bool Disable { get; set; }
 
 		public bool ShowNGrokWindow { get; set; }
 

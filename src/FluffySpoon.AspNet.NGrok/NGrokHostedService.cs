@@ -54,6 +54,9 @@ namespace FluffySpoon.AspNet.NGrok
 
         private async void RunAsync()
         {
+            if (_options.Disable)
+                return;
+
             await _nGrokDownloader.DownloadExecutableAsync();
 
             var url = await AdjustApplicationHttpUrlIfNeededAsync();

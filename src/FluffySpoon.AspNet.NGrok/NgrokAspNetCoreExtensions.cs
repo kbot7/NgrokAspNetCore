@@ -48,9 +48,6 @@ namespace FluffySpoon.AspNet.NGrok
             return builder
                 .ConfigureServices((context, services) =>
                 {
-                    if (services.All(x => x.ImplementationType != typeof(NGrokHostedService)))
-                        return;
-
                     services.AddSingleton<IHostedService>(p => p.GetRequiredService<NGrokHostedService>());
                 });
         }
