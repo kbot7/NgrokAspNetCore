@@ -65,7 +65,7 @@ namespace FluffySpoon.AspNet.NGrok
 
         private async Task RunAsync()
         {
-            await DownloadNGrokIfNeededAsync();
+            await _nGrokDownloader.DownloadExecutableAsync();
 
             var url = AdjustApplicationHttpUrlIfNeeded();
             _logger.LogInformation("Picked hosting URL {Url}.", url);
@@ -87,7 +87,7 @@ namespace FluffySpoon.AspNet.NGrok
 
         private async Task<Tunnel[]> StartTunnelsAsync(string url)
         {
-            var tunnels = await _apiClient.StartTunnelsAsync(_options.NGrokPath, url);
+            var tunnels = await _apiClient.StartTunnelsAsync(url);
             var tunnelsArray = tunnels?.ToArray();
             return tunnelsArray;
         }
@@ -112,12 +112,6 @@ namespace FluffySpoon.AspNet.NGrok
                 throw new InvalidOperationException("No application URL has been set, and it could not be inferred.");
 
             return url;
-        }
-
-        private async Task DownloadNGrokIfNeededAsync()
-        {
-            var nGrokFullPath = await _nGrokDownloader.EnsureNGrokInstalled(_options);
-            _options.NGrokPath = nGrokFullPath;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)

@@ -22,59 +22,25 @@ namespace FluffySpoon.AspNet.NGrok.Services
 		}
 
 		/// <summary>
-		/// Check if NGrok present in current directory or Windows PATH variable. If not, download from CDN, and throw exception if download fails
-		/// </summary>
-		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
-		/// <exception cref="NGrokNotFoundException">Throws if NGrok not found and failed to download from CDN</exception>
-		/// <returns></returns>
-		public async Task<string> EnsureNGrokInstalled(NGrokOptions options)
-		{
-			// Search options
-			var fileInOptions = !string.IsNullOrWhiteSpace(options.NGrokPath) && File.Exists(options.NGrokPath);
-			if (fileInOptions)
-			{
-				return options.NGrokPath;
-			}
-
-			// Search execution directory
-			var fileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNGrokExecutableString()));
-			if (fileExists)
-			{
-				return Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNGrokExecutableString());
-			}
-
-			// Search Windows PATH
-			var envFullPath = PathExtensions.GetFullPathFromEnvPath("NGrok.exe");
-			if (!string.IsNullOrWhiteSpace(envFullPath) && File.Exists(envFullPath))
-			{
-				return envFullPath;
-			}
-
-			// Throw exception if not found yet and downloading is disabled
-			if (!options.DownloadNGrok) throw new NGrokNotFoundException();
-
-			await DownloadNGrokAsync();
-			return RuntimeExtensions.GetNGrokExecutableString();
-		}
-
-		/// <summary>
 		/// Download NGrok from equinox.io CDN
 		/// </summary>
 		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <exception cref="HttpRequestException">Throws if failed to download from CDN</exception>
 		/// <returns></returns>
-		public async Task DownloadNGrokAsync()
+		public async Task DownloadExecutableAsync()
 		{
 			var downloadUrl = GetDownloadPath();
 			var fileName = $"{RuntimeExtensions.GetOsArchitectureString()}.zip";
 			var filePath = $"{Path.Combine(Directory.GetCurrentDirectory(), fileName)}";
+            if (File.Exists(filePath))
+                return;
 
 			var downloadResponse = await _httpClient.GetAsync(downloadUrl);
 			downloadResponse.EnsureSuccessStatusCode();
 
 			// Download Zip
 			var downloadStream = await downloadResponse.Content.ReadAsStreamAsync();
-			using (var writer = File.Create(filePath))
+            await using (var writer = File.Create(filePath))
 			{
 				await downloadStream.CopyToAsync(writer);
 			}

@@ -22,9 +22,9 @@ namespace FluffySpoon.AspNet.NGrok.Services
             applicationLifetime.ApplicationStopping.Register(Stop);
         }
 
-		public void StartNGrokProcess(string nGrokPath)
+		public void StartNGrokProcess()
 		{
-            var processInformation = new ProcessStartInfo(nGrokPath, "start --none")
+            var processInformation = new ProcessStartInfo(RuntimeExtensions.GetNGrokExecutableString(), "start --none")
             {
                 CreateNoWindow = true,
                 WindowStyle = _ngrokOptions.ShowNGrokWindow ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden,

@@ -39,9 +39,9 @@ namespace FluffySpoon.AspNet.NGrok.Services
             _nGrokApi.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        internal async Task<IEnumerable<Tunnel>> StartTunnelsAsync(string nGrokPath, string url)
+        internal async Task<IEnumerable<Tunnel>> StartTunnelsAsync(string url)
         {
-            await StartNGrokAsync(nGrokPath);
+            await StartNGrokAsync();
 
             if (await HasTunnelByAddressAsync(url))
                 return await GetTunnelListAsync();
@@ -68,9 +68,9 @@ namespace FluffySpoon.AspNet.NGrok.Services
         }
 
         /// <returns></returns>
-        private async Task StartNGrokAsync(string nGrokPath)
+        private async Task StartNGrokAsync()
         {
-            _nGrokProcess.StartNGrokProcess(nGrokPath);
+            _nGrokProcess.StartNGrokProcess();
 
             try
             {
