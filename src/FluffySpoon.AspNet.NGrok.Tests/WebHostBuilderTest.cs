@@ -28,7 +28,6 @@ namespace FluffySpoon.AspNet.NGrok.Tests
 
             using var httpClient = new HttpClient();
             await AssertIsUrlReachableAsync(httpClient, "http://localhost:14568/");
-            await AssertIsUrlReachableAsync(httpClient, "https://localhost:14569/");
 
             var ngrokService = host.Services.GetRequiredService<INGrokHostedService>();
             var tunnels = await ngrokService.GetTunnelsAsync();

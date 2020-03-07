@@ -80,7 +80,7 @@ namespace FluffySpoon.AspNet.NGrok
             Ready?.Invoke(tunnels);
         }
 
-        private async Task<Tunnel[]> StartTunnelsAsync(string url)
+        private async Task<Tunnel[]?> StartTunnelsAsync(string url)
         {
             var tunnels = await _apiClient.StartTunnelsAsync(url);
             var tunnelsArray = tunnels?.ToArray();
