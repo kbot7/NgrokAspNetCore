@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NGrok.ApiClient;
-using NGrok.AspNetCore.Exceptions;
+using FluffySpoon.AspNet.NGrok.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NGrok.AspNetCore.Services
+namespace FluffySpoon.AspNet.NGrok.Services
 {
 	public class NGrokProcessMgr
 	{

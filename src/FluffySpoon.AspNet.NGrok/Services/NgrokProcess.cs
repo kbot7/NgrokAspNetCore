@@ -11,9 +11,9 @@ using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NGrok.AspNetCore.Extensions;
+using FluffySpoon.AspNet.NGrok.Extensions;
 
-namespace NGrok.AspNetCore.Services
+namespace FluffySpoon.AspNet.NGrok.Services
 {
 	public class NGrokProcess
 	{

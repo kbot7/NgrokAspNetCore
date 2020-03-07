@@ -5,7 +5,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace NGrok.AspNetCore.Exceptions
+namespace FluffySpoon.AspNet.NGrok.Exceptions
 {
 	public class NGrokUnsupportedException : Exception
 	{

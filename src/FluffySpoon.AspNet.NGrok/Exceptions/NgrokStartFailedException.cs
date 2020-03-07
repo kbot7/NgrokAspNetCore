@@ -4,7 +4,7 @@
 
 using System;
 
-namespace NGrok.AspNetCore.Exceptions
+namespace FluffySpoon.AspNet.NGrok.Exceptions
 {
 	[Serializable]
 	internal class NGrokStartFailedException : Exception

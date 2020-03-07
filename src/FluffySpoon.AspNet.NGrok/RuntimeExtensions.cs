@@ -3,9 +3,9 @@
 // Copyright (c) 2019 Kevin Gysberg
 
 using System.Runtime.InteropServices;
-using NGrok.AspNetCore.Exceptions;
+using FluffySpoon.AspNet.NGrok.Exceptions;
 
-namespace NGrok.AspNetCore
+namespace FluffySpoon.AspNet.NGrok
 {
 	public static class RuntimeExtensions
 	{

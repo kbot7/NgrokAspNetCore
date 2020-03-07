@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace NGrok.AspNetCore.Extensions
+namespace FluffySpoon.AspNet.NGrok.Extensions
 {
 	public static class NGrokLogExtensions
 	{

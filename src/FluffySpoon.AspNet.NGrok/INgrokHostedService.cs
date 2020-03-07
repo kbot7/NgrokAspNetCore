@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using NGrok.ApiClient;
 
-namespace NGrok.AspNetCore
+namespace FluffySpoon.AspNet.NGrok
 {
 	public interface INGrokHostedService : IHostedService
 	{

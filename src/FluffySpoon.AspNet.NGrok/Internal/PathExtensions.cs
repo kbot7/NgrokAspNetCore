@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 
-namespace NGrok.AspNetCore.Internal
+namespace FluffySpoon.AspNet.NGrok.Internal
 {
 	internal static class PathExtensions
 	{

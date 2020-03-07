@@ -7,7 +7,7 @@
 		<PackageLicenseUrl>https://raw.githubusercontent.com/kg73/NGrokAspNetCore/master/LICENSE</PackageLicenseUrl>
 		<Company />
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-		<RootNamespace>NGrok.AspNetCore</RootNamespace>
+		<RootNamespace>FluffySpoon.AspNet.NGrok</RootNamespace>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

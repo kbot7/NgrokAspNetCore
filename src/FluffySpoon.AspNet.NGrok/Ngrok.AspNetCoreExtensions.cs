@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NGrok.AspNetCore.Services;
+using FluffySpoon.AspNet.NGrok.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using NGrok.ApiClient;
 
-namespace NGrok.AspNetCore
+namespace FluffySpoon.AspNet.NGrok
 {
 	public static class NGrokAspNetCoreExtensions
 	{

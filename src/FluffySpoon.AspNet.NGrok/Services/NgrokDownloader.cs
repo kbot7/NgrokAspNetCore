@@ -7,10 +7,10 @@ using System.IO.Compression;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using NGrok.AspNetCore.Exceptions;
-using NGrok.AspNetCore.Internal;
+using FluffySpoon.AspNet.NGrok.Exceptions;
+using FluffySpoon.AspNet.NGrok.Internal;
 
-namespace NGrok.AspNetCore.Services
+namespace FluffySpoon.AspNet.NGrok.Services
 {
 	public class NGrokDownloader
 	{

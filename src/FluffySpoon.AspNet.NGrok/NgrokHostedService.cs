@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using NGrok.AspNetCore.Services;
+using FluffySpoon.AspNet.NGrok.Services;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using NGrok.ApiClient;
 using Tunnel = NGrok.ApiClient.Tunnel;
 
-namespace NGrok.AspNetCore
+namespace FluffySpoon.AspNet.NGrok
 {
 	class NGrokHostedService : INGrokHostedService
 	{

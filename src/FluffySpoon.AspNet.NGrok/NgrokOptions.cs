@@ -2,7 +2,7 @@
 // See the LICENSE file in the project root for more information.
 // Copyright (c) 2019 Kevin Gysberg
 
-namespace NGrok.AspNetCore
+namespace FluffySpoon.AspNet.NGrok
 {
 	public class NGrokOptions
 	{
