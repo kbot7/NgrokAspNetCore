@@ -24,6 +24,9 @@ namespace FluffySpoon.AspNet.NGrok
 
         public async Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync()
         {
+            if (_options.Disable)
+                return Array.Empty<Tunnel>();
+
             return await WaitForTaskWithTimeout(_tunnelTaskSource.Task, 300_000, "No tunnels were found within 5 minutes. Perhaps the server was taking too long to start?");
         }
 
