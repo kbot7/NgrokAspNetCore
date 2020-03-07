@@ -8,6 +8,7 @@ using FluffySpoon.AspNet.NGrok.NGrokModels;
 using FluffySpoon.AspNet.NGrok.Services;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace FluffySpoon.AspNet.NGrok
 {
@@ -16,6 +17,7 @@ namespace FluffySpoon.AspNet.NGrok
         private readonly NGrokLocalApiClient _localApiClient;
         private readonly NGrokOptions _options;
         private readonly NGrokDownloader _nGrokDownloader;
+        private readonly ILogger<NGrokHostedService> _logger;
 
         private readonly TaskCompletionSource<IEnumerable<Tunnel>> _tunnelTaskCompletionSource;
 
@@ -33,11 +35,13 @@ namespace FluffySpoon.AspNet.NGrok
         public NGrokHostedService(
             NGrokLocalApiClient localApiClient,
             NGrokOptions options,
-            NGrokDownloader nGrokDownloader)
+            NGrokDownloader nGrokDownloader,
+            ILogger<NGrokHostedService> logger)
         {
             _localApiClient = localApiClient;
             _options = options;
             _nGrokDownloader = nGrokDownloader;
+            _logger = logger;
 
             _tunnelTaskCompletionSource = new TaskCompletionSource<IEnumerable<Tunnel>>();
         }
@@ -45,6 +49,8 @@ namespace FluffySpoon.AspNet.NGrok
         public void InjectServerAddressesFeature(IServerAddressesFeature feature)
         {
             _serverAddresses = feature.Addresses.ToArray();
+            _logger.LogTrace("Inferred hosting URLs as {ServerAddresses}.", new object[] {_serverAddresses});
+
             RunIfNotAlreadyRunning();
         }
 
@@ -53,15 +59,20 @@ namespace FluffySpoon.AspNet.NGrok
             if (_runTask != null)
                 return;
 
+            _logger.LogTrace("Starting NGrok.");
             _runTask = RunAsync();
         }
 
         private async Task RunAsync()
         {
             await DownloadNGrokIfNeededAsync();
+
             var url = AdjustApplicationHttpUrlIfNeeded();
+            _logger.LogInformation("Picked hosting URL {Url}.", url);
 
             var tunnels = await StartTunnelsAsync(url);
+            _logger.LogInformation("Tunnels {Tunnels} have been started.", tunnels);
+
             OnTunnelsFetched(tunnels);
         }
 
