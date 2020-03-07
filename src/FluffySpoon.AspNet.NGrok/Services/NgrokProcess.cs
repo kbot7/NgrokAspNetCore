@@ -3,9 +3,12 @@
 // Copyright (c) 2016 David Prothero
 // Pulled from Github on 2019-01-13 at https://github.com/dprothero/NGrokExtensions
 
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Hosting;
+using Mono.Unix;
 
 namespace FluffySpoon.AspNet.NGrok.Services
 {
@@ -28,18 +31,20 @@ namespace FluffySpoon.AspNet.NGrok.Services
                 ProcessWindowStyle.Normal : 
                 ProcessWindowStyle.Hidden;
 
-            var linuxProcessStartInfo = new ProcessStartInfo("/bin/bash", "-c \"./ngrok start --none\"")
+            var linuxProcessStartInfo = new ProcessStartInfo("/bin/bash", "-c \"" + Directory.GetCurrentDirectory() + "/ngrok start --none\"")
             {
                 CreateNoWindow = true,
                 WindowStyle = processWindowStyle,
-                UseShellExecute = false
+                UseShellExecute = false,
+                WorkingDirectory = Environment.CurrentDirectory
             };
 
             var windowsProcessStartInfo = new ProcessStartInfo("NGrok.exe", "start --none")
             {
                 CreateNoWindow = true,
                 WindowStyle = processWindowStyle,
-                UseShellExecute = true
+                UseShellExecute = true,
+                WorkingDirectory = Environment.CurrentDirectory
             };
 
             var processInformation = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
@@ -53,7 +58,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
         {
             KillExistingNGrokProcesses();
             _process = Process.Start(pi);
-		}
+        }
 
 		public void Stop()
 		{

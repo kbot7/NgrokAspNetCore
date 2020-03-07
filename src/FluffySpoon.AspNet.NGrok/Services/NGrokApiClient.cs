@@ -104,7 +104,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
             return tunnels != null;
         }
 
-        private async Task<Tunnel[]> GetTunnelListAsync()
+        private async Task<Tunnel[]?> GetTunnelListAsync()
         {
             try
             {
@@ -141,23 +141,25 @@ namespace FluffySpoon.AspNet.NGrok.Services
             Debug.WriteLine($"request: '{json}'");
 
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _nGrokApi.PostAsync("/api/tunnels", httpContent);
-            if (!response.IsSuccessStatusCode)
+            while (true)
             {
-                var errorText = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine($"{response.StatusCode} errorText: '{errorText}'");
+                var response = await _nGrokApi.PostAsync("/api/tunnels", httpContent);
+                var responseText = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                    return JsonConvert.DeserializeObject<Tunnel>(responseText);
 
-                var error = JsonConvert.DeserializeObject<NGrokErrorApiResult>(errorText);
-                _logger.Log(LogLevel.Error,
-                    $"Could not create tunnel for {projectName} ({address}): " +
-                    $"\n[{error.ErrorCode}] {error.Msg}" +
-                    $"\nDetails: {error.Details.Err.Replace("\\n", "\n")}");
-                throw new InvalidOperationException("Could not create tunnel in NGrok: " + error.Msg);
+                var error = JsonConvert.DeserializeObject<NGrokErrorApiResult>(responseText);
+
+                var ERROR_CODE_NGROK_NOT_READY_TO_START_TUNNELS = 104;
+                if (error.ErrorCode == ERROR_CODE_NGROK_NOT_READY_TO_START_TUNNELS)
+                {
+                    await Task.Delay(100);
+                    continue;
+                }
+
+                throw new InvalidOperationException(
+                    $"Could not create tunnel for {projectName} ({address}): " + responseText);
             }
-
-            var responseText = await response.Content.ReadAsStringAsync();
-            Debug.WriteLine($"responseText: '{responseText}'");
-            return JsonConvert.DeserializeObject<Tunnel>(responseText);
         }
     }
 }

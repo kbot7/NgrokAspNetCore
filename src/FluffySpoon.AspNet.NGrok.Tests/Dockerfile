@@ -9,3 +9,4 @@ RUN dotnet restore "FluffySpoon.AspNet.NGrok.Tests/FluffySpoon.AspNet.NGrok.Test
 COPY . .
 WORKDIR "/src/FluffySpoon.AspNet.NGrok.Tests"
 ENTRYPOINT ["dotnet", "test"]
+#CMD tail -f /dev/null
