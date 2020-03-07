@@ -84,7 +84,7 @@ namespace FluffySpoon.AspNet.NGrok
         private async Task<T> WaitForTaskWithTimeout<T>(Task<T> task, int timeoutInMilliseconds, string timeoutMessage)
         {
             if (await Task.WhenAny(task, Task.Delay(timeoutInMilliseconds)) == task)
-                await task;
+                return await task;
 
             throw new InvalidOperationException(timeoutMessage);
         }
