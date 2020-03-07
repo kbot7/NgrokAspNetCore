@@ -11,11 +11,7 @@ namespace FluffySpoon.AspNet.NGrok
 		/// </summary>
 		public string NGrokPath { get; set; }
 
-		/// <summary>
-		/// Set to NGrok profile specified in NGrok config. NGrok config file must be present to use this option
-		/// See <see href="https://NGrok.com/docs#config">https://NGrok.com/docs#config</see> for details
-		/// </summary>
-		public string NGrokConfigProfile { get; set; }
+		public bool ShowNGrokWindow { get; set; }
 
 		/// <summary>
 		/// Sets the local URL NGrok will proxy to. Must be http (not https) at this time. If not filled in, it will be populated automatically at runtime via the IWebHost features
