@@ -49,7 +49,7 @@ namespace FluffySpoon.AspNet.NGrok
         public void InjectServerAddressesFeature(IServerAddressesFeature feature)
         {
             _serverAddresses = feature.Addresses.ToArray();
-            _logger.LogTrace("Inferred hosting URLs as {ServerAddresses}.", new object[] {_serverAddresses});
+            _logger.LogDebug("Inferred hosting URLs as {ServerAddresses}.", new object[] {_serverAddresses});
 
             RunIfNotAlreadyRunning();
         }
