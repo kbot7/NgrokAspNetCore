@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  sut:
+    image: ${DOCKER_REGISTRY-}ngrok-tests
+    build:
+      context: .
+      dockerfile: FluffySpoon.AspNet.NGrok.Tests/Dockerfile

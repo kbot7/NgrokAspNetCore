@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NGrok.AspNetCore\NGrok.AspNetCore.csproj" />
+    <ProjectReference Include="..\FluffySpoon.AspNet.NGrok\FluffySpoon.AspNet.NGrok.csproj" />
   </ItemGroup>
 
 </Project>

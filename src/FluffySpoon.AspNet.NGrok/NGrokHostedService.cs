@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using NGrok.ApiClient;
 using Tunnel = NGrok.ApiClient.Tunnel;
+using Microsoft.Extensions.Logging;
 
 namespace FluffySpoon.AspNet.NGrok
 {
@@ -21,15 +22,18 @@ namespace FluffySpoon.AspNet.NGrok
 		private readonly INGrokApiClient _client;
 		private readonly IServer _server;
 		private readonly IApplicationLifetime _applicationLifetime;
+        private readonly ILogger<NGrokHostedService> _logger;
 
-		private readonly TaskCompletionSource<IEnumerable<Tunnel>> _tunnelTaskCompletionSource;
+        private readonly TaskCompletionSource<IReadOnlyCollection<Tunnel>> _tunnelTaskSource;
+        private readonly TaskCompletionSource<IReadOnlyCollection<string>> _serverAddressesSource;
 
-		private ICollection<string> _addresses;
+        public async Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync()
+        {
+            if (_options.Disable)
+                return Array.Empty<Tunnel>();
 
-		public async Task<IEnumerable<Tunnel>> GetTunnelsAsync()
-		{
-			return await _tunnelTaskCompletionSource.Task;
-		}
+            return await WaitForTaskWithTimeout(_tunnelTaskSource.Task, 300_000, "No tunnels were found within 5 minutes. Perhaps the server was taking too long to start?");
+        }
 
 		public event Action<IEnumerable<Tunnel>> Ready;
 
@@ -48,30 +52,42 @@ namespace FluffySpoon.AspNet.NGrok
 			_processMgr = processMgr;
 			_client = client;
 
-			_tunnelTaskCompletionSource = new TaskCompletionSource<IEnumerable<Tunnel>>();
-		}
+            _tunnelTaskSource = new TaskCompletionSource<IReadOnlyCollection<Tunnel>>();
+            _serverAddressesSource = new TaskCompletionSource<IReadOnlyCollection<string>>();
+        }
 
+		internal void InjectServerAddressesFeature(IServerAddressesFeature? feature)
+		{
+			_logger.LogDebug("Inferred hosting URLs as {ServerAddresses}.", feature?.Addresses);
+			_serverAddressesSource.SetResult(feature?.Addresses.ToArray());
+		}
 
 		private async Task RunAsync()
-		{
-			await DownloadNGrokIfNeededAsync();
-			await _processMgr.EnsureNGrokStartedAsync(_options.NGrokPath);
-			var url = AdjustApplicationHttpUrlIfNeeded();
+        {
+            if (_options.Disable)
+                return;
 
-			var tunnels = await StartTunnelsAsync(url);
-			OnTunnelsFetched(tunnels);
-		}
+            await _nGrokDownloader.DownloadExecutableAsync();
+            await _processMgr.EnsureNGrokStartedAsync();
+            var url = await AdjustApplicationHttpUrlIfNeededAsync();
+            _logger.LogInformation("Picked hosting URL {Url}.", url);
+
+            var tunnels = await StartTunnelsAsync(url);
+            _logger.LogInformation("Tunnels {Tunnels} have been started.", tunnels);
+
+            OnTunnelsFetched(tunnels);
+        }
 
 		private void OnTunnelsFetched(IEnumerable<Tunnel> tunnels)
 		{
 			if (tunnels == null)
 				throw new ArgumentNullException(nameof(tunnels), "Tunnels was not expected to be null here.");
 
-			_tunnelTaskCompletionSource.SetResult(tunnels);
-			Ready?.Invoke(tunnels);
-		}
+            _tunnelTaskSource.SetResult(tunnels.ToArray());
+            Ready?.Invoke(tunnels);
+        }
 
-		private async Task<IEnumerable<Tunnel>> StartTunnelsAsync(string address)
+		private async Task<Tunnel[]?> StartTunnelsAsync(string address)
 		{
 			if (string.IsNullOrEmpty(address))
 			{
@@ -112,19 +128,36 @@ namespace FluffySpoon.AspNet.NGrok
 			// Get Tunnels
 			var tunnels = (await _client.ListTunnelsAsync())
 				.Where(t => t.Name == System.AppDomain.CurrentDomain.FriendlyName ||
-				t.Name == $"{System.AppDomain.CurrentDomain.FriendlyName} (http)");
+				t.Name == $"{System.AppDomain.CurrentDomain.FriendlyName} (http)")
+				?.ToArray();
 
 			return tunnels;
 		}
 
-		private string AdjustApplicationHttpUrlIfNeeded()
-		{
-			var url = _options.ApplicationHttpUrl;
+        private async Task<T> WaitForTaskWithTimeout<T>(Task<T> task, int timeoutInMilliseconds, string timeoutMessage)
+        {
+            if (await Task.WhenAny(task, Task.Delay(timeoutInMilliseconds)) == task)
+                return await task;
 
-			if (string.IsNullOrWhiteSpace(url) || !Uri.TryCreate(url, UriKind.Absolute, out _))
-			{
-				url = _addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? _addresses.FirstOrDefault();
-			}
+            throw new InvalidOperationException(timeoutMessage);
+        }
+
+        private async Task<string> AdjustApplicationHttpUrlIfNeededAsync()
+        {
+            var url = _options.ApplicationHttpUrl;
+
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                var addresses = await WaitForTaskWithTimeout(
+                    _serverAddressesSource.Task,
+                    30000,
+                    $"No {nameof(NGrokOptions.ApplicationHttpUrl)} was set in the settings, and the URL of the server could not be inferred within 30 seconds. Perhaps you are missing a call to {nameof(NGrokAspNetCoreExtensions.UseNGrokAutomaticUrlDetection)} in your Configure method of your Startup class?");
+                if (addresses != null)
+                {
+                    url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
+                    url = url?.Replace("*", "localhost", StringComparison.InvariantCulture);
+                }
+            }
 
 			_options.ApplicationHttpUrl = url;
 
@@ -134,12 +167,6 @@ namespace FluffySpoon.AspNet.NGrok
 			return url;
 		}
 
-		private async Task DownloadNGrokIfNeededAsync()
-		{
-			var nGrokFullPath = await _nGrokDownloader.EnsureNGrokInstalled(_options);
-			_options.NGrokPath = nGrokFullPath;
-		}
-
 		public async Task StartAsync(CancellationToken cancellationToken)
 		{
 			_applicationLifetime.ApplicationStarted.Register(() => OnApplicationStarted());
@@ -147,7 +174,11 @@ namespace FluffySpoon.AspNet.NGrok
 
 		public Task OnApplicationStarted()
 		{
-			_addresses = _server.Features.Get<IServerAddressesFeature>().Addresses.ToArray();
+			var addressFeature = _server.Features.Get<IServerAddressesFeature>();
+
+			_logger.LogDebug("Inferred hosting URLs as {ServerAddresses}.", addressFeature?.Addresses);
+			_serverAddressesSource.SetResult(addressFeature?.Addresses.ToArray());
+
 			return RunAsync();
 		}
 

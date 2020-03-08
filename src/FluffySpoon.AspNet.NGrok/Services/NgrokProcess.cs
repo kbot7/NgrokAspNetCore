@@ -12,6 +12,8 @@ using System.Text;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using FluffySpoon.AspNet.NGrok.Extensions;
+using Mono.Unix;
+using System.Runtime.InteropServices;
 
 namespace FluffySpoon.AspNet.NGrok.Services
 {
@@ -19,85 +21,116 @@ namespace FluffySpoon.AspNet.NGrok.Services
 	{
 		private Process _process;
 		private ILogger _ngrokProcessLogger;
+        private readonly NGrokOptions _ngrokOptions;
 
 		public Action ProcessStarted { get; set; }
 
-		public NGrokProcess(IApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory)
+		public NGrokProcess(
+            IApplicationLifetime applicationLifetime,
+            NGrokOptions ngrokOptions,
+			ILoggerFactory loggerFactory
+			)
 		{
-			applicationLifetime.ApplicationStopping.Register(Stop);
+            _ngrokOptions = ngrokOptions;
+            applicationLifetime.ApplicationStopping.Register(Stop);
 			_ngrokProcessLogger = loggerFactory.CreateLogger("NGrokProcess");
 		}
 
-		public void StartNGrokProcess(string nGrokPath)
+		public void StartNGrokProcess()
 		{
-			var processInformation = new ProcessStartInfo(nGrokPath, "start --none --log=stdout")
-			{
-				CreateNoWindow = true,
-				WindowStyle = ProcessWindowStyle.Hidden,
-				UseShellExecute = false,
-				RedirectStandardOutput = true,
-				RedirectStandardError = true
-			};
+            var processWindowStyle = _ngrokOptions.ShowNGrokWindow ? 
+                ProcessWindowStyle.Normal : 
+                ProcessWindowStyle.Hidden;
 
-			Start(processInformation);
+            var linuxProcessStartInfo = new ProcessStartInfo("/bin/bash", "-c \"" + Directory.GetCurrentDirectory() + "/ngrok start --none --log=stdout\"")
+            {
+                CreateNoWindow = true,
+                WindowStyle = processWindowStyle,
+                UseShellExecute = false,
+                WorkingDirectory = Environment.CurrentDirectory,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+
+            var windowsProcessStartInfo = new ProcessStartInfo("NGrok.exe", "start --none --log=stdout")
+            {
+                CreateNoWindow = true,
+                WindowStyle = processWindowStyle,
+                UseShellExecute = true,
+                WorkingDirectory = Environment.CurrentDirectory,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+
+            var processInformation = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+                windowsProcessStartInfo :
+                linuxProcessStartInfo;
+
+            Start(processInformation);
 		}
 
 		protected virtual void Start(ProcessStartInfo pi)
-		{
-			var process = new Process();
-			process.StartInfo = pi;
+        {
+            KillExistingNGrokProcesses();
+            var process = new Process();
+            process.StartInfo = pi;
 
-			process.OutputDataReceived += ProcessStandardOutput;
-			process.ErrorDataReceived += ProcessStandardError;
-			process.Start();
-			process.BeginOutputReadLine();
-			process.BeginErrorReadLine();
+            process.OutputDataReceived += ProcessStandardOutput;
+            process.ErrorDataReceived += ProcessStandardError;
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
 
 			_process = process;
-		}
+        }
 
 		public void Stop()
 		{
 			if (_process == null || _process.HasExited)
 				return;
 
-			_process.Kill();
-			foreach (var p in Process.GetProcessesByName("NGrok"))
-			{
-				p.Kill();
-			}
-		}
+            _process.Kill();
+            KillExistingNGrokProcesses();
+        }
 
-		private void ProcessStandardError(object sender, DataReceivedEventArgs args)
-		{
-			if (!string.IsNullOrWhiteSpace(args.Data))
-			{
-				_ngrokProcessLogger.LogError(args.Data);
-			}
-		}
+        private static void KillExistingNGrokProcesses()
+        {
+            foreach (var p in Process.GetProcessesByName("ngrok"))
+            {
+                p.Kill();
+            }
+        }
 
-		private void ProcessStandardOutput(object sender, DataReceivedEventArgs args)
-		{
-			if (string.IsNullOrWhiteSpace(args.Data))
-			{
-				return;
-			}
+        private void ProcessStandardError(object sender, DataReceivedEventArgs args)
+        {
+            if (!string.IsNullOrWhiteSpace(args.Data))
+            {
+                _ngrokProcessLogger.LogError(args.Data);
+            }
+        }
 
-			// Fire event when NGrok Client Session is established
-			const string clientSessionEstablishedKey = "obj=csess";
-			if (args?.Data?.Contains(clientSessionEstablishedKey) ?? false)
-			{
-				ProcessStarted?.Invoke();
-			}
+        private void ProcessStandardOutput(object sender, DataReceivedEventArgs args)
+        {
+            if (string.IsNullOrWhiteSpace(args.Data))
+            {
+                return;
+            }
 
-			// Build structured log data
-			var data = NGrokLogExtensions.ParseLogData(args.Data);
-			var logFormatData = data.Where(d => d.Key != "lvl" && d.Key != "t")
-				.ToDictionary(e => e.Key, e => e.Value);
-			var logFormatString = NGrokLogExtensions.GetLogFormatString(logFormatData);
-			var logLevel = NGrokLogExtensions.ParseLogLevel(data["lvl"]);
+            // Fire event when NGrok Client Session is established
+            const string clientSessionEstablishedKey = "obj=csess";
+            if (args?.Data?.Contains(clientSessionEstablishedKey) ?? false)
+            {
+                ProcessStarted?.Invoke();
+            }
 
-			_ngrokProcessLogger.Log(logLevel, logFormatString, logFormatData.Values.ToArray());
-		}
-	}
+            // Build structured log data
+            var data = NGrokLogExtensions.ParseLogData(args.Data);
+            var logFormatData = data.Where(d => d.Key != "lvl" && d.Key != "t")
+                .ToDictionary(e => e.Key, e => e.Value);
+            var logFormatString = NGrokLogExtensions.GetLogFormatString(logFormatData);
+            var logLevel = NGrokLogExtensions.ParseLogLevel(data["lvl"]);
+
+            _ngrokProcessLogger.Log(logLevel, logFormatString, logFormatData.Values.ToArray());
+        }
+    }
 }

@@ -41,7 +41,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
 
 		}
 
-		public async Task EnsureNGrokStartedAsync(string nGrokPath)
+		public async Task EnsureNGrokStartedAsync()
 		{
 			// This allows an already-running NGrok instance to be used, instead of the one we are starting here. 
 			if (await _apiClient.CheckIfLocalAPIUpAsync())
@@ -52,13 +52,13 @@ namespace FluffySpoon.AspNet.NGrok.Services
 			try
 			{
 				UsingManagedProcess = true;
-				_process = new NGrokProcess(_lifetime, _loggerFactory);
+				_process = new NGrokProcess(_lifetime, _options, _loggerFactory);
 
 				// Register OnProcessStarted Handler
 				_process.ProcessStarted += OnProcessStarted;
 
 				// Start Process
-				_process.StartNGrokProcess(nGrokPath);
+				_process.StartNGrokProcess();
 
 				// Wait for Process to be started
 				await _processStartSemaphore.WaitAsync(TimeSpan.FromSeconds(_options.NGrokProcessStartTimeoutMs));
