@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using FluffySpoon.AspNet.NGrok.Exceptions;
 using FluffySpoon.AspNet.NGrok.NGrokModels;
@@ -39,36 +40,36 @@ namespace FluffySpoon.AspNet.NGrok.Services
             _nGrokApi.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        internal async Task<IEnumerable<Tunnel>> StartTunnelsAsync(string url)
+        internal async Task<IEnumerable<Tunnel>?> StartTunnelsAsync(string url, CancellationToken cancellationToken)
         {
-            await StartNGrokAsync();
+            await StartNGrokAsync(cancellationToken);
 
-            if (await HasTunnelByAddressAsync(url))
-                return await GetTunnelListAsync();
+            if (await HasTunnelByAddressAsync(url, cancellationToken))
+                return await GetTunnelListAsync(cancellationToken);
 
-            var tunnel = await CreateTunnelAsync(System.AppDomain.CurrentDomain.FriendlyName, url);
+            var tunnel = await CreateTunnelAsync(System.AppDomain.CurrentDomain.FriendlyName, url, cancellationToken);
 
             var stopwatch = Stopwatch.StartNew();
 
             while (stopwatch.Elapsed < TimeSpan.FromSeconds(30))
             {
-                await Task.Delay(100);
+                await Task.Delay(100, cancellationToken);
 
-                if (await HasTunnelByAddressAsync(tunnel?.Config?.Addr))
-                    return await GetTunnelListAsync();
+                if (await HasTunnelByAddressAsync(tunnel?.Config?.Addr, cancellationToken))
+                    return await GetTunnelListAsync(cancellationToken);
             }
 
             throw new Exception("A timeout occured while waiting for the created tunnel to exist.");
         }
 
-        private async Task<bool> HasTunnelByAddressAsync(string address)
+        private async Task<bool> HasTunnelByAddressAsync(string address, CancellationToken cancellationToken)
         {
-            var tunnels = await GetTunnelListAsync();
+            var tunnels = await GetTunnelListAsync(cancellationToken);
             return tunnels != null && tunnels.Any(x => x.Config?.Addr == address);
         }
 
         /// <returns></returns>
-        private async Task StartNGrokAsync()
+        private async Task StartNGrokAsync(CancellationToken cancellationToken)
         {
             _nGrokProcess.StartNGrokProcess();
 
@@ -78,8 +79,8 @@ namespace FluffySpoon.AspNet.NGrok.Services
                 var canGetTunnelList = false;
                 while (!canGetTunnelList && stopwatch.Elapsed < TimeSpan.FromSeconds(30))
                 {
-                    canGetTunnelList = await CanGetTunnelList();
-                    await Task.Delay(100);
+                    canGetTunnelList = await CanGetTunnelList(cancellationToken);
+                    await Task.Delay(100, cancellationToken);
                 }
 
                 if (!canGetTunnelList)
@@ -98,17 +99,17 @@ namespace FluffySpoon.AspNet.NGrok.Services
             _nGrokProcess.Stop();
         }
 
-        private async Task<bool> CanGetTunnelList()
+        private async Task<bool> CanGetTunnelList(CancellationToken cancellationToken)
         {
-            var tunnels = await GetTunnelListAsync();
+            var tunnels = await GetTunnelListAsync(cancellationToken);
             return tunnels != null;
         }
 
-        private async Task<Tunnel[]?> GetTunnelListAsync()
+        private async Task<Tunnel[]?> GetTunnelListAsync(CancellationToken cancellationToken)
         {
             try
             {
-                var response = await _nGrokApi.GetAsync("/api/tunnels");
+                var response = await _nGrokApi.GetAsync("/api/tunnels", cancellationToken);
                 if (!response.IsSuccessStatusCode)
                     return null;
 
@@ -122,7 +123,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
             }
         }
 
-        private async Task<Tunnel> CreateTunnelAsync(string projectName, string address)
+        private async Task<Tunnel> CreateTunnelAsync(string projectName, string address, CancellationToken cancellationToken)
         {
             var url = new Uri(address);
 
@@ -143,7 +144,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             while (true)
             {
-                var response = await _nGrokApi.PostAsync("/api/tunnels", httpContent);
+                var response = await _nGrokApi.PostAsync("/api/tunnels", httpContent, cancellationToken);
                 var responseText = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
                     return JsonConvert.DeserializeObject<Tunnel>(responseText);
@@ -153,7 +154,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
                 var ERROR_CODE_NGROK_NOT_READY_TO_START_TUNNELS = 104;
                 if (error.ErrorCode == ERROR_CODE_NGROK_NOT_READY_TO_START_TUNNELS)
                 {
-                    await Task.Delay(100);
+                    await Task.Delay(100, cancellationToken);
                     continue;
                 }
 

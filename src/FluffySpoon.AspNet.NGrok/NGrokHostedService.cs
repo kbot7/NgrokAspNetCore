@@ -21,6 +21,9 @@ namespace FluffySpoon.AspNet.NGrok
 
         private readonly TaskCompletionSource<IReadOnlyCollection<Tunnel>> _tunnelTaskSource;
         private readonly TaskCompletionSource<IReadOnlyCollection<string>> _serverAddressesSource;
+        private readonly TaskCompletionSource<bool> _shutdownSource;
+
+        private readonly CancellationTokenSource _cancellationTokenSource;
 
         public async Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync()
         {
@@ -45,6 +48,9 @@ namespace FluffySpoon.AspNet.NGrok
 
             _tunnelTaskSource = new TaskCompletionSource<IReadOnlyCollection<Tunnel>>();
             _serverAddressesSource = new TaskCompletionSource<IReadOnlyCollection<string>>();
+            _shutdownSource = new TaskCompletionSource<bool>();
+
+            _cancellationTokenSource = new CancellationTokenSource();
 
             RunAsync();
         }
@@ -57,18 +63,35 @@ namespace FluffySpoon.AspNet.NGrok
 
         private async void RunAsync()
         {
-            if (_options.Disable)
-                return;
+            try
+            {
+                if (_options.Disable)
+                    return;
 
-            await _nGrokDownloader.DownloadExecutableAsync();
+                await _nGrokDownloader.DownloadExecutableAsync(_cancellationTokenSource.Token);
 
-            var url = await AdjustApplicationHttpUrlIfNeededAsync();
-            _logger.LogInformation("Picked hosting URL {Url}.", url);
+                if (_cancellationTokenSource.IsCancellationRequested)
+                    return;
 
-            var tunnels = await StartTunnelsAsync(url);
-            _logger.LogInformation("Tunnels {Tunnels} have been started.", tunnels);
+                var url = await AdjustApplicationHttpUrlIfNeededAsync();
+                _logger.LogInformation("Picked hosting URL {Url}.", url);
 
-            OnTunnelsFetched(tunnels);
+                if (_cancellationTokenSource.IsCancellationRequested)
+                    return;
+
+                var tunnels = await StartTunnelsAsync(url) ??
+                              Array.Empty<Tunnel>();
+                _logger.LogInformation("Tunnels {Tunnels} have been started.", new object[] {tunnels});
+
+                if (_cancellationTokenSource.IsCancellationRequested)
+                    return;
+
+                OnTunnelsFetched(tunnels);
+            }
+            finally
+            {
+                _shutdownSource.SetResult(true);
+            }
         }
 
         private void OnTunnelsFetched(Tunnel[] tunnels)
@@ -82,14 +105,14 @@ namespace FluffySpoon.AspNet.NGrok
 
         private async Task<Tunnel[]?> StartTunnelsAsync(string url)
         {
-            var tunnels = await _apiClient.StartTunnelsAsync(url);
+            var tunnels = await _apiClient.StartTunnelsAsync(url, _cancellationTokenSource.Token);
             var tunnelsArray = tunnels?.ToArray();
             return tunnelsArray;
         }
 
         private async Task<T> WaitForTaskWithTimeout<T>(Task<T> task, int timeoutInMilliseconds, string timeoutMessage)
         {
-            if (await Task.WhenAny(task, Task.Delay(timeoutInMilliseconds)) == task)
+            if (await Task.WhenAny(task, Task.Delay(timeoutInMilliseconds, _cancellationTokenSource.Token)) == task)
                 return await task;
 
             throw new InvalidOperationException(timeoutMessage);
@@ -122,11 +145,15 @@ namespace FluffySpoon.AspNet.NGrok
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            cancellationToken.Register(() => _cancellationTokenSource.Cancel());
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
+            _cancellationTokenSource.Cancel();
             _apiClient.StopNGrok();
+
+            await _shutdownSource.Task;
         }
     }
 }
