@@ -79,14 +79,18 @@ namespace FluffySpoon.AspNet.NGrok
                 if (_cancellationTokenSource.IsCancellationRequested)
                     return;
 
-                var tunnels = await StartTunnelsAsync(url) ??
-                              Array.Empty<Tunnel>();
-                _logger.LogInformation("Tunnels {Tunnels} have been started.", new object[] {tunnels});
+                var tunnels = await StartTunnelsAsync(url);
+                _logger.LogInformation("Tunnels {Tunnels} have been started.", new object[] { tunnels });
 
                 if (_cancellationTokenSource.IsCancellationRequested)
                     return;
 
-                OnTunnelsFetched(tunnels);
+                if (tunnels != null)
+                    OnTunnelsFetched(tunnels);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occured while running the NGrok service.");
             }
             finally
             {
