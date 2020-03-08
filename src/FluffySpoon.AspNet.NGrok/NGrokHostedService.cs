@@ -57,18 +57,26 @@ namespace FluffySpoon.AspNet.NGrok
 
         private async void RunAsync()
         {
-            if (_options.Disable)
-                return;
+            try
+            {
+                if (_options.Disable)
+                    return;
 
-            await _nGrokDownloader.DownloadExecutableAsync();
+                await _nGrokDownloader.DownloadExecutableAsync();
 
-            var url = await AdjustApplicationHttpUrlIfNeededAsync();
-            _logger.LogInformation("Picked hosting URL {Url}.", url);
+                var url = await AdjustApplicationHttpUrlIfNeededAsync();
+                _logger.LogInformation("Picked hosting URL {Url}.", url);
 
-            var tunnels = await StartTunnelsAsync(url);
-            _logger.LogInformation("Tunnels {Tunnels} have been started.", tunnels);
+                var tunnels = await StartTunnelsAsync(url);
+                _logger.LogInformation("Tunnels {Tunnels} have been started.", tunnels);
 
-            OnTunnelsFetched(tunnels);
+                if (tunnels != null)
+                    OnTunnelsFetched(tunnels);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occured while running the NGrok service.");
+            }
         }
 
         private void OnTunnelsFetched(Tunnel[] tunnels)
