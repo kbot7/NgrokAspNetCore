@@ -36,15 +36,15 @@ namespace FluffySpoon.AspNet.NGrok.Services
 			var downloadUrl = GetDownloadPath();
 			var fileName = $"{RuntimeExtensions.GetOsArchitectureString()}.zip";
 			var filePath = $"{Path.Combine(Directory.GetCurrentDirectory(), fileName)}";
-            if (File.Exists(filePath))
-                return;
+			if (File.Exists(filePath))
+				return;
 
 			var downloadResponse = await _httpClient.GetAsync(downloadUrl, cancellationToken);
 			downloadResponse.EnsureSuccessStatusCode();
 
 			// Download Zip
 			var downloadStream = await downloadResponse.Content.ReadAsStreamAsync();
-            await using (var writer = File.Create(filePath))
+			await using (var writer = File.Create(filePath))
 			{
 				await downloadStream.CopyToAsync(writer, cancellationToken);
 			}
@@ -52,35 +52,35 @@ namespace FluffySpoon.AspNet.NGrok.Services
 			// Extract zip
 			ZipFile.ExtractToDirectory(filePath, Directory.GetCurrentDirectory());
 
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                GrantNGrokFileExecutablePermissions();
-        }
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				GrantNGrokFileExecutablePermissions();
+		}
 
-        private static void GrantNGrokFileExecutablePermissions()
-        {
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = "/bin/bash",
-                    Arguments = $"-c \"chmod +x {Directory.GetCurrentDirectory()}/ngrok\""
-                }
-            };
+		private static void GrantNGrokFileExecutablePermissions()
+		{
+			var process = new Process
+			{
+				StartInfo = new ProcessStartInfo
+				{
+					RedirectStandardOutput = true,
+					UseShellExecute = false,
+					CreateNoWindow = true,
+					WindowStyle = ProcessWindowStyle.Hidden,
+					FileName = "/bin/bash",
+					Arguments = $"-c \"chmod +x {Directory.GetCurrentDirectory()}/ngrok\""
+				}
+			};
 
-            process.Start();
-            process.WaitForExit();
-        }
+			process.Start();
+			process.WaitForExit();
+		}
 
-        /// <summary>
+		/// <summary>
 		/// Get full url to download NGrok on this platform
 		/// </summary>
 		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <returns></returns>
-        private string GetDownloadPath()
+		private string GetDownloadPath()
 		{
 			const string cdn = "https://bin.equinox.io";
 			const string cdnPath = "c/4VmDzA7iaHb/NGrok-stable";

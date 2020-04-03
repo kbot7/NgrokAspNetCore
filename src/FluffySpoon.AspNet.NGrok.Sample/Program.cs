@@ -6,18 +6,18 @@ using Microsoft.Extensions.Hosting;
 
 namespace FluffySpoon.AspNet.NGrok.Sample
 {
-    public class Program
-    {
-        public static async Task Main(string[] args)
-        {
-            var host = CreateHostBuilder(args).Build();
-            await host.RunAsync();
-        }
+	public class Program
+	{
+		public static async Task Main(string[] args)
+		{
+			var host = CreateHostBuilder(args).Build();
+			await host.RunAsync();
+		}
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(x => x
-                    .UseStartup<Startup>()
-                    .UseNGrok());
-    }
+		public static IHostBuilder CreateHostBuilder(string[] args) =>
+			Host.CreateDefaultBuilder(args)
+				.ConfigureWebHostDefaults(x => x
+					.UseStartup<Startup>()
+					.UseNGrok());
+	}
 }

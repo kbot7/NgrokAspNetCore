@@ -1,4 +1,4 @@
-using NGrok.AspNetCore.Extensions;
+using FluffySpoon.AspNet.NGrok.Extensions;
 using System;
 using System.Collections.Generic;
 using Xunit;

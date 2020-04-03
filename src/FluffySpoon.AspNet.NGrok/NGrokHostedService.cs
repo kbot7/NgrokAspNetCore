@@ -22,21 +22,21 @@ namespace FluffySpoon.AspNet.NGrok
 		private readonly INGrokApiClient _client;
 		private readonly IServer _server;
 		private readonly IApplicationLifetime _applicationLifetime;
-        private readonly ILogger<NGrokHostedService> _logger;
+		private readonly ILogger<NGrokHostedService> _logger;
 
-        private readonly TaskCompletionSource<IReadOnlyCollection<Tunnel>> _tunnelTaskSource;
-        private readonly TaskCompletionSource<IReadOnlyCollection<string>> _serverAddressesSource;
-        private readonly TaskCompletionSource<bool> _shutdownSource;
+		private readonly TaskCompletionSource<IReadOnlyCollection<Tunnel>> _tunnelTaskSource;
+		private readonly TaskCompletionSource<IReadOnlyCollection<string>> _serverAddressesSource;
+		private readonly TaskCompletionSource<bool> _shutdownSource;
 
-        private readonly CancellationTokenSource _cancellationTokenSource;
+		private readonly CancellationTokenSource _cancellationTokenSource;
 
-        public async Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync()
-        {
-            if (_options.Disable)
-                return Array.Empty<Tunnel>();
+		public async Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync()
+		{
+			if (_options.Disable)
+				return Array.Empty<Tunnel>();
 
-            return await WaitForTaskWithTimeout(_tunnelTaskSource.Task, 300_000, "No tunnels were found within 5 minutes. Perhaps the server was taking too long to start?");
-        }
+			return await WaitForTaskWithTimeout(_tunnelTaskSource.Task, 300_000, "No tunnels were found within 5 minutes. Perhaps the server was taking too long to start?");
+		}
 
 		public event Action<IEnumerable<Tunnel>> Ready;
 
@@ -55,11 +55,11 @@ namespace FluffySpoon.AspNet.NGrok
 			_processMgr = processMgr;
 			_client = client;
 
-            _tunnelTaskSource = new TaskCompletionSource<IReadOnlyCollection<Tunnel>>();
-            _serverAddressesSource = new TaskCompletionSource<IReadOnlyCollection<string>>();
-            _shutdownSource = new TaskCompletionSource<bool>();
-            _cancellationTokenSource = new CancellationTokenSource();
-        }
+			_tunnelTaskSource = new TaskCompletionSource<IReadOnlyCollection<Tunnel>>();
+			_serverAddressesSource = new TaskCompletionSource<IReadOnlyCollection<string>>();
+			_shutdownSource = new TaskCompletionSource<bool>();
+			_cancellationTokenSource = new CancellationTokenSource();
+		}
 
 		internal void InjectServerAddressesFeature(IServerAddressesFeature? feature)
 		{
@@ -68,52 +68,52 @@ namespace FluffySpoon.AspNet.NGrok
 		}
 
 		private async Task RunAsync()
-        {
-            try
-            {
-                if (_options.Disable)
-                    return;
+		{
+			try
+			{
+				if (_options.Disable)
+					return;
 
-                await _nGrokDownloader.DownloadExecutableAsync(_cancellationTokenSource.Token);
+				await _nGrokDownloader.DownloadExecutableAsync(_cancellationTokenSource.Token);
 
 				await _processMgr.EnsureNGrokStartedAsync();
 
 				if (_cancellationTokenSource.IsCancellationRequested)
-                    return;
+					return;
 
-                var url = await AdjustApplicationHttpUrlIfNeededAsync();
-                _logger.LogInformation("Picked hosting URL {Url}.", url);
+				var url = await AdjustApplicationHttpUrlIfNeededAsync();
+				_logger.LogInformation("Picked hosting URL {Url}.", url);
 
-                if (_cancellationTokenSource.IsCancellationRequested)
-                    return;
+				if (_cancellationTokenSource.IsCancellationRequested)
+					return;
 
-                var tunnels = await StartTunnelsAsync(url);
-                _logger.LogInformation("Tunnels {Tunnels} have been started.", new object[] { tunnels });
+				var tunnels = await StartTunnelsAsync(url);
+				_logger.LogInformation("Tunnels {Tunnels} have been started.", new object[] { tunnels });
 
-                if (_cancellationTokenSource.IsCancellationRequested)
-                    return;
+				if (_cancellationTokenSource.IsCancellationRequested)
+					return;
 
-                if (tunnels != null)
-                    OnTunnelsFetched(tunnels);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occured while running the NGrok service.");
-            }
-            finally
-            {
-                _shutdownSource.SetResult(true);
-            }
-        }
+				if (tunnels != null)
+					OnTunnelsFetched(tunnels);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "An error occured while running the NGrok service.");
+			}
+			finally
+			{
+				_shutdownSource.SetResult(true);
+			}
+		}
 
 		private void OnTunnelsFetched(IEnumerable<Tunnel> tunnels)
 		{
 			if (tunnels == null)
 				throw new ArgumentNullException(nameof(tunnels), "Tunnels was not expected to be null here.");
 
-            _tunnelTaskSource.SetResult(tunnels.ToArray());
-            Ready?.Invoke(tunnels);
-        }
+			_tunnelTaskSource.SetResult(tunnels.ToArray());
+			Ready?.Invoke(tunnels);
+		}
 
 		private async Task<Tunnel[]?> StartTunnelsAsync(string address)
 		{
@@ -162,30 +162,30 @@ namespace FluffySpoon.AspNet.NGrok
 			return tunnels;
 		}
 
-        private async Task<T> WaitForTaskWithTimeout<T>(Task<T> task, int timeoutInMilliseconds, string timeoutMessage)
-        {
-            if (await Task.WhenAny(task, Task.Delay(timeoutInMilliseconds, _cancellationTokenSource.Token)) == task)
-                return await task;
+		private async Task<T> WaitForTaskWithTimeout<T>(Task<T> task, int timeoutInMilliseconds, string timeoutMessage)
+		{
+			if (await Task.WhenAny(task, Task.Delay(timeoutInMilliseconds, _cancellationTokenSource.Token)) == task)
+				return await task;
 
-            throw new InvalidOperationException(timeoutMessage);
-        }
+			throw new InvalidOperationException(timeoutMessage);
+		}
 
-        private async Task<string> AdjustApplicationHttpUrlIfNeededAsync()
-        {
-            var url = _options.ApplicationHttpUrl;
+		private async Task<string> AdjustApplicationHttpUrlIfNeededAsync()
+		{
+			var url = _options.ApplicationHttpUrl;
 
-            if (string.IsNullOrWhiteSpace(url))
-            {
-                var addresses = await WaitForTaskWithTimeout(
-                    _serverAddressesSource.Task,
-                    30000,
-                    $"No {nameof(NGrokOptions.ApplicationHttpUrl)} was set in the settings, and the URL of the server could not be inferred within 30 seconds. Perhaps you are missing a call to {nameof(NGrokAspNetCoreExtensions.UseNGrokAutomaticUrlDetection)} in your Configure method of your Startup class?");
-                if (addresses != null)
-                {
-                    url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
-                    url = url?.Replace("*", "localhost", StringComparison.InvariantCulture);
-                }
-            }
+			if (string.IsNullOrWhiteSpace(url))
+			{
+				var addresses = await WaitForTaskWithTimeout(
+					_serverAddressesSource.Task,
+					30000,
+					$"No {nameof(NGrokOptions.ApplicationHttpUrl)} was set in the settings, and the URL of the server could not be inferred within 30 seconds. Perhaps you are missing a call to {nameof(NGrokAspNetCoreExtensions.UseNGrokAutomaticUrlDetection)} in your Configure method of your Startup class?");
+				if (addresses != null)
+				{
+					url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
+					url = url?.Replace("*", "localhost", StringComparison.InvariantCulture);
+				}
+			}
 
 			_options.ApplicationHttpUrl = url;
 
@@ -210,17 +210,17 @@ namespace FluffySpoon.AspNet.NGrok
 			return RunAsync();
 		}
 
-        public async Task StopAsync(CancellationToken cancellationToken)
-        {
-            _cancellationTokenSource.Cancel();
+		public async Task StopAsync(CancellationToken cancellationToken)
+		{
+			_cancellationTokenSource.Cancel();
 
-            // Likely wont work since I removed apiclient
-            _apiClient.StopNGrok();
+			// TODO - call api client to stop started tunnels
+			// _apiClient.StopNGrok();
 
-            // New way of doing it
-            await _processMgr.StopNGrokAsync();
+			// Stop the process
+			await _processMgr.StopNGrokAsync();
 
-            await _shutdownSource.Task;
-        }
-    }
+			await _shutdownSource.Task;
+		}
+	}
 }

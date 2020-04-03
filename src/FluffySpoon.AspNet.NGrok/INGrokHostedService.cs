@@ -7,9 +7,9 @@ using NGrok.ApiClient;
 
 namespace FluffySpoon.AspNet.NGrok
 {
-    public interface INGrokHostedService : IHostedService
-    {
-        Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync();
+	public interface INGrokHostedService : IHostedService
+	{
+		Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync();
 
 		event Action<IEnumerable<Tunnel>> Ready;
 	}
