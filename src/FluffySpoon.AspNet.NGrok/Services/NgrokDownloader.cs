@@ -8,6 +8,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using FluffySpoon.AspNet.NGrok.Exceptions;
 using FluffySpoon.AspNet.NGrok.Internal;
@@ -30,7 +31,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
 		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
 		/// <exception cref="HttpRequestException">Throws if failed to download from CDN</exception>
 		/// <returns></returns>
-		public async Task DownloadExecutableAsync()
+		public async Task DownloadExecutableAsync(CancellationToken cancellationToken)
 		{
 			var downloadUrl = GetDownloadPath();
 			var fileName = $"{RuntimeExtensions.GetOsArchitectureString()}.zip";
@@ -38,14 +39,14 @@ namespace FluffySpoon.AspNet.NGrok.Services
             if (File.Exists(filePath))
                 return;
 
-			var downloadResponse = await _httpClient.GetAsync(downloadUrl);
+			var downloadResponse = await _httpClient.GetAsync(downloadUrl, cancellationToken);
 			downloadResponse.EnsureSuccessStatusCode();
 
 			// Download Zip
 			var downloadStream = await downloadResponse.Content.ReadAsStreamAsync();
             await using (var writer = File.Create(filePath))
 			{
-				await downloadStream.CopyToAsync(writer);
+				await downloadStream.CopyToAsync(writer, cancellationToken);
 			}
 
 			// Extract zip
