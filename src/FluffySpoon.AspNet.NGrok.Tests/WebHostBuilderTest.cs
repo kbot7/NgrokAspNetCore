@@ -21,7 +21,7 @@ namespace FluffySpoon.AspNet.NGrok.Tests
             var host = Program.CreateHostBuilder(Array.Empty<string>())
                 .ConfigureWebHost(builder => builder
                     .UseKestrel()
-                    .UseUrls("https://*:14569;http://*:14568"))
+                    .UseUrls("http://*:14568"))
                 .Build();
 
             await host.StartAsync();
@@ -35,7 +35,7 @@ namespace FluffySpoon.AspNet.NGrok.Tests
             Assert.AreEqual(2, tunnels.Count());
 
             foreach (var tunnel in tunnels)
-                await AssertIsUrlReachableAsync(httpClient, tunnel.PublicUrl);
+                await AssertIsUrlReachableAsync(httpClient, tunnel.PublicURL);
         }
 
         private static async Task AssertIsUrlReachableAsync(HttpClient httpClient, string url)

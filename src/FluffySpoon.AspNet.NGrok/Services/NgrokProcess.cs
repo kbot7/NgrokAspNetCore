@@ -56,7 +56,7 @@ namespace FluffySpoon.AspNet.NGrok.Services
 			{
 				CreateNoWindow = true,
 				WindowStyle = processWindowStyle,
-				UseShellExecute = true,
+				UseShellExecute = false,
 				WorkingDirectory = Environment.CurrentDirectory,
 				RedirectStandardOutput = true,
 				RedirectStandardError = true

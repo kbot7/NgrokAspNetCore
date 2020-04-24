@@ -41,6 +41,7 @@ namespace FluffySpoon.AspNet.NGrok
 		public event Action<IEnumerable<Tunnel>> Ready;
 
 		public NGrokHostedService(
+			ILogger<NGrokHostedService> logger,
 			NGrokOptions options,
 			NGrokDownloader nGrokDownloader,
 			IServer server,
@@ -48,6 +49,7 @@ namespace FluffySpoon.AspNet.NGrok
 			NGrokProcessMgr processMgr,
 			INGrokApiClient client)
 		{
+			_logger = logger;
 			_options = options;
 			_nGrokDownloader = nGrokDownloader;
 			_server = server;

@@ -23,8 +23,6 @@ namespace FluffySpoon.AspNet.NGrok
 		public static IApplicationBuilder UseNGrokAutomaticUrlDetection(this IApplicationBuilder app)
 		{
 			var service = app.ApplicationServices.GetRequiredService<NGrokHostedService>();
-			service.InjectServerAddressesFeature(app.ServerFeatures.Get<IServerAddressesFeature>());
-
 			return app;
 		}
 

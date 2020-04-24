@@ -33,11 +33,13 @@ namespace FluffySpoon.AspNet.NGrok.Services
 		/// <returns></returns>
 		public async Task DownloadExecutableAsync(CancellationToken cancellationToken)
 		{
+			var ngrokPath = $"{Path.Combine(Directory.GetCurrentDirectory(), "ngrok.exe")}";
+			if (File.Exists(ngrokPath))
+				return;
+
 			var downloadUrl = GetDownloadPath();
 			var fileName = $"{RuntimeExtensions.GetOsArchitectureString()}.zip";
 			var filePath = $"{Path.Combine(Directory.GetCurrentDirectory(), fileName)}";
-			if (File.Exists(filePath))
-				return;
 
 			var downloadResponse = await _httpClient.GetAsync(downloadUrl, cancellationToken);
 			downloadResponse.EnsureSuccessStatusCode();
