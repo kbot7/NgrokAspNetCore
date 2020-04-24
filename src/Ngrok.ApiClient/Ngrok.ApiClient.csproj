@@ -1,11 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<NuspecProperties>version=$(Version)</NuspecProperties>
+		<Authors>Kevin Gysberg</Authors>
+		<PackageLicenseUrl>https://raw.githubusercontent.com/kg73/NgrokAspNetCore/master/LICENSE</PackageLicenseUrl>
+		<Company />
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<RootNamespace>Ngrok.ApiClient</RootNamespace>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="4.7.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.Text.Json" Version="4.7.1" />
+	</ItemGroup>
 
 </Project>
