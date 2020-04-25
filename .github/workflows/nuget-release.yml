@@ -67,6 +67,6 @@ jobs:
       
 
       - name: Push to GitHub NuGet Repo
-        run: dotnet nuget push output/**/*.nupkg --no-symbols
+        run: dotnet nuget push output/**/*.nupkg -n true
 
     
