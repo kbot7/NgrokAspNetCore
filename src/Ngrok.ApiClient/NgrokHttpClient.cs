@@ -78,19 +78,18 @@ namespace Ngrok.ApiClient
 			}
 		}
 
-		public async Task<bool> CheckIfLocalAPIUpAsync()
+		public async Task<bool> CheckIfLocalAPIUpAsync(CancellationToken cancellationToken = default)
 		{
 			using (var client = new HttpClient())
 			{
 				client.BaseAddress = new Uri("http://localhost:4040");
-				client.Timeout = TimeSpan.FromMilliseconds(4000);
 				try
 				{
-					var response = await client.GetAsync(ListTunnelsPath);
+					var response = await client.GetAsync(ListTunnelsPath, cancellationToken);
 					response.EnsureSuccessStatusCode();
 					return true;
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
 					return false;
 				}

@@ -21,31 +21,26 @@ namespace Ngrok.AspNetCore.Services
 	{
 		private Process _process;
 		private ILogger _ngrokProcessLogger;
-		private readonly NgrokOptions _ngrokOptions;
+		private readonly NgrokOptions _options;
 
 		public Action ProcessStarted { get; set; }
 
 		public NgrokProcess(
-			IApplicationLifetime applicationLifetime,
-			NgrokOptions ngrokOptions,
-			ILoggerFactory loggerFactory
-			)
+			IApplicationLifetime applicationLifetime, 
+			ILoggerFactory loggerFactory, 
+			NgrokOptions options)
 		{
-			_ngrokOptions = ngrokOptions;
 			applicationLifetime.ApplicationStopping.Register(Stop);
 			_ngrokProcessLogger = loggerFactory.CreateLogger("NgrokProcess");
+			_options = options;
 		}
 
 		public void StartNgrokProcess()
 		{
-			var processWindowStyle = _ngrokOptions.ShowNgrokWindow ?
-				ProcessWindowStyle.Normal :
-				ProcessWindowStyle.Hidden;
-
 			var linuxProcessStartInfo = new ProcessStartInfo("/bin/bash", "-c \"" + Directory.GetCurrentDirectory() + "/ngrok start --none --log=stdout\"")
 			{
 				CreateNoWindow = true,
-				WindowStyle = processWindowStyle,
+				WindowStyle = ProcessWindowStyle.Hidden,
 				UseShellExecute = false,
 				WorkingDirectory = Environment.CurrentDirectory,
 				RedirectStandardOutput = true,
@@ -55,7 +50,7 @@ namespace Ngrok.AspNetCore.Services
 			var windowsProcessStartInfo = new ProcessStartInfo("Ngrok.exe", "start --none --log=stdout")
 			{
 				CreateNoWindow = true,
-				WindowStyle = processWindowStyle,
+				WindowStyle = ProcessWindowStyle.Hidden,
 				UseShellExecute = false,
 				WorkingDirectory = Environment.CurrentDirectory,
 				RedirectStandardOutput = true,
@@ -71,7 +66,8 @@ namespace Ngrok.AspNetCore.Services
 
 		protected virtual void Start(ProcessStartInfo pi)
 		{
-			KillExistingNgrokProcesses();
+			// TODO - make optional
+			//KillExistingNgrokProcesses();
 			var process = new Process();
 			process.StartInfo = pi;
 
@@ -90,9 +86,10 @@ namespace Ngrok.AspNetCore.Services
 				return;
 
 			_process.Kill();
-			KillExistingNgrokProcesses();
+			//KillExistingNgrokProcesses();
 		}
 
+		// TODO - make optional
 		private static void KillExistingNgrokProcesses()
 		{
 			foreach (var p in Process.GetProcessesByName("ngrok"))
@@ -123,14 +120,17 @@ namespace Ngrok.AspNetCore.Services
 				ProcessStarted?.Invoke();
 			}
 
-			// Build structured log data
-			var data = NgrokLogExtensions.ParseLogData(args.Data);
-			var logFormatData = data.Where(d => d.Key != "lvl" && d.Key != "t")
-				.ToDictionary(e => e.Key, e => e.Value);
-			var logFormatString = NgrokLogExtensions.GetLogFormatString(logFormatData);
-			var logLevel = NgrokLogExtensions.ParseLogLevel(data["lvl"]);
+			if (_options.RedirectLogs)
+			{
+				// Build structured log data
+				var data = NgrokLogExtensions.ParseLogData(args.Data);
+				var logFormatData = data.Where(d => d.Key != "lvl" && d.Key != "t")
+					.ToDictionary(e => e.Key, e => e.Value);
+				var logFormatString = NgrokLogExtensions.GetLogFormatString(logFormatData);
+				var logLevel = NgrokLogExtensions.ParseLogLevel(data["lvl"]);
 
-			_ngrokProcessLogger.Log(logLevel, logFormatString, logFormatData.Values.ToArray());
+				_ngrokProcessLogger.Log(logLevel, logFormatString, logFormatData.Values.ToArray());
+			}
 		}
 	}
 }

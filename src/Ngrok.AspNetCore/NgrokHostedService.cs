@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Ngrok.ApiClient;
 using Tunnel = Ngrok.ApiClient.Tunnel;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Ngrok.AspNetCore
 {
@@ -27,6 +28,7 @@ namespace Ngrok.AspNetCore
 		private readonly TaskCompletionSource<IReadOnlyCollection<Tunnel>> _tunnelTaskSource;
 		private readonly TaskCompletionSource<IReadOnlyCollection<string>> _serverAddressesSource;
 		private readonly TaskCompletionSource<bool> _shutdownSource;
+		private IEnumerable<Tunnel> _tunnels;
 
 		private readonly CancellationTokenSource _cancellationTokenSource;
 
@@ -41,8 +43,8 @@ namespace Ngrok.AspNetCore
 		public event Action<IEnumerable<Tunnel>> Ready;
 
 		public NgrokHostedService(
+			IOptionsMonitor<NgrokOptions> optionsMonitor,
 			ILogger<NgrokHostedService> logger,
-			NgrokOptions options,
 			NgrokDownloader nGrokDownloader,
 			IServer server,
 			IApplicationLifetime applicationLifetime,
@@ -50,7 +52,7 @@ namespace Ngrok.AspNetCore
 			INgrokApiClient client)
 		{
 			_logger = logger;
-			_options = options;
+			_options = optionsMonitor.CurrentValue;
 			_nGrokDownloader = nGrokDownloader;
 			_server = server;
 			_applicationLifetime = applicationLifetime;
@@ -63,22 +65,21 @@ namespace Ngrok.AspNetCore
 			_cancellationTokenSource = new CancellationTokenSource();
 		}
 
-		internal void InjectServerAddressesFeature(IServerAddressesFeature? feature)
-		{
-			_logger.LogDebug("Inferred hosting URLs as {ServerAddresses}.", feature?.Addresses);
-			_serverAddressesSource.SetResult(feature?.Addresses.ToArray());
-		}
+		
 
-		private async Task RunAsync()
+		private async Task RunAsync(CancellationToken cancellationToken = default)
 		{
 			try
 			{
 				if (_options.Disable)
 					return;
 
-				await _nGrokDownloader.DownloadExecutableAsync(_cancellationTokenSource.Token);
+				if (_options.DownloadNgrok)
+				{
+					await _nGrokDownloader.DownloadExecutableAsync(_cancellationTokenSource.Token);
+				}
 
-				await _processMgr.EnsureNgrokStartedAsync();
+				await _processMgr.EnsureNgrokStartedAsync(cancellationToken);
 
 				if (_cancellationTokenSource.IsCancellationRequested)
 					return;
@@ -89,7 +90,7 @@ namespace Ngrok.AspNetCore
 				if (_cancellationTokenSource.IsCancellationRequested)
 					return;
 
-				var tunnels = await StartTunnelsAsync(url);
+				var tunnels = await StartTunnelsAsync(url, cancellationToken);
 				_logger.LogInformation("Tunnels {Tunnels} have been started.", new object[] { tunnels });
 
 				if (_cancellationTokenSource.IsCancellationRequested)
@@ -97,6 +98,7 @@ namespace Ngrok.AspNetCore
 
 				if (tunnels != null)
 					OnTunnelsFetched(tunnels);
+
 			}
 			catch (Exception ex)
 			{
@@ -106,6 +108,7 @@ namespace Ngrok.AspNetCore
 			{
 				_shutdownSource.SetResult(true);
 			}
+			
 		}
 
 		private void OnTunnelsFetched(IEnumerable<Tunnel> tunnels)
@@ -113,11 +116,12 @@ namespace Ngrok.AspNetCore
 			if (tunnels == null)
 				throw new ArgumentNullException(nameof(tunnels), "Tunnels was not expected to be null here.");
 
+			_tunnels = tunnels;
 			_tunnelTaskSource.SetResult(tunnels.ToArray());
 			Ready?.Invoke(tunnels);
 		}
 
-		private async Task<Tunnel[]?> StartTunnelsAsync(string address)
+		private async Task<Tunnel[]?> StartTunnelsAsync(string address, CancellationToken cancellationToken)
 		{
 			if (string.IsNullOrEmpty(address))
 			{
@@ -153,10 +157,10 @@ namespace Ngrok.AspNetCore
 				Address = address,
 				Protocol = "http",
 				HostHeader = address
-			});
+			}, cancellationToken);
 
 			// Get Tunnels
-			var tunnels = (await _client.ListTunnelsAsync())
+			var tunnels = (await _client.ListTunnelsAsync(cancellationToken))
 				.Where(t => t.Name == System.AppDomain.CurrentDomain.FriendlyName ||
 				t.Name == $"{System.AppDomain.CurrentDomain.FriendlyName} (http)")
 				?.ToArray();
@@ -199,25 +203,29 @@ namespace Ngrok.AspNetCore
 
 		public async Task StartAsync(CancellationToken cancellationToken)
 		{
+			cancellationToken.Register(() => _cancellationTokenSource.Cancel());
 			_applicationLifetime.ApplicationStarted.Register(() => OnApplicationStarted());
 		}
 
 		public Task OnApplicationStarted()
 		{
-			var addressFeature = _server.Features.Get<IServerAddressesFeature>();
-
-			_logger.LogDebug("Inferred hosting URLs as {ServerAddresses}.", addressFeature?.Addresses);
-			_serverAddressesSource.SetResult(addressFeature?.Addresses.ToArray());
-
-			return RunAsync();
+			var addresses = _server.Features.Get<IServerAddressesFeature>().Addresses.ToArray();
+			_logger.LogDebug("Inferred hosting URLs as {ServerAddresses}.", addresses);
+			_serverAddressesSource.SetResult(addresses.ToArray());
+			return RunAsync(_cancellationTokenSource.Token);
 		}
 
 		public async Task StopAsync(CancellationToken cancellationToken)
 		{
-			_cancellationTokenSource.Cancel();
+			if (!_options.ManageNgrokProcess && _tunnels != null)
+			{
+				foreach (var tunnel in _tunnels)
+				{
+					await _client.StopTunnelAsync(tunnel.Name, cancellationToken);
+				}
+			}
 
-			// TODO - call api client to stop started tunnels
-			// _apiClient.StopNgrok();
+			_cancellationTokenSource.Cancel();
 
 			// Stop the process
 			await _processMgr.StopNgrokAsync();

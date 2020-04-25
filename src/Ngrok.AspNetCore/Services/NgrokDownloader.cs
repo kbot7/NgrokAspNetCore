@@ -12,7 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ngrok.AspNetCore.Exceptions;
 using Ngrok.AspNetCore.Internal;
-using Mono.Unix;
 
 namespace Ngrok.AspNetCore.Services
 {
