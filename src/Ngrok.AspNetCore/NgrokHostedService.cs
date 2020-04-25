@@ -24,6 +24,7 @@ namespace Ngrok.AspNetCore
 		private readonly IApplicationLifetime _applicationLifetime;
 
 		private readonly TaskCompletionSource<IEnumerable<Tunnel>> _tunnelTaskCompletionSource;
+		private IEnumerable<Tunnel> _tunnels;
 
 		private readonly CancellationTokenSource _cancellationTokenSource;
 
@@ -62,6 +63,14 @@ namespace Ngrok.AspNetCore
 
 		public async Task StopAsync(CancellationToken cancellationToken)
 		{
+			if (!_options.ManageNgrokProcess && _tunnels != null)
+			{
+				foreach (var tunnel in _tunnels)
+				{
+					await _client.StopTunnelAsync(tunnel.Name, cancellationToken);
+				}
+			}
+
 			_cancellationTokenSource.Cancel();
 			await _processMgr.StopNgrokAsync();
 		}
@@ -98,6 +107,7 @@ namespace Ngrok.AspNetCore
 			if (tunnels == null)
 				throw new ArgumentNullException(nameof(tunnels), "Tunnels was not expected to be null here.");
 
+			_tunnels = tunnels;
 			_tunnelTaskCompletionSource.SetResult(tunnels);
 			Ready?.Invoke(tunnels);
 		}

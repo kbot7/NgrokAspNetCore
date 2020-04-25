@@ -21,7 +21,7 @@ namespace Ngrok.AspNetCore.Sample
 		{
 			services.AddNgrok(options => 
 			{
-				options.ManageNgrokProcess = true;
+				
 			});
 			services.AddControllersWithViews();
 		}

@@ -5,6 +5,8 @@ using Ngrok.AspNetCore.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Ngrok.AspNetCore;
+using System.Collections.Generic;
+using Ngrok.ApiClient;
 
 namespace Ngrok.AspNetCore.Sample.Controllers
 {
@@ -22,6 +24,7 @@ namespace Ngrok.AspNetCore.Sample.Controllers
 		public async Task<IActionResult> Index()
 		{
 			var tunnels = await _ngrokService.GetTunnelsAsync();
+			tunnels = tunnels ?? new List<Tunnel>();
 			return View(tunnels);
 		}
 
