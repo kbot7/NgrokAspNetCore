@@ -1,9 +1,9 @@
 # Credits
-- Original project by kg73: https://github.com/kg73/NgrokAspNetCore
-- Fork that enables .NET Core 3 and Linux support by doug62 - which this project is based on: https://github.com/doug62/NgrokAspNetCore/tree/linux-core3
+- doug62 - enabled .NET Core 3 and Linux support 
+- ffMathy - improved testing and linux support, and various other fixes
 - Original project for Visual Studio by dprothero: https://github.com/dprothero/NgrokExtensions
 
-# Ngrok.AspNetCore
+# Ngrok for Asp.Net Core
 Extensions to start Ngrok automatically from the AspNetCore pipeline. Useful to enable for local development when a public URL is needed.
 
 ## Setting it up
@@ -17,29 +17,9 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-You also need to call `UseNgrok` in your `Program` class when making the builder.
-
-```csharp
-public static IHostBuilder CreateHostBuilder(string[] args) =>
-    Host.CreateDefaultBuilder(args)
-        .ConfigureWebHostDefaults(x => x
-            .UseStartup<Startup>()
-            .UseNgrok(/* optional options here */));
-```
-
 When the application starts up, Ngrok will launch automatically and create a tunnel to the application. 
 
 If Ngrok is not installed, it will be downloaded automatically to the execution directory.
-
-### Inferring the application URL
-If you don't specify a `ApplicationHttpUrl` property in the options when calling `AddNgrok`, you have to insert the following call in your `Startup` class' `Configure` method:
-
-```csharp
-public void Configure(IApplicationBuilder app)
-{
-    app.UseNgrokAutomaticUrlDetection();
-}
-```
 
 ## Getting the exposed URL
 Simply inject an `INgrokHostedService` and call its `GetTunnelsAsync` method.
