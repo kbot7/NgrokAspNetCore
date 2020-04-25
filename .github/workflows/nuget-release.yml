@@ -18,18 +18,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         
-      - name: Setup NuGet
-        uses: nuget/setup-nuget@v1
-        with:
-          nuget-api-key: ${{ secrets.GITHUB_TOKEN }}
-          #nuget-version: '5.x'
+      #- name: Setup NuGet
+      #  uses: nuget/setup-nuget@v1
+      #  with:
+      #    nuget-api-key: ${{ secrets.GITHUB_TOKEN }}
+      #    #nuget-version: '5.x'
         
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.101
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        #env:
+        #  NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Install dependencies
         run: dotnet restore
@@ -68,6 +68,6 @@ jobs:
       - name: Push to GitHub NuGet Repo
         run: |
           #nuget setApiKey ${{ secrets.GITHUB_TOKEN }}
-          dotnet nuget push output/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json"
+          dotnet nuget push output/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
 
     
