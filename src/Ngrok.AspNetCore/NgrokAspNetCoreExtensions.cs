@@ -25,7 +25,7 @@ namespace Ngrok.AspNetCore
 		public static void AddNgrok(this IServiceCollection services, Action<NgrokOptions> action = null)
 		{
 			var optBuilder = ConfigureOptionsBuilder(services, action);
-			
+
 			services.TryAddSingleton<NgrokProcessMgr>();
 			services.AddHttpClient<NgrokDownloader>();
 			services.AddHttpClient<INgrokApiClient, NgrokHttpClient>();

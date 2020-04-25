@@ -181,6 +181,6 @@ namespace Ngrok.AspNetCore
 			_options.NgrokPath = nGrokFullPath;
 		}
 
-		
+
 	}
 }
