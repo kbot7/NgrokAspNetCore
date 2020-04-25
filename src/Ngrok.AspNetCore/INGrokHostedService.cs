@@ -11,6 +11,6 @@ namespace Ngrok.AspNetCore
 	{
 		Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync();
 
-		event Action<IEnumerable<Tunnel>> Ready;
+		event Action<IReadOnlyCollection<Tunnel>> Ready;
 	}
 }

@@ -40,7 +40,7 @@ namespace Ngrok.AspNetCore
 			return await WaitForTaskWithTimeout(_tunnelTaskSource.Task, 300_000, "No tunnels were found within 5 minutes. Perhaps the server was taking too long to start?");
 		}
 
-		public event Action<IEnumerable<Tunnel>> Ready;
+		public event Action<IReadOnlyCollection<Tunnel>> Ready;
 
 		public NgrokHostedService(
 			IOptionsMonitor<NgrokOptions> optionsMonitor,
@@ -149,7 +149,7 @@ namespace Ngrok.AspNetCore
 
 			_tunnels = tunnels;
 			_tunnelTaskSource.SetResult(tunnels.ToArray());
-			Ready?.Invoke(tunnels);
+			Ready?.Invoke(tunnels.ToArray());
 		}
 
 		private async Task<Tunnel[]?> StartTunnelsAsync(string address, CancellationToken cancellationToken)
