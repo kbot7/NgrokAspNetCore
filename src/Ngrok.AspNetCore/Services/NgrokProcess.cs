@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -23,29 +24,49 @@ namespace Ngrok.AspNetCore.Services
 
 		public Action ProcessStarted { get; set; }
 
-		public NgrokProcess(IApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory, NgrokOptions options)
+		public NgrokProcess(
+			IApplicationLifetime applicationLifetime, 
+			ILoggerFactory loggerFactory, 
+			NgrokOptions options)
 		{
 			applicationLifetime.ApplicationStopping.Register(Stop);
 			_ngrokProcessLogger = loggerFactory.CreateLogger("NgrokProcess");
 			_options = options;
 		}
 
-		public void StartNgrokProcess(string nGrokPath)
+		public void StartNgrokProcess()
 		{
-			var processInformation = new ProcessStartInfo(nGrokPath, "start --none --log=stdout")
+			var linuxProcessStartInfo = new ProcessStartInfo("/bin/bash", "-c \"" + Directory.GetCurrentDirectory() + "/ngrok start --none --log=stdout\"")
 			{
-				CreateNoWindow = false,
+				CreateNoWindow = true,
 				WindowStyle = ProcessWindowStyle.Hidden,
 				UseShellExecute = false,
+				WorkingDirectory = Environment.CurrentDirectory,
 				RedirectStandardOutput = true,
 				RedirectStandardError = true
 			};
+
+			var windowsProcessStartInfo = new ProcessStartInfo("Ngrok.exe", "start --none --log=stdout")
+			{
+				CreateNoWindow = true,
+				WindowStyle = ProcessWindowStyle.Hidden,
+				UseShellExecute = false,
+				WorkingDirectory = Environment.CurrentDirectory,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true
+			};
+
+			var processInformation = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+				windowsProcessStartInfo :
+				linuxProcessStartInfo;
 
 			Start(processInformation);
 		}
 
 		protected virtual void Start(ProcessStartInfo pi)
 		{
+			// TODO - make optional
+			//KillExistingNgrokProcesses();
 			var process = new Process();
 			process.StartInfo = pi;
 
@@ -64,7 +85,13 @@ namespace Ngrok.AspNetCore.Services
 				return;
 
 			_process.Kill();
-			foreach (var p in Process.GetProcessesByName("Ngrok"))
+			//KillExistingNgrokProcesses();
+		}
+
+		// TODO - make optional
+		private static void KillExistingNgrokProcesses()
+		{
+			foreach (var p in Process.GetProcessesByName("ngrok"))
 			{
 				p.Kill();
 			}
@@ -80,14 +107,14 @@ namespace Ngrok.AspNetCore.Services
 
 		private void ProcessStandardOutput(object sender, DataReceivedEventArgs args)
 		{
-			if (string.IsNullOrWhiteSpace(args.Data))
+			if (args == null || string.IsNullOrWhiteSpace(args.Data))
 			{
 				return;
 			}
 
 			// Fire event when Ngrok Client Session is established
 			const string clientSessionEstablishedKey = "obj=csess";
-			if (args?.Data?.Contains(clientSessionEstablishedKey) ?? false)
+			if (args.Data.Contains(clientSessionEstablishedKey))
 			{
 				ProcessStarted?.Invoke();
 			}

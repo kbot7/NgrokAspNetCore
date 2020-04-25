@@ -13,7 +13,7 @@ namespace Ngrok.AspNetCore.Sample
 			await host.RunAsync();
 		}
 
-		private static IHostBuilder CreateHostBuilder(string[] args) =>
+		public static IHostBuilder CreateHostBuilder(string[] args) =>
 			Host.CreateDefaultBuilder(args)
 				.ConfigureWebHostDefaults(x => x
 					.UseStartup<Startup>());

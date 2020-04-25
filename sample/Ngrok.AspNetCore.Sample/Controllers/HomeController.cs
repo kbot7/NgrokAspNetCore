@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Ngrok.AspNetCore.Sample.Models;
-using Ngrok.AspNetCore.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Ngrok.AspNetCore;
@@ -26,11 +25,6 @@ namespace Ngrok.AspNetCore.Sample.Controllers
 			var tunnels = await _ngrokService.GetTunnelsAsync();
 			tunnels = tunnels ?? new List<Tunnel>();
 			return View(tunnels);
-		}
-
-		public IActionResult Privacy()
-		{
-			return View();
 		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

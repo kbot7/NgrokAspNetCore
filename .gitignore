@@ -330,4 +330,5 @@ ASALocalRun/
 .mfractor/
 *.zip
 **/ngrok.exe
-/act/actions-setup-dotnet@v1
+act/
+*.deb

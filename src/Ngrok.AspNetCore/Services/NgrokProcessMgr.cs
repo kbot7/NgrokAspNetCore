@@ -41,7 +41,7 @@ namespace Ngrok.AspNetCore.Services
 
 		}
 
-		public async Task EnsureNgrokStartedAsync(string nGrokPath, CancellationToken cancellationToken = default)
+		public async Task EnsureNgrokStartedAsync(CancellationToken cancellationToken = default)
 		{
 			// This allows an already-running Ngrok instance to be used, instead of the one we are starting here. 
 			if (await _apiClient.CheckIfLocalAPIUpAsync(cancellationToken))
@@ -63,7 +63,7 @@ namespace Ngrok.AspNetCore.Services
 				_process.ProcessStarted += OnProcessStarted;
 
 				// Start Process
-				_process.StartNgrokProcess(nGrokPath);
+				_process.StartNgrokProcess();
 
 				// Wait for Process to be started
 				await _processStartSemaphore.WaitAsync(TimeSpan.FromMilliseconds(_options.ProcessStartTimeoutMs), cancellationToken);

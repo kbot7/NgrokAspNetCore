@@ -2,6 +2,8 @@
 // See the LICENSE file in the project root for more information.
 // Copyright (c) 2019 Kevin Gysberg
 
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
@@ -23,49 +25,17 @@ namespace Ngrok.AspNetCore.Services
 		}
 
 		/// <summary>
-		/// Check if Ngrok present in current directory or Windows PATH variable. If not, download from CDN, and throw exception if download fails
-		/// </summary>
-		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
-		/// <exception cref="NgrokNotFoundException">Throws if Ngrok not found and failed to download from CDN</exception>
-		/// <returns></returns>
-		public async Task<string> EnsureNgrokInstalled(NgrokOptions options, CancellationToken cancellationToken = default)
-		{
-			// Search options
-			var fileInOptions = !string.IsNullOrWhiteSpace(options.NgrokPath) && File.Exists(options.NgrokPath);
-			if (fileInOptions)
-			{
-				return options.NgrokPath;
-			}
-
-			// Search execution directory
-			var fileExists = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNgrokExecutableString()));
-			if (fileExists)
-			{
-				return Path.Combine(Directory.GetCurrentDirectory(), RuntimeExtensions.GetNgrokExecutableString());
-			}
-
-			// Search Windows PATH
-			var envFullPath = PathExtensions.GetFullPathFromEnvPath("Ngrok.exe");
-			if (!string.IsNullOrWhiteSpace(envFullPath) && File.Exists(envFullPath))
-			{
-				return envFullPath;
-			}
-
-			// Throw exception if not found yet and downloading is disabled
-			if (!options.DownloadNgrok) throw new NgrokNotFoundException();
-
-			await DownloadNgrokAsync(cancellationToken);
-			return RuntimeExtensions.GetNgrokExecutableString();
-		}
-
-		/// <summary>
 		/// Download Ngrok from equinox.io CDN
 		/// </summary>
 		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <exception cref="HttpRequestException">Throws if failed to download from CDN</exception>
 		/// <returns></returns>
-		public async Task DownloadNgrokAsync(CancellationToken cancellationToken = default)
+		public async Task DownloadExecutableAsync(CancellationToken cancellationToken)
 		{
+			var ngrokPath = $"{Path.Combine(Directory.GetCurrentDirectory(), "ngrok.exe")}";
+			if (File.Exists(ngrokPath))
+				return;
+
 			var downloadUrl = GetDownloadPath();
 			var fileName = $"{RuntimeExtensions.GetOsArchitectureString()}.zip";
 			var filePath = $"{Path.Combine(Directory.GetCurrentDirectory(), fileName)}";
@@ -75,13 +45,35 @@ namespace Ngrok.AspNetCore.Services
 
 			// Download Zip
 			var downloadStream = await downloadResponse.Content.ReadAsStreamAsync();
-			using (var writer = File.Create(filePath))
+			await using (var writer = File.Create(filePath))
 			{
 				await downloadStream.CopyToAsync(writer, cancellationToken);
 			}
 
 			// Extract zip
 			ZipFile.ExtractToDirectory(filePath, Directory.GetCurrentDirectory());
+
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				GrantNgrokFileExecutablePermissions();
+		}
+
+		private static void GrantNgrokFileExecutablePermissions()
+		{
+			var process = new Process
+			{
+				StartInfo = new ProcessStartInfo
+				{
+					RedirectStandardOutput = true,
+					UseShellExecute = false,
+					CreateNoWindow = true,
+					WindowStyle = ProcessWindowStyle.Hidden,
+					FileName = "/bin/bash",
+					Arguments = $"-c \"chmod +x {Directory.GetCurrentDirectory()}/ngrok\""
+				}
+			};
+
+			process.Start();
+			process.WaitForExit();
 		}
 
 		/// <summary>
@@ -89,9 +81,8 @@ namespace Ngrok.AspNetCore.Services
 		/// </summary>
 		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <returns></returns>
-		public string GetDownloadPath()
+		private string GetDownloadPath()
 		{
-			var architecture = RuntimeInformation.ProcessArchitecture;
 			const string cdn = "https://bin.equinox.io";
 			const string cdnPath = "c/4VmDzA7iaHb/Ngrok-stable";
 

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Ngrok.ApiClient;
 using Tunnel = Ngrok.ApiClient.Tunnel;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Ngrok.AspNetCore
@@ -22,36 +23,45 @@ namespace Ngrok.AspNetCore
 		private readonly INgrokApiClient _client;
 		private readonly IServer _server;
 		private readonly IApplicationLifetime _applicationLifetime;
+		private readonly ILogger<NgrokHostedService> _logger;
 
-		private readonly TaskCompletionSource<IReadOnlyCollection<Tunnel>> _tunnelTaskCompletionSource;
+		private readonly TaskCompletionSource<IReadOnlyCollection<Tunnel>> _tunnelTaskSource;
+		private readonly TaskCompletionSource<IReadOnlyCollection<string>> _serverAddressesSource;
+		private readonly TaskCompletionSource<bool> _shutdownSource;
 		private IEnumerable<Tunnel> _tunnels;
 
 		private readonly CancellationTokenSource _cancellationTokenSource;
 
-		private ICollection<string> _addresses;
-
 		public async Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync()
 		{
-			return await _tunnelTaskCompletionSource.Task;
+			if (_options.Disable)
+				return Array.Empty<Tunnel>();
+
+			return await WaitForTaskWithTimeout(_tunnelTaskSource.Task, 300_000, "No tunnels were found within 5 minutes. Perhaps the server was taking too long to start?");
 		}
 
 		public event Action<IReadOnlyCollection<Tunnel>> Ready;
 
 		public NgrokHostedService(
 			IOptionsMonitor<NgrokOptions> optionsMonitor,
+			ILogger<NgrokHostedService> logger,
 			NgrokDownloader nGrokDownloader,
 			IServer server,
 			IApplicationLifetime applicationLifetime,
 			NgrokProcessMgr processMgr,
 			INgrokApiClient client)
 		{
+			_logger = logger;
 			_options = optionsMonitor.CurrentValue;
 			_nGrokDownloader = nGrokDownloader;
 			_server = server;
 			_applicationLifetime = applicationLifetime;
 			_processMgr = processMgr;
 			_client = client;
-			_tunnelTaskCompletionSource = new TaskCompletionSource<IReadOnlyCollection<Tunnel>>();
+
+			_tunnelTaskSource = new TaskCompletionSource<IReadOnlyCollection<Tunnel>>();
+			_serverAddressesSource = new TaskCompletionSource<IReadOnlyCollection<string>>();
+			_shutdownSource = new TaskCompletionSource<bool>();
 			_cancellationTokenSource = new CancellationTokenSource();
 		}
 
@@ -72,34 +82,64 @@ namespace Ngrok.AspNetCore
 			}
 
 			_cancellationTokenSource.Cancel();
+
+			// Stop the process
 			await _processMgr.StopNgrokAsync();
+
+			await _shutdownSource.Task;
 		}
 
 		public Task OnApplicationStarted()
 		{
-			_addresses = _server.Features.Get<IServerAddressesFeature>().Addresses.ToArray();
+			var addresses = _server.Features.Get<IServerAddressesFeature>().Addresses.ToArray();
+			_logger.LogDebug("Inferred hosting URLs as {ServerAddresses}.", addresses);
+			_serverAddressesSource.SetResult(addresses.ToArray());
 			return RunAsync(_cancellationTokenSource.Token);
 		}
 
+
 		private async Task RunAsync(CancellationToken cancellationToken = default)
 		{
-			if (_options.DownloadNgrok)
+			try
 			{
-				await DownloadNgrokIfNeededAsync(cancellationToken);
+				if (_options.Disable)
+					return;
+
+				if (_options.DownloadNgrok)
+				{
+					await _nGrokDownloader.DownloadExecutableAsync(_cancellationTokenSource.Token);
+				}
+
+				await _processMgr.EnsureNgrokStartedAsync(cancellationToken);
+
+				if (_cancellationTokenSource.IsCancellationRequested)
+					return;
+
+				var url = await AdjustApplicationHttpUrlIfNeededAsync();
+				_logger.LogInformation("Picked hosting URL {Url}.", url);
+
+				if (_cancellationTokenSource.IsCancellationRequested)
+					return;
+
+				var tunnels = await StartTunnelsAsync(url, cancellationToken);
+				_logger.LogInformation("Tunnels {Tunnels} have been started.", new object[] { tunnels });
+
+				if (_cancellationTokenSource.IsCancellationRequested)
+					return;
+
+				if (tunnels != null)
+					OnTunnelsFetched(tunnels);
+
 			}
-
-			if (_cancellationTokenSource.IsCancellationRequested)
-				return;
-
-			await _processMgr.EnsureNgrokStartedAsync(_options.NgrokPath, cancellationToken);
-
-			if (_cancellationTokenSource.IsCancellationRequested)
-				return;
-
-			var url = AdjustApplicationHttpUrlIfNeeded();
-
-			var tunnels = await StartTunnelsAsync(url, cancellationToken);
-			OnTunnelsFetched(tunnels);
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "An error occured while running the Ngrok service.");
+			}
+			finally
+			{
+				_shutdownSource.SetResult(true);
+			}
+			
 		}
 
 		private void OnTunnelsFetched(IEnumerable<Tunnel> tunnels)
@@ -108,11 +148,11 @@ namespace Ngrok.AspNetCore
 				throw new ArgumentNullException(nameof(tunnels), "Tunnels was not expected to be null here.");
 
 			_tunnels = tunnels;
-			_tunnelTaskCompletionSource.SetResult(tunnels.ToArray());
+			_tunnelTaskSource.SetResult(tunnels.ToArray());
 			Ready?.Invoke(tunnels.ToArray());
 		}
 
-		private async Task<IEnumerable<Tunnel>> StartTunnelsAsync(string address, CancellationToken cancellationToken)
+		private async Task<Tunnel[]?> StartTunnelsAsync(string address, CancellationToken cancellationToken)
 		{
 			if (string.IsNullOrEmpty(address))
 			{
@@ -153,18 +193,36 @@ namespace Ngrok.AspNetCore
 			// Get Tunnels
 			var tunnels = (await _client.ListTunnelsAsync(cancellationToken))
 				.Where(t => t.Name == System.AppDomain.CurrentDomain.FriendlyName ||
-				t.Name == $"{System.AppDomain.CurrentDomain.FriendlyName} (http)");
+				t.Name == $"{System.AppDomain.CurrentDomain.FriendlyName} (http)")
+				?.ToArray();
 
 			return tunnels;
 		}
 
-		private string AdjustApplicationHttpUrlIfNeeded()
+		private async Task<T> WaitForTaskWithTimeout<T>(Task<T> task, int timeoutInMilliseconds, string timeoutMessage)
+		{
+			if (await Task.WhenAny(task, Task.Delay(timeoutInMilliseconds, _cancellationTokenSource.Token)) == task)
+				return await task;
+
+			throw new InvalidOperationException(timeoutMessage);
+		}
+
+		private async Task<string> AdjustApplicationHttpUrlIfNeededAsync()
 		{
 			var url = _options.ApplicationHttpUrl;
 
-			if (string.IsNullOrWhiteSpace(url) || !Uri.TryCreate(url, UriKind.Absolute, out _))
+			// TODO review if this is needed. Can this even be hit anymore?
+			if (string.IsNullOrWhiteSpace(url))
 			{
-				url = _addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? _addresses.FirstOrDefault();
+				var addresses = await WaitForTaskWithTimeout(
+					_serverAddressesSource.Task,
+					30000,
+					$"No {nameof(NgrokOptions.ApplicationHttpUrl)} was set in the settings, and the URL of the server could not be inferred within 30 seconds.");
+				if (addresses != null)
+				{
+					url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
+					url = url?.Replace("*", "localhost", StringComparison.InvariantCulture);
+				}
 			}
 
 			_options.ApplicationHttpUrl = url;
@@ -174,13 +232,5 @@ namespace Ngrok.AspNetCore
 
 			return url;
 		}
-
-		private async Task DownloadNgrokIfNeededAsync(CancellationToken cancellationToken = default)
-		{
-			var nGrokFullPath = await _nGrokDownloader.EnsureNgrokInstalled(_options, cancellationToken);
-			_options.NgrokPath = nGrokFullPath;
-		}
-
-
 	}
 }

@@ -2,27 +2,28 @@
 // See the LICENSE file in the project root for more information.
 // Copyright (c) 2019 Kevin Gysberg
 
-using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Ngrok.AspNetCore.Services;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Ngrok.ApiClient;
 using Ngrok.AspNetCore.Exceptions;
 using Microsoft.Extensions.Options;
+using System;
 
 namespace Ngrok.AspNetCore
 {
 	public static class NgrokAspNetCoreExtensions
 	{
-		public static void AddNgrok(this IServiceCollection services, Action<NgrokOptions> action = null)
+		public static IServiceCollection AddNgrok(this IServiceCollection services, Action<NgrokOptions> action = null)
 		{
 			var optBuilder = ConfigureOptionsBuilder(services, action);
 
@@ -35,6 +36,8 @@ namespace Ngrok.AspNetCore
 			services.AddSingleton<NgrokHostedService>();
 			services.AddSingleton<INgrokHostedService>(p => p.GetRequiredService<NgrokHostedService>());
 			services.AddSingleton<IHostedService>(p => p.GetRequiredService<NgrokHostedService>());
+
+			return services;
 		}
 
 		private static OptionsBuilder<NgrokOptions> ConfigureOptionsBuilder(IServiceCollection services, Action<NgrokOptions> action = null)

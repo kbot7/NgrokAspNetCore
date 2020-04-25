@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ngrok.AspNetCore.Tests", "test\Ngrok.AspNetCore.Tests\Ngrok.AspNetCore.Tests.csproj", "{51DCAEDB-2CD9-4037-ABB4-46AF897308F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{A550A8B4-DEB6-4433-9CC1-06D0BC107016}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A550A8B4-DEB6-4433-9CC1-06D0BC107016}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A550A8B4-DEB6-4433-9CC1-06D0BC107016}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51DCAEDB-2CD9-4037-ABB4-46AF897308F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51DCAEDB-2CD9-4037-ABB4-46AF897308F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51DCAEDB-2CD9-4037-ABB4-46AF897308F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51DCAEDB-2CD9-4037-ABB4-46AF897308F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{86F1FE1F-AEAF-42F7-9F5E-3C861319A761} = {7E68639E-4949-4AF3-9995-87B149DE1445}
 		{A550A8B4-DEB6-4433-9CC1-06D0BC107016} = {7E68639E-4949-4AF3-9995-87B149DE1445}
+		{51DCAEDB-2CD9-4037-ABB4-46AF897308F5} = {7E68639E-4949-4AF3-9995-87B149DE1445}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {03329965-2AFC-4B22-B7A4-9AAD58FFB0C5}

@@ -7,6 +7,11 @@ namespace Ngrok.AspNetCore
 	public class NgrokOptions
 	{
 		/// <summary>
+		/// Disable all Ngrok integration features
+		/// </summary>
+		public bool Disable { get; set; } = false;
+
+		/// <summary>
 		/// Automatically detect URL from <see cref="Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature"/>
 		/// </summary>
 		public bool DetectUrl { get; set; } = true;
