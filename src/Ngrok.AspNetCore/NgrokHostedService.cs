@@ -211,6 +211,7 @@ namespace Ngrok.AspNetCore
 		{
 			var url = _options.ApplicationHttpUrl;
 
+			// TODO review if this is needed. Can this even be hit anymore?
 			if (string.IsNullOrWhiteSpace(url))
 			{
 				var addresses = await WaitForTaskWithTimeout(
