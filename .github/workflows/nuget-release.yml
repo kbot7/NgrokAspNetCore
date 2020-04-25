@@ -57,9 +57,15 @@ jobs:
           name: packages
           path: output
 
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-api-key: ${{ secrets.GITHUB_TOKEN }}
+          #nuget-version: '5.x'
+
       - name: Push to GitHub NuGet Repo
         run: |
-          nuget setApiKey ${{ secrets.GITHUB_TOKEN }}
+          #nuget setApiKey ${{ secrets.GITHUB_TOKEN }}
           dotnet nuget push output/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json"
 
     
