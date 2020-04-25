@@ -34,8 +34,8 @@ namespace Ngrok.AspNetCore.Services
 		{
 			var processInformation = new ProcessStartInfo(nGrokPath, "start --none --log=stdout")
 			{
-				CreateNoWindow = !_options.DisplayNgrokWindow,
-				WindowStyle = _options.DisplayNgrokWindow ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden,
+				CreateNoWindow = false,
+				WindowStyle = ProcessWindowStyle.Hidden,
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 				RedirectStandardError = true

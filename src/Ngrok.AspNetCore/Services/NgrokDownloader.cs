@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Ngrok.AspNetCore.Exceptions;
 using Ngrok.AspNetCore.Internal;
@@ -27,7 +28,7 @@ namespace Ngrok.AspNetCore.Services
 		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <exception cref="NgrokNotFoundException">Throws if Ngrok not found and failed to download from CDN</exception>
 		/// <returns></returns>
-		public async Task<string> EnsureNgrokInstalled(NgrokOptions options)
+		public async Task<string> EnsureNgrokInstalled(NgrokOptions options, CancellationToken cancellationToken = default)
 		{
 			// Search options
 			var fileInOptions = !string.IsNullOrWhiteSpace(options.NgrokPath) && File.Exists(options.NgrokPath);
@@ -53,7 +54,7 @@ namespace Ngrok.AspNetCore.Services
 			// Throw exception if not found yet and downloading is disabled
 			if (!options.DownloadNgrok) throw new NgrokNotFoundException();
 
-			await DownloadNgrokAsync();
+			await DownloadNgrokAsync(cancellationToken);
 			return RuntimeExtensions.GetNgrokExecutableString();
 		}
 
@@ -63,20 +64,20 @@ namespace Ngrok.AspNetCore.Services
 		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <exception cref="HttpRequestException">Throws if failed to download from CDN</exception>
 		/// <returns></returns>
-		public async Task DownloadNgrokAsync()
+		public async Task DownloadNgrokAsync(CancellationToken cancellationToken = default)
 		{
 			var downloadUrl = GetDownloadPath();
 			var fileName = $"{RuntimeExtensions.GetOsArchitectureString()}.zip";
 			var filePath = $"{Path.Combine(Directory.GetCurrentDirectory(), fileName)}";
 
-			var downloadResponse = await _httpClient.GetAsync(downloadUrl);
+			var downloadResponse = await _httpClient.GetAsync(downloadUrl, cancellationToken);
 			downloadResponse.EnsureSuccessStatusCode();
 
 			// Download Zip
 			var downloadStream = await downloadResponse.Content.ReadAsStreamAsync();
 			using (var writer = File.Create(filePath))
 			{
-				await downloadStream.CopyToAsync(writer);
+				await downloadStream.CopyToAsync(writer, cancellationToken);
 			}
 
 			// Extract zip

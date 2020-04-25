@@ -13,6 +13,10 @@ namespace Ngrok.AspNetCore.Exceptions
 		{
 		}
 
+		public NgrokStartFailedException(string message) : base($"Ngrok failed to start. {message}")
+		{
+		}
+
 		public NgrokStartFailedException(Exception innerException) : base("Ngrok failed to start", innerException)
 		{
 		}

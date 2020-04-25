@@ -25,6 +25,8 @@ namespace Ngrok.AspNetCore
 
 		private readonly TaskCompletionSource<IEnumerable<Tunnel>> _tunnelTaskCompletionSource;
 
+		private readonly CancellationTokenSource _cancellationTokenSource;
+
 		private ICollection<string> _addresses;
 
 		public async Task<IEnumerable<Tunnel>> GetTunnelsAsync()
@@ -49,21 +51,45 @@ namespace Ngrok.AspNetCore
 			_processMgr = processMgr;
 			_client = client;
 			_tunnelTaskCompletionSource = new TaskCompletionSource<IEnumerable<Tunnel>>();
+			_cancellationTokenSource = new CancellationTokenSource();
 		}
 
+		public async Task StartAsync(CancellationToken cancellationToken)
+		{
+			cancellationToken.Register(() => _cancellationTokenSource.Cancel());
+			_applicationLifetime.ApplicationStarted.Register(() => OnApplicationStarted());
+		}
 
-		private async Task RunAsync()
+		public async Task StopAsync(CancellationToken cancellationToken)
+		{
+			_cancellationTokenSource.Cancel();
+			await _processMgr.StopNgrokAsync();
+		}
+
+		public Task OnApplicationStarted()
+		{
+			_addresses = _server.Features.Get<IServerAddressesFeature>().Addresses.ToArray();
+			return RunAsync(_cancellationTokenSource.Token);
+		}
+
+		private async Task RunAsync(CancellationToken cancellationToken = default)
 		{
 			if (_options.DownloadNgrok)
 			{
-				await DownloadNgrokIfNeededAsync();
+				await DownloadNgrokIfNeededAsync(cancellationToken);
 			}
 
-			
-			await _processMgr.EnsureNgrokStartedAsync(_options.NgrokPath);
+			if (_cancellationTokenSource.IsCancellationRequested)
+				return;
+
+			await _processMgr.EnsureNgrokStartedAsync(_options.NgrokPath, cancellationToken);
+
+			if (_cancellationTokenSource.IsCancellationRequested)
+				return;
+
 			var url = AdjustApplicationHttpUrlIfNeeded();
 
-			var tunnels = await StartTunnelsAsync(url);
+			var tunnels = await StartTunnelsAsync(url, cancellationToken);
 			OnTunnelsFetched(tunnels);
 		}
 
@@ -76,7 +102,7 @@ namespace Ngrok.AspNetCore
 			Ready?.Invoke(tunnels);
 		}
 
-		private async Task<IEnumerable<Tunnel>> StartTunnelsAsync(string address)
+		private async Task<IEnumerable<Tunnel>> StartTunnelsAsync(string address, CancellationToken cancellationToken)
 		{
 			if (string.IsNullOrEmpty(address))
 			{
@@ -112,10 +138,10 @@ namespace Ngrok.AspNetCore
 				Address = address,
 				Protocol = "http",
 				HostHeader = address
-			});
+			}, cancellationToken);
 
 			// Get Tunnels
-			var tunnels = (await _client.ListTunnelsAsync())
+			var tunnels = (await _client.ListTunnelsAsync(cancellationToken))
 				.Where(t => t.Name == System.AppDomain.CurrentDomain.FriendlyName ||
 				t.Name == $"{System.AppDomain.CurrentDomain.FriendlyName} (http)");
 
@@ -139,26 +165,12 @@ namespace Ngrok.AspNetCore
 			return url;
 		}
 
-		private async Task DownloadNgrokIfNeededAsync()
+		private async Task DownloadNgrokIfNeededAsync(CancellationToken cancellationToken = default)
 		{
-			var nGrokFullPath = await _nGrokDownloader.EnsureNgrokInstalled(_options);
+			var nGrokFullPath = await _nGrokDownloader.EnsureNgrokInstalled(_options, cancellationToken);
 			_options.NgrokPath = nGrokFullPath;
 		}
 
-		public async Task StartAsync(CancellationToken cancellationToken)
-		{
-			_applicationLifetime.ApplicationStarted.Register(() => OnApplicationStarted());
-		}
-
-		public Task OnApplicationStarted()
-		{
-			_addresses = _server.Features.Get<IServerAddressesFeature>().Addresses.ToArray();
-			return RunAsync();
-		}
-
-		public async Task StopAsync(CancellationToken cancellationToken)
-		{
-			await _processMgr.StopNgrokAsync();
-		}
+		
 	}
 }

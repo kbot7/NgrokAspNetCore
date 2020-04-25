@@ -20,7 +20,7 @@ namespace Ngrok.ApiClient
 		// DELETE /api/tunnels/:name 
 		Task StopTunnelAsync(string name, CancellationToken cancellationToken = default);
 
-		Task<bool> CheckIfLocalAPIUpAsync();
+		Task<bool> CheckIfLocalAPIUpAsync(CancellationToken cancellationToken = default);
 
 	}
 }

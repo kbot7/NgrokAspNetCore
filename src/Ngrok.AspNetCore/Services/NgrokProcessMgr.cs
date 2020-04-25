@@ -41,18 +41,23 @@ namespace Ngrok.AspNetCore.Services
 
 		}
 
-		public async Task EnsureNgrokStartedAsync(string nGrokPath)
+		public async Task EnsureNgrokStartedAsync(string nGrokPath, CancellationToken cancellationToken = default)
 		{
 			// This allows an already-running Ngrok instance to be used, instead of the one we are starting here. 
-			if (await _apiClient.CheckIfLocalAPIUpAsync())
+			if (await _apiClient.CheckIfLocalAPIUpAsync(cancellationToken))
 			{
 				return;
+			}
+
+			if (!_options.ManageNgrokProcess)
+			{
+				throw new NgrokStartFailedException("No running Ngrok process found and ManageNgrokProcess is disabled");
 			}
 
 			try
 			{
 				UsingManagedProcess = true;
-				_process = new NgrokProcess(_lifetime, _loggerFactory);
+				_process = new NgrokProcess(_lifetime, _loggerFactory, _options);
 
 				// Register OnProcessStarted Handler
 				_process.ProcessStarted += OnProcessStarted;
@@ -61,10 +66,10 @@ namespace Ngrok.AspNetCore.Services
 				_process.StartNgrokProcess(nGrokPath);
 
 				// Wait for Process to be started
-				await _processStartSemaphore.WaitAsync(TimeSpan.FromSeconds(_options.ProcessStartTimeoutMs));
+				await _processStartSemaphore.WaitAsync(TimeSpan.FromMilliseconds(_options.ProcessStartTimeoutMs), cancellationToken);
 
 				// Verify API is up
-				var IsAPIUp = await _apiClient.CheckIfLocalAPIUpAsync();
+				var IsAPIUp = await _apiClient.CheckIfLocalAPIUpAsync(cancellationToken);
 
 				if (!IsAPIUp)
 				{
@@ -79,7 +84,7 @@ namespace Ngrok.AspNetCore.Services
 
 		public Task StopNgrokAsync()
 		{
-			_process.Stop();
+			_process?.Stop();
 			return Task.CompletedTask;
 		}
 

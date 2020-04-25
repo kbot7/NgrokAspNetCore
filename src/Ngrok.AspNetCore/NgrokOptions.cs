@@ -48,12 +48,6 @@ namespace Ngrok.AspNetCore
 		public bool RedirectLogs { get; set; } = true;
 
 		/// <summary>
-		/// Display a separate ngrok window
-		/// Implies <see cref="ManageNgrokProcess"/> is true
-		/// </summary>
-		public bool DisplayNgrokWindow { get; set; } = false;
-
-		/// <summary>
 		/// Set to Ngrok profile specified in Ngrok config. Ngrok config file must be present to use this option
 		/// See <see href="https://Ngrok.com/docs#config">https://Ngrok.com/docs#config</see> for details
 		/// </summary>
