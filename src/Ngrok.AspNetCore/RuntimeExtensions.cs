@@ -71,5 +71,19 @@ namespace Ngrok.AspNetCore
 		{
 			return $"{GetOsString()}-{GetArchitectureString()}";
 		}
+
+		/// <summary>
+		/// Get Ngrok executable name
+		/// </summary>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
+		/// <returns></returns>
+		public static string GetNgrokExecutableString()
+		{
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				return "Ngrok.exe";
+			}
+			return "Ngrok";
+		}
 	}
 }

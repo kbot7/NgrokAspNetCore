@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.1</TargetFramework>
+		<NuspecProperties>version=$(Version)</NuspecProperties>
 		<Authors>Kevin Gysberg, David Prothero</Authors>
 		<PackageLicenseUrl>https://raw.githubusercontent.com/kg73/NgrokAspNetCore/master/LICENSE</PackageLicenseUrl>
 		<Company />
