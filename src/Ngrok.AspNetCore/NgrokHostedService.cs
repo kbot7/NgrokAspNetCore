@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Ngrok.ApiClient;
 using Tunnel = Ngrok.ApiClient.Tunnel;
+using Microsoft.Extensions.Options;
 
 namespace Ngrok.AspNetCore
 {
@@ -34,27 +35,31 @@ namespace Ngrok.AspNetCore
 		public event Action<IEnumerable<Tunnel>> Ready;
 
 		public NgrokHostedService(
-			NgrokOptions options,
+			IOptionsMonitor<NgrokOptions> optionsMonitor,
 			NgrokDownloader nGrokDownloader,
 			IServer server,
 			IApplicationLifetime applicationLifetime,
 			NgrokProcessMgr processMgr,
 			INgrokApiClient client)
 		{
-			_options = options;
+			_options = optionsMonitor.CurrentValue;
 			_nGrokDownloader = nGrokDownloader;
 			_server = server;
 			_applicationLifetime = applicationLifetime;
 			_processMgr = processMgr;
 			_client = client;
-
 			_tunnelTaskCompletionSource = new TaskCompletionSource<IEnumerable<Tunnel>>();
 		}
 
 
 		private async Task RunAsync()
 		{
-			await DownloadNgrokIfNeededAsync();
+			if (_options.DownloadNgrok)
+			{
+				await DownloadNgrokIfNeededAsync();
+			}
+
+			
 			await _processMgr.EnsureNgrokStartedAsync(_options.NgrokPath);
 			var url = AdjustApplicationHttpUrlIfNeeded();
 

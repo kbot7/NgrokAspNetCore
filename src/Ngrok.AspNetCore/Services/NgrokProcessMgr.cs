@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Ngrok.ApiClient;
 using Ngrok.AspNetCore.Exceptions;
 using System;
@@ -27,15 +28,14 @@ namespace Ngrok.AspNetCore.Services
 		public bool IsStarted { get; private set; }
 
 		public NgrokProcessMgr(
-			ILogger<NgrokProcessMgr> logger,
 			ILoggerFactory loggerFactory,
 			IApplicationLifetime lifetime,
-			NgrokOptions options,
+			IOptionsMonitor<NgrokOptions> optionsAccessor,
 			INgrokApiClient apiClient)
 		{
 			_logger = loggerFactory.CreateLogger<NgrokProcessMgr>();
 			_loggerFactory = loggerFactory;
-			_options = options;
+			_options = optionsAccessor.CurrentValue;
 			_apiClient = apiClient;
 			_lifetime = lifetime;
 
@@ -61,7 +61,7 @@ namespace Ngrok.AspNetCore.Services
 				_process.StartNgrokProcess(nGrokPath);
 
 				// Wait for Process to be started
-				await _processStartSemaphore.WaitAsync(TimeSpan.FromSeconds(_options.NgrokProcessStartTimeoutMs));
+				await _processStartSemaphore.WaitAsync(TimeSpan.FromSeconds(_options.ProcessStartTimeoutMs));
 
 				// Verify API is up
 				var IsAPIUp = await _apiClient.CheckIfLocalAPIUpAsync();

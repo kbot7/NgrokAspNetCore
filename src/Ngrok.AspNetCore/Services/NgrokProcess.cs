@@ -19,21 +19,23 @@ namespace Ngrok.AspNetCore.Services
 	{
 		private Process _process;
 		private ILogger _ngrokProcessLogger;
+		private readonly NgrokOptions _options;
 
 		public Action ProcessStarted { get; set; }
 
-		public NgrokProcess(IApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory)
+		public NgrokProcess(IApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory, NgrokOptions options)
 		{
 			applicationLifetime.ApplicationStopping.Register(Stop);
 			_ngrokProcessLogger = loggerFactory.CreateLogger("NgrokProcess");
+			_options = options;
 		}
 
 		public void StartNgrokProcess(string nGrokPath)
 		{
 			var processInformation = new ProcessStartInfo(nGrokPath, "start --none --log=stdout")
 			{
-				CreateNoWindow = true,
-				WindowStyle = ProcessWindowStyle.Hidden,
+				CreateNoWindow = !_options.DisplayNgrokWindow,
+				WindowStyle = _options.DisplayNgrokWindow ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden,
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 				RedirectStandardError = true
@@ -90,14 +92,17 @@ namespace Ngrok.AspNetCore.Services
 				ProcessStarted?.Invoke();
 			}
 
-			// Build structured log data
-			var data = NgrokLogExtensions.ParseLogData(args.Data);
-			var logFormatData = data.Where(d => d.Key != "lvl" && d.Key != "t")
-				.ToDictionary(e => e.Key, e => e.Value);
-			var logFormatString = NgrokLogExtensions.GetLogFormatString(logFormatData);
-			var logLevel = NgrokLogExtensions.ParseLogLevel(data["lvl"]);
+			if (_options.RedirectLogs)
+			{
+				// Build structured log data
+				var data = NgrokLogExtensions.ParseLogData(args.Data);
+				var logFormatData = data.Where(d => d.Key != "lvl" && d.Key != "t")
+					.ToDictionary(e => e.Key, e => e.Value);
+				var logFormatString = NgrokLogExtensions.GetLogFormatString(logFormatData);
+				var logLevel = NgrokLogExtensions.ParseLogLevel(data["lvl"]);
 
-			_ngrokProcessLogger.Log(logLevel, logFormatString, logFormatData.Values.ToArray());
+				_ngrokProcessLogger.Log(logLevel, logFormatString, logFormatData.Values.ToArray());
+			}
 		}
 	}
 }

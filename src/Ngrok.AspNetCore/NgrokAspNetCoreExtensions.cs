@@ -15,26 +15,58 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Ngrok.ApiClient;
+using Ngrok.AspNetCore.Exceptions;
+using Microsoft.Extensions.Options;
 
 namespace Ngrok.AspNetCore
 {
 	public static class NgrokAspNetCoreExtensions
 	{
-		public static void AddNgrok(this IServiceCollection services, NgrokOptions options = null)
+		public static void AddNgrok(this IServiceCollection services, Action<NgrokOptions> action = null)
 		{
+			var optBuilder = ConfigureOptionsBuilder(services, action);
+			
 			services.TryAddSingleton<NgrokProcessMgr>();
-
 			services.AddHttpClient<NgrokDownloader>();
 			services.AddHttpClient<INgrokApiClient, NgrokHttpClient>();
-
-
-			services.TryAddSingleton(options ?? new NgrokOptions());
 
 			services.AddLogging();
 
 			services.AddSingleton<NgrokHostedService>();
 			services.AddSingleton<INgrokHostedService>(p => p.GetRequiredService<NgrokHostedService>());
 			services.AddSingleton<IHostedService>(p => p.GetRequiredService<NgrokHostedService>());
+		}
+
+		private static OptionsBuilder<NgrokOptions> ConfigureOptionsBuilder(IServiceCollection services, Action<NgrokOptions> action = null)
+		{
+			var optBuilder = services.AddOptions<NgrokOptions>();
+			if (action != null)
+			{
+				optBuilder.Configure(action);
+			}
+			optBuilder.PostConfigure(PostConfigure);
+			optBuilder.Validate(ValidateUrlDetectOpt, "Must supply an ApplicationHttpUrl if DetectUrl is false");
+			return optBuilder;
+		}
+
+		private static void PostConfigure(NgrokOptions opt)
+		{
+			if (opt.ManageNgrokProcess == false)
+			{
+				opt.DownloadNgrok = false;
+				opt.RedirectLogs = false;
+				opt.NgrokConfigProfile = null;
+				opt.ProcessStartTimeoutMs = 0;
+			}
+		}
+
+		private static bool ValidateUrlDetectOpt(NgrokOptions opt)
+		{
+			if (opt.DetectUrl == false && string.IsNullOrWhiteSpace(opt.ApplicationHttpUrl))
+			{
+				return false;
+			}
+			return true;
 		}
 	}
 }
