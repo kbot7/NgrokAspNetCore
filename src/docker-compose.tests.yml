@@ -5,4 +5,4 @@ services:
     image: ${DOCKER_REGISTRY-}ngrok-tests
     build:
       context: .
-      dockerfile: FluffySpoon.AspNet.NGrok.Tests/Dockerfile
+      dockerfile: Ngrok.AspNetCore.Tests/Dockerfile

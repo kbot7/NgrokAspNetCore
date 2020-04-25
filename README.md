@@ -3,7 +3,7 @@
 - Fork that enables .NET Core 3 and Linux support by doug62 - which this project is based on: https://github.com/doug62/NgrokAspNetCore/tree/linux-core3
 - Original project for Visual Studio by dprothero: https://github.com/dprothero/NgrokExtensions
 
-# FluffySpoon.AspNet.NGrok
+# Ngrok.AspNetCore
 Extensions to start Ngrok automatically from the AspNetCore pipeline. Useful to enable for local development when a public URL is needed.
 
 ## Setting it up

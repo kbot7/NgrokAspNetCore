@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluffySpoon.AspNet.NGrok", "FluffySpoon.AspNet.NGrok\FluffySpoon.AspNet.NGrok.csproj", "{2AEDAB6B-CD52-4F18-9538-69CEA05D1FB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ngrok.AspNetCore", "Ngrok.AspNetCore\Ngrok.AspNetCore.csproj", "{2AEDAB6B-CD52-4F18-9538-69CEA05D1FB2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluffySpoon.AspNet.NGrok.Sample", "FluffySpoon.AspNet.NGrok.Sample\FluffySpoon.AspNet.NGrok.Sample.csproj", "{ED503E74-1A27-4492-A274-F7C5C0C43539}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ngrok.AspNetCore.Sample", "Ngrok.AspNetCore.Sample\Ngrok.AspNetCore.Sample.csproj", "{ED503E74-1A27-4492-A274-F7C5C0C43539}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGrok.ApiClient", "NGrok.ApiClient\NGrok.ApiClient.csproj", "{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}"
 EndProject
