@@ -55,7 +55,7 @@ jobs:
           dotnet pack -p:Version=$VERSION --include-symbols --include-source --no-restore --configuration Release --verbosity normal --output output
 
       - name: Echo
-        run: echo $TAG_VERSION
+        run: echo "$TAG_VERSION"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v1
@@ -65,9 +65,9 @@ jobs:
 
       
 
-      - name: Push to GitHub NuGet Repo
-        run: |
-          #nuget setApiKey ${{ secrets.GITHUB_TOKEN }}
-          dotnet nuget push output/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json" --api-key ${{ secrets.NUGET_TOKEN }}
+      #- name: Push to GitHub NuGet Repo
+      #  run: |
+      #    #nuget setApiKey ${{ secrets.GITHUB_TOKEN }}
+      #    dotnet nuget push output/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json" --api-key ${{ secrets.NUGET_TOKEN }}
 
     
