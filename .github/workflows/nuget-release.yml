@@ -2,8 +2,8 @@ name: Nuget Release
 
 on:
   push:
-    #branches:
-    #  - develop
+    branches:
+      - develop
 
     # Publish `v1.2.3` tags as releases.
     tags:
@@ -37,10 +37,11 @@ jobs:
       - name: Pack
         run: |
           # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          #VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          VERSION=$(echo "2.0.0-alpha2")
 
           # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          #[[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
           
           echo "::set-output name=TAG_VERSION::$VERSION"
           
