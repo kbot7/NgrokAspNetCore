@@ -45,7 +45,7 @@ jobs:
         run: |
           # Strip git ref prefix from version
           #VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          VERSION=$(echo "2.0.0-alpha3")
+          VERSION=$(echo "2.0.0-alpha4")
 
           # Strip "v" prefix from tag name
           #[[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
@@ -67,6 +67,6 @@ jobs:
       
 
       - name: Push to GitHub NuGet Repo
-        run: dotnet nuget push output/*.nupkg
+        run: dotnet nuget push output/**/*.nupkg
 
     
