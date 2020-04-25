@@ -1,0 +1,60 @@
+name: Nuget Release
+
+on:
+  push:
+    branches:
+      - develop
+
+env:
+  MAJOR: 2
+  MINOR: 0
+  PATCH: 0
+
+jobs:
+  # Run tests.
+  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.101
+          source-url: https://nuget.pkg.github.com/kg73/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      #- name: Test
+      #  run: dotnet test --no-restore --verbosity normal
+
+      - name: Pack
+        run: |
+          # Set version
+          VERSION=$(echo "${MAJOR}.${MINOR}.${PATCH}-build${GITHUB_RUN_NUMBER}")
+          echo "::set-output name=BUILD_VERSION::$VERSION"
+          
+          # pack
+          dotnet pack -p:Version=$VERSION --include-symbols --include-source --no-restore --verbosity normal --output output
+
+      - name: Echo Version
+        run: echo "${BUILD_VERSION}"
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: packages
+          path: output
+
+      - name: Push to GitHub NuGet Repo
+        run: dotnet nuget push output/**/*.nupkg -n true --skip-duplicate
+
+    

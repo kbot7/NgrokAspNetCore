@@ -7,6 +7,9 @@
 		<Company />
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<RootNamespace>Ngrok.AspNetCore</RootNamespace>
+		<PackageId>Ngrok.AspNetCore</PackageId>
+		<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
