@@ -38,8 +38,8 @@ jobs:
         run: dotnet pack -p:Version=2.0.0-alpha --include-symbols --include-source --no-restore --configuration Release --verbosity normal
 
       - name: Push API Client
-        run: dotnet nuget push src/Ngrok.AspNetCore/bin/Release/*.nupkg --source "github"
+        run: dotnet nuget push src/Ngrok.AspNetCore/bin/Release/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json"
 
       - name: Push Ngrok Library
-        run: dotnet nuget push src/Ngrok.ApiClient/bin/Release/*.nupkg --source "github"
+        run: dotnet nuget push src/Ngrok.ApiClient/bin/Release/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json"
     
