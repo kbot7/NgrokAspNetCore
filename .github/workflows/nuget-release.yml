@@ -68,6 +68,6 @@ jobs:
       - name: Push to GitHub NuGet Repo
         run: |
           #nuget setApiKey ${{ secrets.GITHUB_TOKEN }}
-          dotnet nuget push output/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
+          dotnet nuget push output/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json" --api-key ${{ secrets.NUGET_TOKEN }}
 
     
