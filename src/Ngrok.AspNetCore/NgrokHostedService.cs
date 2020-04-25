@@ -23,19 +23,19 @@ namespace Ngrok.AspNetCore
 		private readonly IServer _server;
 		private readonly IApplicationLifetime _applicationLifetime;
 
-		private readonly TaskCompletionSource<IEnumerable<Tunnel>> _tunnelTaskCompletionSource;
+		private readonly TaskCompletionSource<IReadOnlyCollection<Tunnel>> _tunnelTaskCompletionSource;
 		private IEnumerable<Tunnel> _tunnels;
 
 		private readonly CancellationTokenSource _cancellationTokenSource;
 
 		private ICollection<string> _addresses;
 
-		public async Task<IEnumerable<Tunnel>> GetTunnelsAsync()
+		public async Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync()
 		{
 			return await _tunnelTaskCompletionSource.Task;
 		}
 
-		public event Action<IEnumerable<Tunnel>> Ready;
+		public event Action<IReadOnlyCollection<Tunnel>> Ready;
 
 		public NgrokHostedService(
 			IOptionsMonitor<NgrokOptions> optionsMonitor,
@@ -51,7 +51,7 @@ namespace Ngrok.AspNetCore
 			_applicationLifetime = applicationLifetime;
 			_processMgr = processMgr;
 			_client = client;
-			_tunnelTaskCompletionSource = new TaskCompletionSource<IEnumerable<Tunnel>>();
+			_tunnelTaskCompletionSource = new TaskCompletionSource<IReadOnlyCollection<Tunnel>>();
 			_cancellationTokenSource = new CancellationTokenSource();
 		}
 
@@ -108,8 +108,8 @@ namespace Ngrok.AspNetCore
 				throw new ArgumentNullException(nameof(tunnels), "Tunnels was not expected to be null here.");
 
 			_tunnels = tunnels;
-			_tunnelTaskCompletionSource.SetResult(tunnels);
-			Ready?.Invoke(tunnels);
+			_tunnelTaskCompletionSource.SetResult(tunnels.ToArray());
+			Ready?.Invoke(tunnels.ToArray());
 		}
 
 		private async Task<IEnumerable<Tunnel>> StartTunnelsAsync(string address, CancellationToken cancellationToken)

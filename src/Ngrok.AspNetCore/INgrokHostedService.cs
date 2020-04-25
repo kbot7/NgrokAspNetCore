@@ -9,8 +9,8 @@ namespace Ngrok.AspNetCore
 {
 	public interface INgrokHostedService : IHostedService
 	{
-		Task<IEnumerable<Tunnel>> GetTunnelsAsync();
+		Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync();
 
-		event Action<IEnumerable<Tunnel>> Ready;
+		event Action<IReadOnlyCollection<Tunnel>> Ready;
 	}
 }
