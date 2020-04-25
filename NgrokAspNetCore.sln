@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ngrok.AspNetCore", "Ngrok.AspNetCore\Ngrok.AspNetCore.csproj", "{2AEDAB6B-CD52-4F18-9538-69CEA05D1FB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ngrok.AspNetCore", "src\Ngrok.AspNetCore\Ngrok.AspNetCore.csproj", "{2AEDAB6B-CD52-4F18-9538-69CEA05D1FB2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ngrok.AspNetCore.Sample", "Ngrok.AspNetCore.Sample\Ngrok.AspNetCore.Sample.csproj", "{ED503E74-1A27-4492-A274-F7C5C0C43539}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ngrok.AspNetCore.Sample", "sample\Ngrok.AspNetCore.Sample\Ngrok.AspNetCore.Sample.csproj", "{ED503E74-1A27-4492-A274-F7C5C0C43539}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGrok.ApiClient", "NGrok.ApiClient\NGrok.ApiClient.csproj", "{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGrok.ApiClient", "src\NGrok.ApiClient\NGrok.ApiClient.csproj", "{D5AFB532-EDD2-4F03-9628-2ECBB62922E8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGrok.ApiClient.IntegrationTests", "NGrok.ApiClient.IntegrationTests\NGrok.ApiClient.IntegrationTests.csproj", "{86F1FE1F-AEAF-42F7-9F5E-3C861319A761}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGrok.ApiClient.IntegrationTests", "test\NGrok.ApiClient.IntegrationTests\NGrok.ApiClient.IntegrationTests.csproj", "{86F1FE1F-AEAF-42F7-9F5E-3C861319A761}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGrok.AspNetCore.UnitTests", "NGrok.AspNetCore.UnitTests\NGrok.AspNetCore.UnitTests.csproj", "{A550A8B4-DEB6-4433-9CC1-06D0BC107016}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGrok.AspNetCore.UnitTests", "test\NGrok.AspNetCore.UnitTests\NGrok.AspNetCore.UnitTests.csproj", "{A550A8B4-DEB6-4433-9CC1-06D0BC107016}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7E68639E-4949-4AF3-9995-87B149DE1445}"
 EndProject
@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ngrok.AspNetCore.Tests", "test\Ngrok.AspNetCore.Tests\Ngrok.AspNetCore.Tests.csproj", "{51DCAEDB-2CD9-4037-ABB4-46AF897308F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +50,10 @@ Global
 		{A550A8B4-DEB6-4433-9CC1-06D0BC107016}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A550A8B4-DEB6-4433-9CC1-06D0BC107016}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A550A8B4-DEB6-4433-9CC1-06D0BC107016}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51DCAEDB-2CD9-4037-ABB4-46AF897308F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51DCAEDB-2CD9-4037-ABB4-46AF897308F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51DCAEDB-2CD9-4037-ABB4-46AF897308F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51DCAEDB-2CD9-4037-ABB4-46AF897308F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{86F1FE1F-AEAF-42F7-9F5E-3C861319A761} = {7E68639E-4949-4AF3-9995-87B149DE1445}
 		{A550A8B4-DEB6-4433-9CC1-06D0BC107016} = {7E68639E-4949-4AF3-9995-87B149DE1445}
+		{51DCAEDB-2CD9-4037-ABB4-46AF897308F5} = {7E68639E-4949-4AF3-9995-87B149DE1445}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {03329965-2AFC-4B22-B7A4-9AAD58FFB0C5}
