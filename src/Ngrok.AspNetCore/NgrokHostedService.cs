@@ -185,7 +185,7 @@ namespace Ngrok.AspNetCore
 				var addresses = await WaitForTaskWithTimeout(
 					_serverAddressesSource.Task,
 					30000,
-					$"No {nameof(NgrokOptions.ApplicationHttpUrl)} was set in the settings, and the URL of the server could not be inferred within 30 seconds. Perhaps you are missing a call to {nameof(NgrokAspNetCoreExtensions.UseNgrokAutomaticUrlDetection)} in your Configure method of your Startup class?");
+					$"No {nameof(NgrokOptions.ApplicationHttpUrl)} was set in the settings, and the URL of the server could not be inferred within 30 seconds.");
 				if (addresses != null)
 				{
 					url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
