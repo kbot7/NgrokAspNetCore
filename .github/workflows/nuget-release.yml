@@ -2,12 +2,12 @@ name: Nuget Release
 
 on:
   push:
-    branch:
-      - develop
+    #branches:
+    #  - develop
 
     # Publish `v1.2.3` tags as releases.
-    #tags:
-    #  - v*
+    tags:
+      - v*
 
 jobs:
   # Run tests.
@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
+        
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
@@ -35,7 +35,20 @@ jobs:
       #  run: dotnet test --no-restore --verbosity normal
 
       - name: Pack
-        run: dotnet pack -p:Version=2.0.0-alpha --include-symbols --include-source --no-restore --configuration Release --verbosity normal --output output
+        run: |
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          
+          echo "::set-output name=TAG_VERSION::$VERSION"
+          
+          # pack
+          dotnet pack -p:Version=$VERSION --include-symbols --include-source --no-restore --configuration Release --verbosity normal --output output
+
+      - name: Echo
+        run: echo $TAG_VERSION
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v1
@@ -43,9 +56,7 @@ jobs:
           name: packages
           path: output
 
-      #- name: Push API Client
-      #  run: dotnet nuget push src/Ngrok.AspNetCore/bin/Release/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json"
+      - name: Push to GitHub NuGet Repo
+        run: dotnet nuget push output/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json"
 
-      #- name: Push Ngrok Library
-      #  run: dotnet nuget push src/Ngrok.ApiClient/bin/Release/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json"
     
