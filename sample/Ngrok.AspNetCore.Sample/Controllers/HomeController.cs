@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
-using Ngrok.AspNetCore.Models;
+using Ngrok.AspNetCore.Sample.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Ngrok.AspNetCore;
