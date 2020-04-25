@@ -65,7 +65,38 @@ namespace Ngrok.AspNetCore
 			_cancellationTokenSource = new CancellationTokenSource();
 		}
 
-		
+		public async Task StartAsync(CancellationToken cancellationToken)
+		{
+			cancellationToken.Register(() => _cancellationTokenSource.Cancel());
+			_applicationLifetime.ApplicationStarted.Register(() => OnApplicationStarted());
+		}
+
+		public async Task StopAsync(CancellationToken cancellationToken)
+		{
+			if (!_options.ManageNgrokProcess && _tunnels != null)
+			{
+				foreach (var tunnel in _tunnels)
+				{
+					await _client.StopTunnelAsync(tunnel.Name, cancellationToken);
+				}
+			}
+
+			_cancellationTokenSource.Cancel();
+
+			// Stop the process
+			await _processMgr.StopNgrokAsync();
+
+			await _shutdownSource.Task;
+		}
+
+		public Task OnApplicationStarted()
+		{
+			var addresses = _server.Features.Get<IServerAddressesFeature>().Addresses.ToArray();
+			_logger.LogDebug("Inferred hosting URLs as {ServerAddresses}.", addresses);
+			_serverAddressesSource.SetResult(addresses.ToArray());
+			return RunAsync(_cancellationTokenSource.Token);
+		}
+
 
 		private async Task RunAsync(CancellationToken cancellationToken = default)
 		{
@@ -199,38 +230,6 @@ namespace Ngrok.AspNetCore
 				throw new InvalidOperationException("No application URL has been set, and it could not be inferred.");
 
 			return url;
-		}
-
-		public async Task StartAsync(CancellationToken cancellationToken)
-		{
-			cancellationToken.Register(() => _cancellationTokenSource.Cancel());
-			_applicationLifetime.ApplicationStarted.Register(() => OnApplicationStarted());
-		}
-
-		public Task OnApplicationStarted()
-		{
-			var addresses = _server.Features.Get<IServerAddressesFeature>().Addresses.ToArray();
-			_logger.LogDebug("Inferred hosting URLs as {ServerAddresses}.", addresses);
-			_serverAddressesSource.SetResult(addresses.ToArray());
-			return RunAsync(_cancellationTokenSource.Token);
-		}
-
-		public async Task StopAsync(CancellationToken cancellationToken)
-		{
-			if (!_options.ManageNgrokProcess && _tunnels != null)
-			{
-				foreach (var tunnel in _tunnels)
-				{
-					await _client.StopTunnelAsync(tunnel.Name, cancellationToken);
-				}
-			}
-
-			_cancellationTokenSource.Cancel();
-
-			// Stop the process
-			await _processMgr.StopNgrokAsync();
-
-			await _shutdownSource.Task;
 		}
 	}
 }
