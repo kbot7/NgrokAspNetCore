@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Ngrok.AspNetCore.Extensions
 {
-	public static class NGrokLogExtensions
+	public static class NgrokLogExtensions
 	{
 		public static Dictionary<string, string> ParseLogData(string input)
 		{

@@ -4,16 +4,16 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Extensions.Ordering;
 
-namespace NGrok.ApiClient.IntegrationTests
+namespace Ngrok.ApiClient.IntegrationTests
 {
 	[Order(1)]
 	public class CreateGetListDelete_PositiveCase
 	{
-		public INGrokApiClient Client;
+		public INgrokApiClient Client;
 
 		public CreateGetListDelete_PositiveCase()
 		{
-			Client = new NGrokHttpClient(new HttpClient());
+			Client = new NgrokHttpClient(new HttpClient());
 		}
 
 		[Fact, Order(2)]

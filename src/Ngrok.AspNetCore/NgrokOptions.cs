@@ -4,21 +4,21 @@
 
 namespace Ngrok.AspNetCore
 {
-	public class NGrokOptions
+	public class NgrokOptions
 	{
 		public bool Disable { get; set; }
 
-		public bool ShowNGrokWindow { get; set; }
+		public bool ShowNgrokWindow { get; set; }
 
 		/// <summary>
-		/// Sets the local URL NGrok will proxy to. Must be http (not https) at this time. If not filled in, it will be populated automatically.
+		/// Sets the local URL Ngrok will proxy to. Must be http (not https) at this time. If not filled in, it will be populated automatically.
 		/// </summary>
 		public string? ApplicationHttpUrl { get; set; }
 
-		public bool DownloadNGrok { get; set; } = true;
+		public bool DownloadNgrok { get; set; } = true;
 
-		public int NGrokProcessStartTimeoutMs = 10000;
+		public int NgrokProcessStartTimeoutMs = 10000;
 
-		public string? NGrokPath { get; set; }
+		public string? NgrokPath { get; set; }
 	}
 }

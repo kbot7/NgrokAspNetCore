@@ -16,19 +16,19 @@ using Mono.Unix;
 
 namespace Ngrok.AspNetCore.Services
 {
-	public class NGrokDownloader
+	public class NgrokDownloader
 	{
 		private readonly HttpClient _httpClient;
 
-		public NGrokDownloader(HttpClient httpClient)
+		public NgrokDownloader(HttpClient httpClient)
 		{
 			_httpClient = httpClient;
 		}
 
 		/// <summary>
-		/// Download NGrok from equinox.io CDN
+		/// Download Ngrok from equinox.io CDN
 		/// </summary>
-		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <exception cref="HttpRequestException">Throws if failed to download from CDN</exception>
 		/// <returns></returns>
 		public async Task DownloadExecutableAsync(CancellationToken cancellationToken)
@@ -55,10 +55,10 @@ namespace Ngrok.AspNetCore.Services
 			ZipFile.ExtractToDirectory(filePath, Directory.GetCurrentDirectory());
 
 			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				GrantNGrokFileExecutablePermissions();
+				GrantNgrokFileExecutablePermissions();
 		}
 
-		private static void GrantNGrokFileExecutablePermissions()
+		private static void GrantNgrokFileExecutablePermissions()
 		{
 			var process = new Process
 			{
@@ -78,14 +78,14 @@ namespace Ngrok.AspNetCore.Services
 		}
 
 		/// <summary>
-		/// Get full url to download NGrok on this platform
+		/// Get full url to download Ngrok on this platform
 		/// </summary>
-		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <returns></returns>
 		private string GetDownloadPath()
 		{
 			const string cdn = "https://bin.equinox.io";
-			const string cdnPath = "c/4VmDzA7iaHb/NGrok-stable";
+			const string cdnPath = "c/4VmDzA7iaHb/Ngrok-stable";
 
 			return $"{cdn}/{cdnPath}-{RuntimeExtensions.GetOsArchitectureString()}.zip";
 		}

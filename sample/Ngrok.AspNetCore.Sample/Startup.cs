@@ -18,7 +18,7 @@ namespace Ngrok.AspNetCore
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddNGrok();
+			services.AddNgrok();
 			services.AddControllersWithViews()
 				.AddApplicationPart(typeof(Startup).Assembly);
 		}
@@ -26,7 +26,7 @@ namespace Ngrok.AspNetCore
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			app.UseNGrokAutomaticUrlDetection();
+			app.UseNgrokAutomaticUrlDetection();
 
 			app.UseDeveloperExceptionPage();
 			app.UseStaticFiles();

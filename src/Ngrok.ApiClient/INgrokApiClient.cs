@@ -4,9 +4,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NGrok.ApiClient
+namespace Ngrok.ApiClient
 {
-	public interface INGrokApiClient
+	public interface INgrokApiClient
 	{
 		// GET /api/tunnels 
 		Task<IEnumerable<Tunnel>> ListTunnelsAsync(CancellationToken cancellationToken = default);

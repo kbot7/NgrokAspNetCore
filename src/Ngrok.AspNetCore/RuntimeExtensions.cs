@@ -10,9 +10,9 @@ namespace Ngrok.AspNetCore
 	public static class RuntimeExtensions
 	{
 		/// <summary>
-		/// Get architecture string format used by NGrok cdn
+		/// Get architecture string format used by Ngrok cdn
 		/// </summary>
-		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <returns></returns>
 		public static string GetArchitectureString()
 		{
@@ -22,13 +22,13 @@ namespace Ngrok.AspNetCore
 				case Architecture.Arm:
 					if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 					{
-						throw new NGrokUnsupportedException();
+						throw new NgrokUnsupportedException();
 					}
 					return "arm";
 				case Architecture.Arm64:
 					if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 					{
-						throw new NGrokUnsupportedException();
+						throw new NgrokUnsupportedException();
 					}
 					return "arm64";
 				case Architecture.X64:
@@ -36,14 +36,14 @@ namespace Ngrok.AspNetCore
 				case Architecture.X86:
 					return "386";
 				default:
-					throw new NGrokUnsupportedException();
+					throw new NgrokUnsupportedException();
 			}
 		}
 
 		/// <summary>
-		/// Get OS string format used by NGrok cdn
+		/// Get OS string format used by Ngrok cdn
 		/// </summary>
-		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <returns></returns>
 		public static string GetOsString()
 		{
@@ -59,13 +59,13 @@ namespace Ngrok.AspNetCore
 			{
 				return "darwin";
 			}
-			throw new NGrokUnsupportedException();
+			throw new NgrokUnsupportedException();
 		}
 
 		/// <summary>
-		/// Get OS-Architecture string format used by NGrok cdn
+		/// Get OS-Architecture string format used by Ngrok cdn
 		/// </summary>
-		/// <exception cref="NGrokUnsupportedException">Throws if platform not supported by NGrok</exception>
+		/// <exception cref="NgrokUnsupportedException">Throws if platform not supported by Ngrok</exception>
 		/// <returns></returns>
 		public static string GetOsArchitectureString()
 		{

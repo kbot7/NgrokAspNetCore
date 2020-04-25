@@ -18,6 +18,6 @@ namespace Ngrok.AspNetCore.Sample
 			Host.CreateDefaultBuilder(args)
 				.ConfigureWebHostDefaults(x => x
 					.UseStartup<Startup>()
-					.UseNGrok());
+					.UseNgrok());
 	}
 }

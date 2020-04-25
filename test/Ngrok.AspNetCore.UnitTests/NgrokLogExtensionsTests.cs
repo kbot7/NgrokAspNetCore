@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace NGrok.AspNetCore.UnitTests
+namespace Ngrok.AspNetCore.UnitTests
 {
-	public class NGrokLogExtensionsTests
+	public class NgrokLogExtensionsTests
 	{
 		[Fact]
 		public void ParseStartTunnel()
@@ -21,7 +21,7 @@ namespace NGrok.AspNetCore.UnitTests
 				{ "addr", "http://localhost:425" },
 				{ "url", "https://12030abc.ngrok.io" }
 			};
-			var result = NGrokLogExtensions.ParseLogData(input);
+			var result = NgrokLogExtensions.ParseLogData(input);
 
 			Assert.Equal(expectedResult, result);
 		}
@@ -37,7 +37,7 @@ namespace NGrok.AspNetCore.UnitTests
 				{ "msg", "no configuration paths supplied" }
 			};
 
-			var result = NGrokLogExtensions.ParseLogData(input);
+			var result = NgrokLogExtensions.ParseLogData(input);
 
 			Assert.Equal(expectedResult, result);
 		}

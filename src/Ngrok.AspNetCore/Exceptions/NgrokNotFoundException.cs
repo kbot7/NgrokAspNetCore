@@ -6,9 +6,9 @@ using System;
 
 namespace Ngrok.AspNetCore.Exceptions
 {
-	public class NGrokNotFoundException : Exception
+	public class NgrokNotFoundException : Exception
 	{
-		public NGrokNotFoundException() : base("NGrok not found in current directory, or PATH. If download attempted, it failed. Please download NGrok manually and place in running directory. If already downloaded, configure path in NGrokOptions")
+		public NgrokNotFoundException() : base("Ngrok not found in current directory, or PATH. If download attempted, it failed. Please download Ngrok manually and place in running directory. If already downloaded, configure path in NgrokOptions")
 		{ }
 	}
 }

@@ -8,52 +8,52 @@ Extensions to start Ngrok automatically from the AspNetCore pipeline. Useful to 
 
 ## Setting it up
 
-Add `AddNGrok` to your service registration
+Add `AddNgrok` to your service registration
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddNGrok();
+    services.AddNgrok();
 }
 ```
 
-You also need to call `UseNGrok` in your `Program` class when making the builder.
+You also need to call `UseNgrok` in your `Program` class when making the builder.
 
 ```csharp
 public static IHostBuilder CreateHostBuilder(string[] args) =>
     Host.CreateDefaultBuilder(args)
         .ConfigureWebHostDefaults(x => x
             .UseStartup<Startup>()
-            .UseNGrok(/* optional options here */));
+            .UseNgrok(/* optional options here */));
 ```
 
-When the application starts up, NGrok will launch automatically and create a tunnel to the application. 
+When the application starts up, Ngrok will launch automatically and create a tunnel to the application. 
 
-If NGrok is not installed, it will be downloaded automatically to the execution directory.
+If Ngrok is not installed, it will be downloaded automatically to the execution directory.
 
 ### Inferring the application URL
-If you don't specify a `ApplicationHttpUrl` property in the options when calling `AddNGrok`, you have to insert the following call in your `Startup` class' `Configure` method:
+If you don't specify a `ApplicationHttpUrl` property in the options when calling `AddNgrok`, you have to insert the following call in your `Startup` class' `Configure` method:
 
 ```csharp
 public void Configure(IApplicationBuilder app)
 {
-    app.UseNGrokAutomaticUrlDetection();
+    app.UseNgrokAutomaticUrlDetection();
 }
 ```
 
 ## Getting the exposed URL
-Simply inject an `INGrokHostedService` and call its `GetTunnelsAsync` method.
+Simply inject an `INgrokHostedService` and call its `GetTunnelsAsync` method.
 
-`INGrokHostedService` also has a `Ready` event that you can listen to, if you'd rather like that.
+`INgrokHostedService` also has a `Ready` event that you can listen to, if you'd rather like that.
 
 ## Configuration
-NGrok can be configured when registering it in the services collection by passing in an `NGrokOptions` instance in the `AddNGrok` method
+Ngrok can be configured when registering it in the services collection by passing in an `NgrokOptions` instance in the `AddNgrok` method
 
-#### NGrokOptions
+#### NgrokOptions
 | Option | Description |
 | --- | --- |
 | ApplicationHttpUrl | The local URL to proxy to. If not provided, it will default to the first HTTP URL registered. It should work fine automatically when hosted from kestrel. Haven't tested in IIS. |
-| ShowNGrokWindow | Whether the NGrok window will be shown. Useful for debugging purposes. |
+| ShowNgrokWindow | Whether the Ngrok window will be shown. Useful for debugging purposes. |
 
 ## Contributing
 Feedback and Contributions are greatly welcome. 

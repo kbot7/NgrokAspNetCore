@@ -9,9 +9,9 @@ namespace Ngrok.AspNetCore.Sample.Controllers
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
-		private readonly INGrokHostedService _ngrokService;
+		private readonly INgrokHostedService _ngrokService;
 
-		public HomeController(ILogger<HomeController> logger, INGrokHostedService ngrokService)
+		public HomeController(ILogger<HomeController> logger, INgrokHostedService ngrokService)
 		{
 			_logger = logger;
 			_ngrokService = ngrokService;

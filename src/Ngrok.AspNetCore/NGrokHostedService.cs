@@ -8,21 +8,21 @@ using Ngrok.AspNetCore.Services;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
-using NGrok.ApiClient;
-using Tunnel = NGrok.ApiClient.Tunnel;
+using Ngrok.ApiClient;
+using Tunnel = Ngrok.ApiClient.Tunnel;
 using Microsoft.Extensions.Logging;
 
 namespace Ngrok.AspNetCore
 {
-	class NGrokHostedService : INGrokHostedService
+	class NgrokHostedService : INgrokHostedService
 	{
-		private readonly NGrokOptions _options;
-		private readonly NGrokDownloader _nGrokDownloader;
-		private readonly NGrokProcessMgr _processMgr;
-		private readonly INGrokApiClient _client;
+		private readonly NgrokOptions _options;
+		private readonly NgrokDownloader _nGrokDownloader;
+		private readonly NgrokProcessMgr _processMgr;
+		private readonly INgrokApiClient _client;
 		private readonly IServer _server;
 		private readonly IApplicationLifetime _applicationLifetime;
-		private readonly ILogger<NGrokHostedService> _logger;
+		private readonly ILogger<NgrokHostedService> _logger;
 
 		private readonly TaskCompletionSource<IReadOnlyCollection<Tunnel>> _tunnelTaskSource;
 		private readonly TaskCompletionSource<IReadOnlyCollection<string>> _serverAddressesSource;
@@ -40,14 +40,14 @@ namespace Ngrok.AspNetCore
 
 		public event Action<IEnumerable<Tunnel>> Ready;
 
-		public NGrokHostedService(
-			ILogger<NGrokHostedService> logger,
-			NGrokOptions options,
-			NGrokDownloader nGrokDownloader,
+		public NgrokHostedService(
+			ILogger<NgrokHostedService> logger,
+			NgrokOptions options,
+			NgrokDownloader nGrokDownloader,
 			IServer server,
 			IApplicationLifetime applicationLifetime,
-			NGrokProcessMgr processMgr,
-			INGrokApiClient client)
+			NgrokProcessMgr processMgr,
+			INgrokApiClient client)
 		{
 			_logger = logger;
 			_options = options;
@@ -78,7 +78,7 @@ namespace Ngrok.AspNetCore
 
 				await _nGrokDownloader.DownloadExecutableAsync(_cancellationTokenSource.Token);
 
-				await _processMgr.EnsureNGrokStartedAsync();
+				await _processMgr.EnsureNgrokStartedAsync();
 
 				if (_cancellationTokenSource.IsCancellationRequested)
 					return;
@@ -100,7 +100,7 @@ namespace Ngrok.AspNetCore
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "An error occured while running the NGrok service.");
+				_logger.LogError(ex, "An error occured while running the Ngrok service.");
 			}
 			finally
 			{
@@ -181,7 +181,7 @@ namespace Ngrok.AspNetCore
 				var addresses = await WaitForTaskWithTimeout(
 					_serverAddressesSource.Task,
 					30000,
-					$"No {nameof(NGrokOptions.ApplicationHttpUrl)} was set in the settings, and the URL of the server could not be inferred within 30 seconds. Perhaps you are missing a call to {nameof(NGrokAspNetCoreExtensions.UseNGrokAutomaticUrlDetection)} in your Configure method of your Startup class?");
+					$"No {nameof(NgrokOptions.ApplicationHttpUrl)} was set in the settings, and the URL of the server could not be inferred within 30 seconds. Perhaps you are missing a call to {nameof(NgrokAspNetCoreExtensions.UseNgrokAutomaticUrlDetection)} in your Configure method of your Startup class?");
 				if (addresses != null)
 				{
 					url = addresses.FirstOrDefault(a => a.StartsWith("http://")) ?? addresses.FirstOrDefault();
@@ -217,10 +217,10 @@ namespace Ngrok.AspNetCore
 			_cancellationTokenSource.Cancel();
 
 			// TODO - call api client to stop started tunnels
-			// _apiClient.StopNGrok();
+			// _apiClient.StopNgrok();
 
 			// Stop the process
-			await _processMgr.StopNGrokAsync();
+			await _processMgr.StopNgrokAsync();
 
 			await _shutdownSource.Task;
 		}

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using NGrok.ApiClient;
+using Ngrok.ApiClient;
 
 namespace Ngrok.AspNetCore
 {
-	public interface INGrokHostedService : IHostedService
+	public interface INgrokHostedService : IHostedService
 	{
 		Task<IReadOnlyCollection<Tunnel>> GetTunnelsAsync();
 
