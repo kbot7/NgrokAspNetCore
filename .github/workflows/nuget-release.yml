@@ -28,8 +28,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.101
-        #env:
-        #  NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          source-url: https://nuget.pkg.github.com/kg73/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Install dependencies
         run: dotnet restore
@@ -44,7 +45,7 @@ jobs:
         run: |
           # Strip git ref prefix from version
           #VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          VERSION=$(echo "2.0.0-alpha2")
+          VERSION=$(echo "2.0.0-alpha3")
 
           # Strip "v" prefix from tag name
           #[[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
@@ -65,9 +66,7 @@ jobs:
 
       
 
-      #- name: Push to GitHub NuGet Repo
-      #  run: |
-      #    #nuget setApiKey ${{ secrets.GITHUB_TOKEN }}
-      #    dotnet nuget push output/*.nupkg --source "https://nuget.pkg.github.com/kg73/index.json" --api-key ${{ secrets.NUGET_TOKEN }}
+      - name: Push to GitHub NuGet Repo
+        run: dotnet nuget push output/*.nupkg
 
     
