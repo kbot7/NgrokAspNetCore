@@ -8,7 +8,8 @@
 		<Company />
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<RootNamespace>Ngrok.ApiClient</RootNamespace>
-		<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>
+		<!--<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>-->
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
