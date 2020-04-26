@@ -19,6 +19,13 @@ jobs:
         with:
           dotnet-version: 3.1.101
 
+      - uses: actions/cache@v1
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - name: Install dependencies
         run: dotnet restore
 
