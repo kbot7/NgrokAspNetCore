@@ -10,6 +10,8 @@
 		<RootNamespace>Ngrok.ApiClient</RootNamespace>
 		<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<ItemGroup>

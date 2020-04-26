@@ -13,14 +13,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.101
-          source-url: https://www.nuget.org/api/v2/package
-        env:
-          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
       - name: Install dependencies
         run: dotnet restore
@@ -45,7 +42,7 @@ jobs:
           echo "::set-output name=BUILD_VERSION::$VERSION"
           
           # pack
-          dotnet pack -p:Version=$VERSION --configuration Release --no-restore --verbosity normal --output output
+          dotnet pack -p:Version=$VERSION --no-restore --verbosity normal --output output
 
       - name: Echo Version
         run: echo "${BUILD_VERSION}"
@@ -57,7 +54,7 @@ jobs:
           path: output
 
       - name: Push to GitHub NuGet Repo
-        run: dotnet nuget push output/**/*.nupkg -n true --skip-duplicate
+        run: dotnet nuget push output/**/*.nupkg -n true --skip-duplicate --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json 
 
       # TODO - Create GitHub Release     
 

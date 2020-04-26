@@ -12,6 +12,8 @@
 		<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Nullable>enable</Nullable>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
