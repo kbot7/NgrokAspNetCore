@@ -30,9 +30,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.101
-          source-url: https://nuget.pkg.github.com/kg73/index.json
+          source-url: https://www.myget.org/F/ngrok-aspnetcore-ci/api/v3/index.json
         env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NUGET_AUTH_TOKEN: ${{secrets.MYGET_TOKEN}}
 
       - uses: actions/cache@v1
         with:
@@ -75,6 +75,6 @@ jobs:
           path: output
 
       - name: Push to GitHub NuGet Repo
-        run: dotnet nuget push output/**/*.nupkg -n true --skip-duplicate --diagnostics
+        run: dotnet nuget push output/**/*.nupkg --skip-duplicate --api-key ${{ secrets.MYGET_TOKEN }} --source https://www.myget.org/F/ngrok-aspnetcore-ci/api/v3/index.json
 
     
