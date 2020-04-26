@@ -18,9 +18,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.101
-          source-url: https://api.nuget.org/v3/index.json
+          source-url: https://www.nuget.org/api/v2/package
         env:
-          NUGET_AUTH_TOKEN: ${{secrets.NUGET_TOKEN}}
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
       - name: Install dependencies
         run: dotnet restore
