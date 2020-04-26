@@ -43,7 +43,7 @@ jobs:
           echo "::set-output name=BUILD_VERSION::$VERSION"
           
           # pack
-          dotnet pack -p:Version=$VERSION --include-symbols --include-source --no-restore --verbosity normal --output output
+          dotnet pack -p:Version=$VERSION --configuration Release --no-restore --verbosity normal --output output
 
       - name: Echo Version
         run: echo "${BUILD_VERSION}"
