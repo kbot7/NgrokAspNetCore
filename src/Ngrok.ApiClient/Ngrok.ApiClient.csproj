@@ -8,16 +8,16 @@
 		<Company />
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<RootNamespace>Ngrok.ApiClient</RootNamespace>
-		<!--<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>-->
-		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>
+		<!--<PublishRepositoryUrl>true</PublishRepositoryUrl>-->
 		<RepositoryType>git</RepositoryType>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 		<!-- https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables -->
-		<Deterministic Condition="'$(GITHUB_ACTIONS)' == 'true'">true</Deterministic>
+		<Deterministic Condition="'$(GITHUB_ACTIONS)' == 'true'">True</Deterministic>
 		<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">True</ContinuousIntegrationBuild>
-		<DeterministicSourcePaths Condition="'$(GITHUB_ACTIONS)' == 'true'"></DeterministicSourcePaths>
+		<DeterministicSourcePaths Condition="'$(GITHUB_ACTIONS)' == 'true'">True</DeterministicSourcePaths>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 	</PropertyGroup>
 

@@ -2,12 +2,13 @@
 | CI | Pre-release | Release |
 | --- | --- | --- |
 | ![CI Build](https://github.com/kg73/NgrokAspNetCore/workflows/CI%20Build/badge.svg?branch=develop) | ![Pre-release Build](https://github.com/kg73/NgrokAspNetCore/workflows/Release%20Build/badge.svg) | ![Release Build](https://github.com/kg73/NgrokAspNetCore/workflows/Release%20Build/badge.svg) | 
-|  | ![NuGet Release](https://img.shields.io/nuget/vpre/Ngrok.AspNetCore) | ![NuGet](https://img.shields.io/nuget/v/Ngrok.AspNetCore) |
+| ![MyGet](https://img.shields.io/myget/ngrok-aspnetcore-ci/vpre/Ngrok.ApiClient?label=MyGet)  | ![NuGet Release](https://img.shields.io/nuget/vpre/Ngrok.AspNetCore) | ![NuGet](https://img.shields.io/nuget/v/Ngrok.AspNetCore) |
 
 ##### Nuget Packages 
 | Ngrok.AspNetCore | Ngrok.ApiClient |
 | --- | --- |
 | [NuGet Link](https://www.nuget.org/packages/Ngrok.AspNetCore/) | [NuGet Link](https://www.nuget.org/packages/Ngrok.ApiClient/) |
+| [MyGet Link](https://www.myget.org/feed/ngrok-aspnetcore-ci/package/nuget/Ngrok.AspNetCore) | [MyGet Link](https://www.myget.org/feed/ngrok-aspnetcore-ci/package/nuget/Ngrok.ApiClient) |
 | ![Nuget](https://img.shields.io/nuget/dt/Ngrok.AspNetCore) | ![Nuget](https://img.shields.io/nuget/dt/Ngrok.AspNetCore) |
 
 
