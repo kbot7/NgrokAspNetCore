@@ -22,7 +22,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<SourceRoot Include="src/Ngrok.ApiClient" RepositoryUrl="https://github.com/kg73/NgrokAspNetCore.git"/>
+		<SourceRoot Include="src/Ngrok.ApiClient/" RepositoryUrl="https://github.com/kg73/NgrokAspNetCore.git"/>
 	</ItemGroup>
 	
 	<ItemGroup>

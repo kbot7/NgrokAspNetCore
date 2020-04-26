@@ -23,7 +23,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<SourceRoot Include="src/Ngrok.AspNetCore" RepositoryUrl="https://github.com/kg73/NgrokAspNetCore.git"/>
+		<SourceRoot Include="src/Ngrok.AspNetCore/" RepositoryUrl="https://github.com/kg73/NgrokAspNetCore.git"/>
 	</ItemGroup>
 		
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
