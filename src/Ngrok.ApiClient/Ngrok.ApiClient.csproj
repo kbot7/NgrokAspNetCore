@@ -12,10 +12,11 @@
 		<RepositoryType>git</RepositoryType>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<Deterministic>true</Deterministic>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 		<!-- https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables -->
+		<Deterministic Condition="'$(GITHUB_ACTIONS)' == 'true'">true</Deterministic>
 		<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">True</ContinuousIntegrationBuild>
+		<DeterministicSourcePaths Condition="'$(GITHUB_ACTIONS)' == 'true'"></DeterministicSourcePaths>
 	</PropertyGroup>
 
 	<ItemGroup>
