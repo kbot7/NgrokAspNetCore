@@ -22,6 +22,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<SourceRoot Include="src/Ngrok.ApiClient" RepositoryUrl="https://github.com/kg73/NgrokAspNetCore.git"/>
+	</ItemGroup>
+	
+	<ItemGroup>
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
 		<PackageReference Include="System.Text.Json" Version="4.7.1" />
 	</ItemGroup>

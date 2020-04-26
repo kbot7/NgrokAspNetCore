@@ -22,6 +22,10 @@
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<SourceRoot Include="src/Ngrok.AspNetCore" RepositoryUrl="https://github.com/kg73/NgrokAspNetCore.git"/>
+	</ItemGroup>
+		
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<DefineConstants>DEBUG;TRACE</DefineConstants>
 	</PropertyGroup>
