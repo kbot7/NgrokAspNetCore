@@ -18,10 +18,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+      GITHUB_ACTIONS: ${{ GITHUB_ACTIONS }}
 
     steps:
       - uses: actions/checkout@v2
       
+      - name: Echo Github Actions Value
+        run: echo "${GITHUB_ACTIONS}"
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
@@ -56,7 +60,13 @@ jobs:
           dotnet pack -p:Version=$VERSION --no-restore -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true --include-source --include-symbols --verbosity normal --output output
 
       - name: Echo Version
-        run: echo "${BUILD_VERSION}"
+        run: | 
+          echo "${BUILD_VERSION}"
+          echo $BUILD_VERSION
+          $BUILD_VERSION
+          echo "${VERSION}"
+          echo $VERSION
+          $VERSION
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v1
