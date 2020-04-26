@@ -16,9 +16,9 @@
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-		<Deterministic Condition="'$(GITHUB_ACTIONS)' == 'true'">true</Deterministic>
+		<Deterministic Condition="'$(GITHUB_ACTIONS)' == 'true'">True</Deterministic>
 		<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">True</ContinuousIntegrationBuild>
-		<DeterministicSourcePaths Condition="'$(GITHUB_ACTIONS)' == 'true'"></DeterministicSourcePaths>
+		<DeterministicSourcePaths Condition="'$(GITHUB_ACTIONS)' == 'true'">True</DeterministicSourcePaths>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 	</PropertyGroup>
 
