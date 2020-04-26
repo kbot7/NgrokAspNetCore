@@ -19,7 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
-      GITHUB_ACTIONS: ${{ GITHUB_ACTIONS }}
 
     steps:
       - uses: actions/checkout@v2
