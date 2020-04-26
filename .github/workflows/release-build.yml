@@ -54,7 +54,7 @@ jobs:
           path: output
 
       - name: Push to NuGet Repo
-        run: dotnet nuget push output/**/*.nupkg -n true --skip-duplicate --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json 
+        run: dotnet nuget push output/**/*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json 
 
       # TODO - Create GitHub Release     
 
