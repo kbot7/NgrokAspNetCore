@@ -75,6 +75,6 @@ jobs:
           path: output
 
       - name: Push to GitHub NuGet Repo
-        run: dotnet nuget push output/**/*.nupkg -n true --skip-duplicate --verbosity diagnostic
+        run: dotnet nuget push output/**/*.nupkg -n true --skip-duplicate --verbosity diag
 
     
