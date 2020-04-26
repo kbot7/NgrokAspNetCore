@@ -9,8 +9,8 @@
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<RootNamespace>Ngrok.AspNetCore</RootNamespace>
 		<PackageId>Ngrok.AspNetCore</PackageId>
-		<!--<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>-->
-		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>
+		<!--<PublishRepositoryUrl>true</PublishRepositoryUrl>-->
 		<RepositoryType>git</RepositoryType>
 		<Nullable>enable</Nullable>
 		<IncludeSymbols>true</IncludeSymbols>
