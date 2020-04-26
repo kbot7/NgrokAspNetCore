@@ -1,4 +1,4 @@
-
+![CI Build](https://github.com/kg73/NgrokAspNetCore/workflows/CI%20Build/badge.svg?branch=develop)
 
 # Ngrok for Asp.Net Core
 Ngrok.AspNetCore is a set of extensions to start Ngrok automatically from the AspNetCore pipeline. Useful to enable for local development when a public URL is needed. By default, an ngrok process will be started on application startup. Then an ngrok tunnel will be established to the local application URL.
