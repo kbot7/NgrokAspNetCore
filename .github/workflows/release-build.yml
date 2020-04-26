@@ -25,9 +25,9 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-cache-${{ hashFiles('**/packages.lock.json') }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-nuget-cache-
+            ${{ runner.os }}-nuget-
 
       - name: Install dependencies
         run: dotnet restore
