@@ -9,20 +9,17 @@
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<RootNamespace>Ngrok.ApiClient</RootNamespace>
 		<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>
-		<!--<PublishRepositoryUrl>true</PublishRepositoryUrl>-->
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<RepositoryType>git</RepositoryType>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Deterministic>true</Deterministic>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<!-- https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables -->
+		<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">True</ContinuousIntegrationBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
 		<PackageReference Include="System.Text.Json" Version="4.7.1" />
 	</ItemGroup>
 

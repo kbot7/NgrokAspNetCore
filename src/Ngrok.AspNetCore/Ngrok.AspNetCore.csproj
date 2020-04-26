@@ -10,14 +10,13 @@
 		<RootNamespace>Ngrok.AspNetCore</RootNamespace>
 		<PackageId>Ngrok.AspNetCore</PackageId>
 		<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>
-		<!--<PublishRepositoryUrl>true</PublishRepositoryUrl>-->
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<RepositoryType>git</RepositoryType>
 		<Nullable>enable</Nullable>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<Deterministic>true</Deterministic>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">True</ContinuousIntegrationBuild>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -29,10 +28,7 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.2" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.2" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="3.1.2" />
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
 		<PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 	</ItemGroup>
