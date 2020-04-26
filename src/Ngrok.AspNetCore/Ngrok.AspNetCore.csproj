@@ -11,6 +11,8 @@
 		<PackageId>Ngrok.AspNetCore</PackageId>
 		<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 		<RepositoryType>git</RepositoryType>
 		<Nullable>enable</Nullable>
 		<IncludeSymbols>true</IncludeSymbols>
