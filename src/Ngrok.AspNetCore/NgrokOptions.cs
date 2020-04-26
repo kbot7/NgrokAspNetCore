@@ -20,7 +20,7 @@ namespace Ngrok.AspNetCore
 		/// Sets the local URL Ngrok will proxy to. Must be http (not https) at this time. 
 		/// Implies <see cref="DetectUrl"/> is false
 		/// </summary>
-		public string ApplicationHttpUrl { get; set; }
+		public string? ApplicationHttpUrl { get; set; } = null;
 
 		/// <summary>
 		/// Launch and manage an ngrok process if one is not already running on startup
@@ -31,7 +31,7 @@ namespace Ngrok.AspNetCore
 		/// Path to the Ngrok executable. If not set, the execution directory and PATH will be searched. 
 		/// Implies <see cref="ManageNgrokProcess"/> is true
 		/// </summary>
-		public string NgrokPath { get; set; }
+		public string? NgrokPath { get; set; } = null;
 
 		/// <summary>
 		/// Download Ngrok if not found in local directory or PATH. 
@@ -56,6 +56,6 @@ namespace Ngrok.AspNetCore
 		/// Set to Ngrok profile specified in Ngrok config. Ngrok config file must be present to use this option
 		/// See <see href="https://Ngrok.com/docs#config">https://Ngrok.com/docs#config</see> for details
 		/// </summary>
-		public string NgrokConfigProfile { get; set; }
+		public string? NgrokConfigProfile { get; set; } = null;
 	}
 }
