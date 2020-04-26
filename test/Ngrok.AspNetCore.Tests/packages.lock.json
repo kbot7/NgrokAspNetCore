@@ -12,6 +12,12 @@
           "Microsoft.TestPlatform.TestHost": "16.5.0"
         }
       },
+      "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
+        "type": "Direct",
+        "requested": "[1.10.8, )",
+        "resolved": "1.10.8",
+        "contentHash": "LXlwvlXetgFg2sqsLCzi+Kd+nV78VrRzy9u6nKU05yx9tcsF9BcLqL/+vtj01Z7RPhp0U8D4Px/bHbyMR9Ddjg=="
+      },
       "MSTest.TestAdapter": {
         "type": "Direct",
         "requested": "[2.1.0, )",
@@ -388,11 +394,6 @@
           "Newtonsoft.Json": "9.0.1"
         }
       },
-      "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
-        "type": "Transitive",
-        "resolved": "1.9.10",
-        "contentHash": "d5/5CDc4TAjrgO9oyyj+FHUDVumxgrlCMJqDtUX4GyTnr1Q/BP88PhnVunRZ9AQcL2UQkM4EkRNyFelPXunHtw=="
-      },
       "Microsoft.Win32.Primitives": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -472,6 +473,29 @@
         "type": "Transitive",
         "resolved": "12.0.3",
         "contentHash": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg=="
+      },
+      "Ngrok.ApiClient": {
+        "type": "Transitive",
+        "resolved": "2.0.0-alpha1",
+        "contentHash": "HdKAw6dvInevqZueAIMNAU9yq9AjCPn6cbV7S6XzQsB/9uk7KTanvUsgcZYd479knYpbTB9RKl4EdiI/T9lV8g==",
+        "dependencies": {
+          "System.Text.Json": "4.7.1"
+        }
+      },
+      "Ngrok.AspNetCore": {
+        "type": "Transitive",
+        "resolved": "2.0.0-alpha1",
+        "contentHash": "UcDJ7wphfKYJCKMYcIjxTqCIewpo6Jk+UMlqhhcgmpCBFyIBZpTUQgJPF7kkCMpX4RFdl2s2LarStNIJ4yyWtw==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Hosting": "2.2.7",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.2",
+          "Microsoft.Extensions.Hosting": "3.1.2",
+          "Microsoft.Extensions.Hosting.Abstractions": "3.1.2",
+          "Microsoft.Extensions.Http": "3.1.2",
+          "Mono.Posix.NETStandard": "1.0.0",
+          "Newtonsoft.Json": "12.0.3",
+          "Ngrok.ApiClient": "2.0.0-alpha1"
+        }
       },
       "NuGet.Frameworks": {
         "type": "Transitive",
@@ -1359,30 +1383,11 @@
           "System.Xml.ReaderWriter": "4.3.0"
         }
       },
-      "ngrok.apiclient": {
-        "type": "Project",
-        "dependencies": {
-          "System.Text.Json": "4.7.1"
-        }
-      },
-      "ngrok.aspnetcore": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.AspNetCore.Hosting": "2.2.7",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.2",
-          "Microsoft.Extensions.Hosting": "3.1.2",
-          "Microsoft.Extensions.Hosting.Abstractions": "3.1.2",
-          "Microsoft.Extensions.Http": "3.1.2",
-          "Mono.Posix.NETStandard": "1.0.0",
-          "Newtonsoft.Json": "12.0.3",
-          "Ngrok.ApiClient": "1.0.0"
-        }
-      },
       "ngrok.aspnetcore.sample": {
         "type": "Project",
         "dependencies": {
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "1.9.10",
-          "Ngrok.AspNetCore": "1.0.0"
+          "Ngrok.AspNetCore": "2.0.0-alpha1"
         }
       }
     }

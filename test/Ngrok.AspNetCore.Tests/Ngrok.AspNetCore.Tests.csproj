@@ -5,10 +5,13 @@
 
 		<IsPackable>false</IsPackable>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..</DockerfileContext>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
 		<PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
 		<PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
 	</ItemGroup>

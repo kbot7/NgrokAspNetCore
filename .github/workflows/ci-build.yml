@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - develop
-      - ci-improvements
+      - feature/*
 
 env:
   MAJOR: 2

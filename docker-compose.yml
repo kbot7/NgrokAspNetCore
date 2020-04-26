@@ -1,0 +1,9 @@
+version: '3.4'
+
+services:
+  ngrok.aspnetcore.tests:
+    image: ${DOCKER_REGISTRY-}ngrokaspnetcoretests
+    build:
+      context: .
+      dockerfile: test/Ngrok.AspNetCore.Tests/Dockerfile
+

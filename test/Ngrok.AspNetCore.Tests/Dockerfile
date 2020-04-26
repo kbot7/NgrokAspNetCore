@@ -2,11 +2,9 @@
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["Ngrok.AspNetCore.Tests/Ngrok.AspNetCore.Tests.csproj", "Ngrok.AspNetCore.Tests/"]
-COPY ["Ngrok.AspNetCore/Ngrok.AspNetCore.csproj", "Ngrok.AspNetCore/"]
-RUN ls
-RUN dotnet restore "Ngrok.AspNetCore.Tests/Ngrok.AspNetCore.Tests.csproj"
+COPY ["test/Ngrok.AspNetCore.Tests/Ngrok.AspNetCore.Tests.csproj", "test/Ngrok.AspNetCore.Tests/"]
+COPY ["sample/Ngrok.AspNetCore.Sample/Ngrok.AspNetCore.Sample.csproj", "sample/Ngrok.AspNetCore.Sample/"]
+RUN dotnet restore "test/Ngrok.AspNetCore.Tests/Ngrok.AspNetCore.Tests.csproj"
 COPY . .
-WORKDIR "/src/Ngrok.AspNetCore.Tests"
+WORKDIR "/src/test/Ngrok.AspNetCore.Tests"
 ENTRYPOINT ["dotnet", "test"]
-#CMD tail -f /dev/null

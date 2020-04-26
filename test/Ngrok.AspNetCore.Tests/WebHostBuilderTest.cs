@@ -21,7 +21,7 @@ namespace Ngrok.AspNetCore.Tests
 			var host = Program.CreateHostBuilder(Array.Empty<string>())
 				.ConfigureWebHost(builder => builder
 					.UseKestrel()
-					.UseUrls("http://*:14568"))
+					.UseUrls("http://localhost:14568"))
 				.Build();
 
 			await host.StartAsync();
@@ -50,8 +50,9 @@ namespace Ngrok.AspNetCore.Tests
 
 					return;
 				}
-				catch (HttpRequestException)
+				catch (HttpRequestException es)
 				{
+
 				}
 
 				await Task.Delay(1000);
