@@ -9,7 +9,7 @@
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<RootNamespace>Ngrok.ApiClient</RootNamespace>
 		<RepositoryUrl>https://github.com/kg73/NgrokAspNetCore.git</RepositoryUrl>
-		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<!--<PublishRepositoryUrl>true</PublishRepositoryUrl>-->
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 		<RepositoryType>git</RepositoryType>
