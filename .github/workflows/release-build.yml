@@ -18,9 +18,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.101
-          source-url: https://nuget.pkg.github.com/kg73/index.json
+          source-url: https://api.nuget.org/v3/index.json
         env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NUGET_AUTH_TOKEN: ${{secrets.NUGET_TOKEN}}
 
       - name: Install dependencies
         run: dotnet restore
@@ -59,16 +59,6 @@ jobs:
       - name: Push to GitHub NuGet Repo
         run: dotnet nuget push output/**/*.nupkg -n true --skip-duplicate
 
-      # TODO - Create GitHub Release
-      - name: Setup .NET Core for Nuget.Org
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.1.101
-          source-url: https://api.nuget.org/v3/index.json
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.NUGET_TOKEN}}
-          
-      - name: Push to NuGet.org Repo
-        run: dotnet nuget push output/**/*.nupkg -n true --skip-duplicate          
+      # TODO - Create GitHub Release     
 
     
