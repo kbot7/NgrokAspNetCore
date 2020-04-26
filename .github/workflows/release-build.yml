@@ -60,5 +60,15 @@ jobs:
         run: dotnet nuget push output/**/*.nupkg -n true --skip-duplicate
 
       # TODO - Create GitHub Release
+      - name: Setup .NET Core for Nuget.Org
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.101
+          source-url: https://api.nuget.org/v3/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.NUGET_TOKEN}}
+          
+      - name: Push to NuGet.org Repo
+        run: dotnet nuget push output/**/*.nupkg -n true --skip-duplicate          
 
     
