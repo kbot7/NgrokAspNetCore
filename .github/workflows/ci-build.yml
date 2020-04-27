@@ -47,8 +47,11 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      #- name: Test
-      #  run: dotnet test --no-restore --verbosity normal
+      - name: Unit Tests
+        run: dotnet test test/Ngrok.AspNetCore.UnitTests/Ngrok.AspNetCore.UnitTests.csproj --no-restore --verbosity normal
+
+      #- name: End to End Tests
+      #  run: dotnet test test/Ngrok.AspNetCore.Tests/Ngrok.AspNetCore.Tests.csproj --no-restore --verbosity normal
 
       - name: Pack
         run: |
