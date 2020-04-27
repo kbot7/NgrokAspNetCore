@@ -2,8 +2,8 @@
 // See the LICENSE file in the project root for more information.
 // Copyright (c) 2019 Kevin Gysberg
 
-using System.Runtime.InteropServices;
 using Ngrok.AspNetCore.Exceptions;
+using System.Runtime.InteropServices;
 
 namespace Ngrok.AspNetCore
 {

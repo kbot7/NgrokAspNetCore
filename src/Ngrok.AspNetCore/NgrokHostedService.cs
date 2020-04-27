@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Ngrok.AspNetCore.Services;
+﻿using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Hosting.Server;
-using Ngrok.ApiClient;
-using Tunnel = Ngrok.ApiClient.Tunnel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Ngrok.ApiClient;
+using Ngrok.AspNetCore.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Tunnel = Ngrok.ApiClient.Tunnel;
 
 namespace Ngrok.AspNetCore
 {
@@ -139,7 +138,7 @@ namespace Ngrok.AspNetCore
 			{
 				_shutdownSource.SetResult(true);
 			}
-			
+
 		}
 
 		private void OnTunnelsFetched(IEnumerable<Tunnel> tunnels)

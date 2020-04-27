@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
-using Ngrok.AspNetCore.Sample.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Ngrok.AspNetCore;
-using System.Collections.Generic;
 using Ngrok.ApiClient;
+using Ngrok.AspNetCore.Sample.Models;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Ngrok.AspNetCore.Sample.Controllers
 {
