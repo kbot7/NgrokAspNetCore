@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
@@ -29,11 +28,11 @@ namespace Ngrok.ApiClient
 		public async Task<IEnumerable<Tunnel>> ListTunnelsAsync(CancellationToken cancellationToken = default)
 		{
 			var response = await Client.GetAsync(ListTunnelsPath);
-			await ThrowIfError(response);
+			await ThrowIfError(response, cancellationToken);
 
 			using var responseStream = await response.Content.ReadAsStreamAsync();
 			var listTunnelResponse = await JsonSerializer.DeserializeAsync
-				<ListTunnelsResponse>(responseStream);
+				<ListTunnelsResponse>(responseStream, cancellationToken: cancellationToken);
 			return listTunnelResponse.Tunnels;
 		}
 
@@ -42,57 +41,57 @@ namespace Ngrok.ApiClient
 			HttpResponseMessage response;
 			using (var content = new StringContent(JsonSerializer.Serialize(request), System.Text.Encoding.UTF8, "application/json"))
 			{
-				response = await Client.PostAsync(StartTunnelPath, content);
+				response = await Client.PostAsync(StartTunnelPath, content, cancellationToken);
 			}
-			await ThrowIfError(response);
+			await ThrowIfError(response, cancellationToken);
 
 			using var responseStream = await response.Content.ReadAsStreamAsync();
 			return await JsonSerializer.DeserializeAsync
-				<Tunnel>(responseStream);
+				<Tunnel>(responseStream, cancellationToken: cancellationToken);
 		}
 
 		public async Task<Tunnel> GetTunnelAsync(string name, CancellationToken cancellationToken = default)
 		{
-			var response = await Client.GetAsync(string.Format(GetTunnelPathFormat, name));
-			await ThrowIfError(response);
+			var response = await Client.GetAsync(string.Format(GetTunnelPathFormat, name), cancellationToken);
+			await ThrowIfError(response, cancellationToken);
 
 			using var responseStream = await response.Content.ReadAsStreamAsync();
 			return await JsonSerializer.DeserializeAsync
-				<Tunnel>(responseStream);
+				<Tunnel>(responseStream, cancellationToken: cancellationToken);
 		}
 
 		public async Task StopTunnelAsync(string name, CancellationToken cancellationToken = default)
 		{
-			var response = await Client.DeleteAsync(string.Format(StopTunnelPathFormat, name));
-			await ThrowIfError(response);
+			var response = await Client.DeleteAsync(string.Format(StopTunnelPathFormat, name), cancellationToken);
+			await ThrowIfError(response, cancellationToken);
 		}
 
-		private async Task ThrowIfError(HttpResponseMessage response)
+		private async Task ThrowIfError(HttpResponseMessage response, CancellationToken cancellationToken)
 		{
 			if (!response.IsSuccessStatusCode)
 			{
 				using var responseStream = await response.Content.ReadAsStreamAsync();
 				var errorResponse = await JsonSerializer.DeserializeAsync
-					<ErrorResponse>(responseStream);
+					<ErrorResponse>(responseStream, cancellationToken: cancellationToken);
 				throw new NgrokApiException(errorResponse);
 			}
 		}
 
 		public async Task<bool> CheckIfLocalAPIUpAsync(CancellationToken cancellationToken = default)
 		{
-			using (var client = new HttpClient())
+			using var client = new HttpClient
 			{
-				client.BaseAddress = new Uri("http://localhost:4040");
-				try
-				{
-					var response = await client.GetAsync(ListTunnelsPath, cancellationToken);
-					response.EnsureSuccessStatusCode();
-					return true;
-				}
-				catch (Exception)
-				{
-					return false;
-				}
+				BaseAddress = new Uri("http://localhost:4040")
+			};
+			try
+			{
+				var response = await client.GetAsync(ListTunnelsPath, cancellationToken);
+				response.EnsureSuccessStatusCode();
+				return true;
+			}
+			catch (Exception)
+			{
+				return false;
 			}
 		}
 	}
