@@ -47,8 +47,16 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      #- name: Test
-      #  run: dotnet test --no-restore --verbosity normal
+      - name: Run Tests and Generate Coverage Report
+        run: |
+          cd ./test/Ngrok.AspNetCore.UnitTests
+          dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov --no-restore --verbosity normal
+
+      - name: Publish coverage report to coveralls.io
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./test/Ngrok.AspNetCore.UnitTests/TestResults/coverage.info 
 
       - name: Pack
         run: |
