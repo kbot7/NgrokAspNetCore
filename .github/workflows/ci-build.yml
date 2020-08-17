@@ -50,6 +50,12 @@ jobs:
       - name: Run Tests and Generate Coverage Report
         run: dotnet test ${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov --no-restore --verbosity normal
 
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v1
+        with:
+          name: testcoverage
+          path: ${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests/TestResults
+
       - name: Publish coverage report to coveralls.io
         uses: coverallsapp/github-action@master
         with:
