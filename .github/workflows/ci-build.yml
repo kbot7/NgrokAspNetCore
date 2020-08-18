@@ -47,6 +47,15 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
+      - name: Pack
+        run: |
+          # Set version
+          VERSION=$(echo "${MAJOR}.${MINOR}.${PATCH}-build${GITHUB_RUN_NUMBER}")
+          echo "::set-output name=BUILD_VERSION::$VERSION"
+          
+          # pack
+          dotnet pack -p:Version=$VERSION --no-restore -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true --include-source --include-symbols --verbosity normal --output output
+
       - name: Run Tests and Generate Coverage Report
         run: dotnet test ${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests --collect:"XPlat Code Coverage" /p:DeterministicSourcePaths=true --settings runsettings.xml --results-directory ${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests/TestResults --diag:${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests/TestResults/log.txt
 
@@ -65,14 +74,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests/TestResults/coverage.info 
 
-      - name: Pack
-        run: |
-          # Set version
-          VERSION=$(echo "${MAJOR}.${MINOR}.${PATCH}-build${GITHUB_RUN_NUMBER}")
-          echo "::set-output name=BUILD_VERSION::$VERSION"
-          
-          # pack
-          dotnet pack -p:Version=$VERSION --no-restore -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true --include-source --include-symbols --verbosity normal --output output
+      
 
       - name: Echo Version
         run: | 
