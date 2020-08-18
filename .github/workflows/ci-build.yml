@@ -48,7 +48,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Run Tests and Generate Coverage Report
-        run: dotnet test ${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests --collect:"XPlat Code Coverage" --settings runsettings.xml --results-directory ${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests/TestResults
+        run: dotnet test ${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests --collect:"XPlat Code Coverage" --settings runsettings.xml --results-directory ${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests/TestResults --diag:${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests/TestResults/log.txt
 
       - name: Move Test Results to Reachable Directory
         run: mv ${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests/TestResults/*/coverage.info ${{ github.workspace }}/test/Ngrok.AspNetCore.UnitTests/TestResults
