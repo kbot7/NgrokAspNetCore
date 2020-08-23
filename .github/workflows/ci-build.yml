@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - develop
-      - ci-improvements
+      - feature/coveralls-integration
 
 env:
   MAJOR: 2
