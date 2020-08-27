@@ -1,16 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
-using System.Linq;
-using Ngrok.AspNetCore.Services;
-using Ngrok.AspNetCore;
 using Microsoft.Extensions.Hosting;
+using Ngrok.AspNetCore.Services;
+using System.Linq;
+using Xunit;
 
 namespace Ngrok.AspNetCore.UnitTests
 {
-	public class NgrokAspNetCoreExtensionsTests
+	public class NgrokAspNetCoreAddNgrokAddsCorrectServicesTests
 	{
 		[Fact]
 		public void AddNgrokAddsINgrokHostedServiceToServiceCollection()
