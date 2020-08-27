@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Ngrok.AspNetCore.UnitTests
 {
-	public class NgrokAspNetCoreAddNgrokAddsCorrectServicesTests
+	public class AddNgrokExtensionServiceTests
 	{
 		[Fact]
 		public void AddNgrokAddsINgrokHostedServiceToServiceCollection()

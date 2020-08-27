@@ -1,15 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Ngrok.AspNetCore;
-using Ngrok.AspNetCore.Services;
-using System;
-using System.Linq;
 using Xunit;
 
 namespace Ngrok.AspNetCore.UnitTests
 {
-	public class NgrokAspNetAddNgrokOptionsTests
+	public class AddNgrokExtensionOptionsTests
 	{
 		[Theory]
 		[InlineData(false, false, false)]
