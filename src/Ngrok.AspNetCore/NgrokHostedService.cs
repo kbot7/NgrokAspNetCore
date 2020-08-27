@@ -15,7 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace Ngrok.AspNetCore
 {
-	class NgrokHostedService : INgrokHostedService
+	public class NgrokHostedService : INgrokHostedService
 	{
 		private readonly NgrokOptions _options;
 		private readonly NgrokDownloader _nGrokDownloader;
