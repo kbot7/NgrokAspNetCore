@@ -2,21 +2,12 @@
 // See the LICENSE file in the project root for more information.
 // Copyright (c) 2019 Kevin Gysberg
 
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Ngrok.AspNetCore.Services;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Ngrok.ApiClient;
-using Ngrok.AspNetCore.Exceptions;
 using Microsoft.Extensions.Options;
+using Ngrok.ApiClient;
+using Ngrok.AspNetCore.Services;
 using System;
 
 namespace Ngrok.AspNetCore
