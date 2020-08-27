@@ -3,16 +3,14 @@
 // Copyright (c) 2016 David Prothero, Kevin Gysberg
 // Originally pulled from Github on 2019-01-13 at https://github.com/dprothero/NgrokExtensions
 
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Ngrok.AspNetCore.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Ngrok.AspNetCore.Extensions;
 
 namespace Ngrok.AspNetCore.Services
 {
